@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-14
+> **Last updated:** 2026-10-15
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -28,7 +28,7 @@ The source copy includes current uncommitted improvements, without Substrata Git
 | Extension framework | [WXT](https://wxt.dev/) v0.20+ | Manifest V3, builds for Firefox & Chrome |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest + jsdom, Python unittest | 292 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 102 packaging tests; 5 Node profile/release tests; full candidate results remain authoritative in readiness |
+| Testing | Vitest + jsdom, Python unittest | 292 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 104 packaging tests; 5 Node profile/release tests; full candidate results remain authoritative in readiness |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -333,6 +333,8 @@ Schema 2 `public-identity.template.json` constructs an exact-bound HTTPS candida
 
 The full Windows workflow obtains exact public inputs and runs complete offline preparation. Public binary sharing requires explicit review-candidate authorization and complete licence evidence; build-only provenance is not safety or Store approval. `public_materials.py` prepares buildless GitHub Pages locally only after real values are supplied; unconfigured previews receive source/templates, not invented public pages. `release_assets.py` uses predictable immutable filenames. `promote_release.py` defaults to planning, validates hash-bound decisions and unchanged local/remote bytes, and requires exact-version execution confirmation. It promotes an existing prerelease only; no Store automation, replacement uploads, tags or implicit publication occurs.
 
+`public_materials.py --prelaunch` separately prepares source/privacy/help only: real identity required, installer reports rejected, no binary/Store download links, visible unreleased status on every page and a `.nojekyll` marker. It does not loosen installer or release approval gates. User authorization on 2026-10-15 covers source and these pages only. `docs/PUBLIC_SOURCE_AND_PAGES.md` records the dedicated `codex/public-pages` root kit, required account settings and planned URLs. The connected GitHub interface lacks visibility/Pages settings mutations; generation, branch upload and publisher authorization are not proof of live deployment. Existing commit email metadata is not silently erased.
+
 `audio-inputs.lock.json` pins official FFmpeg 9.0.2 source/signature/key, Opus 1.6.1 and dated portable MSYS2. `audio-toolchain.lock.json` pins 22 compiler/build packages plus signatures. `audio_build.py` restores the toolchain offline, compares installed compiler/shell bytes to locked archives (excluding only a generated documentation index), verifies the FFmpeg fingerprint, builds shared non-GPL/nonfree audio tools and emits sources/notices/hashes. The rejected first build lacked raw-PCM muxing; corrected builds restore it. `verify_audio_tools.py` runs production preparation/chunking on six synthetic formats and checks malformed input plus restricted-PATH/Unicode/missing-DLL behavior. Signal differences are measured without inference or semantic acceptance.
 
 Runtime adoption also checks the matching pre-build compiler audit, current source/compiler lock digests and every accepted audio file. The dependency ledger maps all runtime, extension and embedded Setup files; unknown attribution is explicit, never automatic licence clearance. Emitted extension inventories map packages per chunk. `RELEASE_CANDIDATE_SECURITY_AUDIT.md` records native/credential/temp/downloader boundaries. Downloader output must be nonempty and confined to its request's temporary directory; public frozen transport cannot be downgraded by a message.
@@ -349,7 +351,7 @@ CI actions are pinned to verified commits. Manual Chrome builds attest the exact
 
 The audited source is uploaded privately to `TearsOfTheDawn/CueFlora`; this does not authorize public visibility, binary hosting or releases. Initial commit `93b6ff1adf4821a2f67b8f26f288779f11a86122` has 302 exact archive-matching source files. Its remote extension tests/builds passed; native jobs exposed a unit test that mocked audio/download resolvers but not Deno. `test_native_protocol.py` now mocks all four resolvers, verifies calls and covers missing/raising resolvers independently of the runner's PATH. Follow-up Windows CI passed; Unix runners exposed the signature-command unit test's unmocked Windows-only MSYS2 path adapter. `test_audio_build.py` now isolates that adapter while retaining command/fingerprint assertions. Actual bundled-tool health and signature/build behavior remain separately verified by framed PING and preserved Windows build evidence; unit success is not cross-platform installer certification. Private upload/CI evidence stays in local artifacts; previous packaged candidates and their source/hash bindings remain immutable.
 
-The stable unpacked Chrome identity is `klnnagigpdlgchlablabnafceoldfalm`, explicitly development-only and derived from the retained public key. Final Store identity, public contact and hosted privacy/download/support locations remain unset. Firefox builds are regression checks, not packaging/certification; no default Firefox identity is assigned.
+The stable unpacked Chrome identity is `klnnagigpdlgchlablabnafceoldfalm`, explicitly development-only and derived from the retained public key. The user-supplied Store draft ID `akcolbcdfnjcahhhodnpablekjagfadf` matches its public key independently; GitHub Issues is the chosen public support channel. Their incomplete local release draft/evidence stays in artifacts, not provider storage or published runtime approvals. Final Store-bound installer and actual public hosting/release acceptance remain unverified. Firefox builds are regression checks, not packaging/certification; no default Firefox identity is assigned.
 
 `build_runtime.py` builds an onedir host with pinned tools, Python/package notices, interpreter notice inventory and hash-bound tool build/license evidence. `build_preview.py` embeds it, Chrome-only private configuration and notices into one windowed self-extracting `CueFlora Setup.exe`. Self-extraction is for Setup only; the installed runtime remains one-folder.
 

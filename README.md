@@ -6,6 +6,12 @@ AI Subtitles & Translation for YouTube — independent Windows x64 / Chrome rele
 
 CueFlora combines available YouTube captions, optional AI transcription and optional AI translation. The flower button opens subtitle controls and the existing appearance editor. AI work starts only when you press Run.
 
+## Pre-release status
+
+Source/privacy/help publication is separate from a software release. There is **no public installer or Chrome Store extension available yet**. Existing private previews remain preserved; they are not public downloads or redistribution approval. You can inspect the source and documented builds, but the ordinary-user installation path awaits the remaining release gates.
+
+The publisher has authorized source and prelaunch privacy/help pages. [Source/Pages preparation](docs/PUBLIC_SOURCE_AND_PAGES.md) records the deployment path and its account-setting requirements. GitHub Issues is the selected public support channel; do not post credentials or private captures.
+
 ## Install the private preview
 
 Extract the complete preview ZIP. Load its `Chrome-preview` folder through Chrome's Developer mode → Load unpacked. Run `CueFlora Setup.exe`, explicitly select Chrome and confirm Install. The installer includes Python and audio tools, requires no administrator access or PATH edits, and runs no persistent companion.
@@ -24,7 +30,7 @@ The Store item and public downloads are not live yet. Final identities and links
 
 ## Status and boundaries
 
-Version 0.1.4 adds complete public-source build orchestration, isolated hash-locked Node/npm, public synthetic audio checks independent of private old binaries, a same-version yt-dlp rebuild on pinned modern Python, byte-matched curl source evidence, exact-bound acceptance builds, external approval sidecars, embedded extension notices and local public-page/release preparation. See [release completion](docs/RELEASE_COMPLETION.md) and each fresh candidate's measured readiness. It is not published or Store-approved. Earlier previews remain preserved; final publisher/Store identity and hosted pages remain unset. The first installer is unsigned.
+Version 0.1.4 adds complete public-source build orchestration, isolated hash-locked Node/npm, public synthetic audio checks independent of private old binaries, a same-version yt-dlp rebuild on pinned modern Python, byte-matched curl source evidence, exact-bound acceptance builds, external approval sidecars, embedded extension notices and public-page/release preparation. See [release completion](docs/RELEASE_COMPLETION.md) and each fresh candidate's measured readiness. Software is not publicly released or Store-approved. The real Store draft ID/public key has been supplied and matched; final installer binding, live hosting verification and external reviews remain separate. Earlier previews remain preserved. The first installer is unsigned.
 
 Windows/Chrome public-release preparation now includes bundled Deno, local EJS checks, hash-locked offline inputs, separate preview/keyless candidates and build-only automation. Use [the preparation command](docs/PUBLIC_RELEASE_PREPARATION.md), [handoff](docs/PUBLIC_RELEASE_HANDOFF.md) and [explicit release blockers](docs/PUBLIC_RELEASE_BLOCKERS.md). This is not public-release clearance; nothing is submitted automatically.
 
@@ -32,7 +38,7 @@ The previous 0.1.2 milestone introduced [Windows-protected remembered keys](docs
 
 The preview is unsigned, not a public release. Stable development Chrome ID: `klnnagigpdlgchlablabnafceoldfalm`. It is separate from Substrata's extension, registration, settings, files and evidence. No settings or credentials are imported. No live installation or browser automation was performed during implementation.
 
-Clean-machine, actual Chrome/native Run, GUI/scanner acceptance, signing, store publication, final identities, redistribution clearance and macOS/Linux/Firefox certification remain deferred. The keyless store-upload ZIP is a candidate, not permission to publish; a store-assigned identity needs a matching future installer. ChatGPT sign-in and AI-service/model provisioning are not implemented.
+Clean-machine, actual Chrome/native Run, GUI/scanner acceptance, signing, store publication, final public binding, redistribution clearance and macOS/Linux/Firefox certification remain deferred. The keyless store-upload ZIP is a candidate, not permission to publish; the supplied Store identity needs a matching future installer. ChatGPT sign-in and AI-service/model provisioning are not implemented.
 
 ## Development
 

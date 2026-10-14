@@ -1,6 +1,6 @@
 # CueFlora support
 
-Use the contact/support link in the page footer. Public issue reports must not contain credentials, encrypted credential payloads or private captures.
+Use [CueFlora GitHub Issues](https://github.com/TearsOfTheDawn/CueFlora/issues). No public support email is required. Issue reports and replies are public; they must not contain credentials, encrypted credential payloads or private captures. Source/help publication does not mean the installer or Store extension has been released.
 
 No subtitles: check source/language selections in the flower panel and press Run for AI generation. Native captions depend on the video/language.
 

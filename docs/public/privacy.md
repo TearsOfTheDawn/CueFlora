@@ -1,6 +1,6 @@
 # CueFlora privacy policy
 
-Publisher/contact details appear in the page footer. Policy revision: 2026-10-13. This policy describes the Windows x64 / Chrome edition.
+Publisher/contact details appear in the page footer. Policy revision: 2026-10-15. This policy describes the Windows x64 / Chrome edition; publishing this policy is not a public software release.
 
 CueFlora reads current-video/caption metadata, video ID, title and bounded description for subtitles. On explicit Run, the on-demand helper downloads temporary audio and sends prepared chunks/language/model parameters to your chosen transcription service. Source cues, languages, neighbouring context, title and bounded description go to your chosen translation service. User-triggered model checks send metadata requests and optional credentials; they do not perform inference.
 
@@ -13,3 +13,9 @@ Temporary processing files are removed with their processing directory. Local pr
 Evidence capture is off by default and enabled explicitly through a local environment setting. It retains audio, raw ASR/translation text and processing mappings. Credentials and signed media URLs are excluded, but audio/text can still be private. Users control deletion and sharing. Ordinary diagnostics contain IDs, counts, timings and reason codes, not subtitle text or credential payloads.
 
 Contact the publisher through the linked support/contact route for privacy questions. Do not post API keys or private evidence publicly. These disclosures do not guarantee third-party deletion, filesystem backup erasure, or protection from malware running under your Windows account.
+
+## Website and public support
+
+This source/help website is hosted by GitHub Pages. GitHub handles website connections under its [Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement). The publisher adds no analytics, tracking scripts or forms to these static pages.
+
+Support uses GitHub Issues. Reports and replies are public when the repository is public. Posting is optional; use redacted details and do not submit API keys, encrypted credential records, signed URLs or private audio/subtitle captures. A public issue tracker is not a private channel for sensitive evidence.
