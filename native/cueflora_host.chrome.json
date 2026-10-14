@@ -1,9 +1,0 @@
-{
-    "name":  "cueflora_host",
-    "description":  "CueFlora native messaging host",
-    "path":  "PLACEHOLDER_GENERATED_BY_CUEFLORA_SETUP",
-    "type":  "stdio",
-    "allowed_origins":  [
-                            "chrome-extension://klnnagigpdlgchlablabnafceoldfalm/"
-                        ]
-}
