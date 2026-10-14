@@ -13,13 +13,13 @@ from collect_release_evidence import collect
 from source_export import source_identity
 
 
-BLOCKERS = ['FFmpeg enabled-library corresponding source and build recipes unresolved',
+BLOCKERS = ['Exact source-built FFmpeg/Opus sources supplied; dependency-specific licensing assessment required',
     'Exact yt-dlp bundled-dependency source closure needs redistribution review',
     'Deno/native DLL licence closure needs final review; interpreter payload matching is established',
     'Store eligibility of native audio downloads and JavaScript challenge execution unresolved',
     'DPAPI and store-only HTTPS implemented; independent security review and live acceptance still deferred',
-    'Publisher, store-assigned Chrome identity, public privacy/download/support locations and genuine screenshots missing',
-    'Unsigned first release accepted; clean-machine/real-browser acceptance and cross-platform certification absent']
+    'Genuine screenshots and artifact-bound verification of supplied publisher/Store identity and public locations required',
+    'Unsigned first release accepted; clean-Windows/real-Chrome acceptance absent; other platforms not certified']
 
 
 def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio_cache=None, toolchain=None, public_config=None, downloader_cache=None):
@@ -126,7 +126,6 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
             'conformanceSha256':digest(audio_build/'audio-conformance.json'),
             'inputLockSha256':digest(ROOT/'packaging/audio-inputs.lock.json'),
             'toolchainLockSha256':digest(ROOT/'packaging/audio-toolchain.lock.json'),'privateBaselineRequired':False}
-        report['releaseBlockers'][0] = 'Exact source-built FFmpeg/Opus sources supplied; dependency-specific licensing assessment required'
         workspace = output/'offline-extension-workspace'; workspace.mkdir()
         for directory in ['entrypoints','utils','public','scripts']:
             shutil.copytree(ROOT/directory,workspace/directory)

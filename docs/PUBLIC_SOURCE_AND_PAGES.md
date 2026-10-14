@@ -1,5 +1,9 @@
 # Source and privacy/help publication
 
+## Verified hosting status
+
+On 2026-10-15, the publisher made `TearsOfTheDawn/CueFlora` public and enabled Pages from `codex/public-pages` at `/ (root)`. GitHub deployment run `38654562336` succeeded. Direct HTTPS checks of all four pages, CSS and the generation report returned 200 and matched the exact uploaded byte counts and SHA-256 hashes. Local evidence is preserved as `LIVE_HOSTING_VERIFICATION.json` under release-binding artifacts; earlier preparation reports remain historical. No browser automation was used. There are still no public installer or Store download links; no binary release or Store submission was authorized.
+
 The publisher approved making CueFlora source and privacy/help pages public on 2026-10-15. This approval excludes installers, binary/source bundles for a runtime release, Chrome Store submission/publication and redistribution clearance. The Store item remains a draft and previous private previews remain unchanged.
 
 ## Site preparation
@@ -10,7 +14,7 @@ The publisher approved making CueFlora source and privacy/help pages public on 2
 python packaging/public_materials.py --output artifacts/public-source-pages/site-001 --configuration artifacts/release-binding/TearsOfTheDawn-CueFlora/public-identity.draft.json --prelaunch
 ```
 
-The local draft holds planned publisher-controlled URLs while deployment is pending. These are not proof of public availability or installer readiness. Exact runtime/source bindings and all public release/redistribution approvals remain unset.
+The local draft holds the verified publisher-controlled prelaunch URLs. Live hosting is not proof of installer readiness. Builders must fill exact fresh runtime/source bindings; all public release/redistribution approvals remain false.
 
 ## Account settings
 
