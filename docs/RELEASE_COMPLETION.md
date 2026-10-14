@@ -4,6 +4,8 @@ This source prepares Windows x64 / Chrome candidates. It does not publish, insta
 
 ## Build from public source
 
+The audited source has been uploaded to the private repository `TearsOfTheDawn/CueFlora`. Private source access is not a public launch or permission to upload installers, deploy pages or change visibility. The original source import and packaged candidates remain preserved. Remote regression checks complement local engineering evidence; neither establishes clean-machine/browser acceptance or distribution clearance.
+
 Obtain exact input caches using `packaging/bootstrap_public_cache.py --online`, then restore the pinned Python environment using `packaging/bootstrap_offline.py --official`. The command restores official Node 24.19.0/npm 11.17.0 and validates the archive/executable and all 1921 npm files; no installed/global npm module dependency is needed. Run preparation with the restored interpreter:
 
 ```text
@@ -40,7 +42,7 @@ The installer payload does not embed mutable approval records. Freeze candidate 
 
 ## Minimum publisher steps
 
-1. Supply GitHub owner/repository/public contact and create a Chrome developer draft using the prepared keyless ZIP. Supply its assigned ID and public key. Do not share account passwords or private signing keys.
+1. The GitHub owner/repository is established as `TearsOfTheDawn/CueFlora`. Supply a public contact and create a Chrome developer draft using the prepared keyless ZIP. Supply its assigned ID and public key. Do not share account passwords or private signing keys.
 2. Attempt one clean Windows/Chrome install and real Run using existing compatible AI services, capturing genuine screenshots. A later explicit testing waiver is recorded as untested, never passed; genuine Store screenshots are still required.
 3. Authorize source/Pages and clearly labelled review-candidate hosting, then submit with automatic publication disabled. Reviewer instructions disclose helper installation, temporary audio download, native challenge execution, configured service prerequisites and data transfers. Any requested reviewer-only credentials stay out of public source/artifacts.
 4. After actual Store approval and resolved licensing obligations, explicitly authorize launch. Promote the matching GitHub release and Store item. If review objects to the architecture, obtain a separate approved remedy rather than disguising the behavior.
