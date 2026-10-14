@@ -17,7 +17,10 @@ class AudioBuildTests(unittest.TestCase):
             fingerprint='A'*40
             def shell(toolchain,command,log):
                 calls.append(command); log.write_text('[GNUPG:] VALIDSIG '+fingerprint+' 0\n' if 'gpgv ' in command else '')
-            with patch('audio_build.shell',side_effect=shell):
+            # Test signature commands and fingerprint rejection independently
+            # of the Windows-only MSYS2 path adapter and external GPG process.
+            with patch('audio_build.shell',side_effect=shell), \
+                    patch('audio_build.posix',side_effect=lambda path: Path(path).as_posix()):
                 verify_signature(root,root,first,fingerprint)
                 self.assertTrue(any('gpgv ' in command for command in calls))
                 self.assertTrue(any('--dearmor' in command for command in calls))
