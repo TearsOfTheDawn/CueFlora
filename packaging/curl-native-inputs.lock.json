@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "version": "2.0.0",
+  "binary": {
+    "file": "curl-impersonate-v2.0.0.x86_64-win32.tar.gz",
+    "url": "https://github.com/lexiforest/curl-impersonate/releases/download/v2.0.0/curl-impersonate-v2.0.0.x86_64-win32.tar.gz",
+    "sha256": "88e5b641a13b9a991857996947837c6f058cc3b0c9142ded0fc17b82008e98b2",
+    "member": "lib/libcurl-impersonate.dll",
+    "memberSha256": "ec8ead0e422fe4ae62a99233a63f6007adc727caba97ff1f87385c00cafe200f"
+  },
+  "source": {
+    "file": "curl-impersonate-2.0.0-source.zip",
+    "url": "https://codeload.github.com/lexiforest/curl-impersonate/zip/refs/tags/v2.0.0",
+    "sha256": "9cc7b8bcba99cefb02907272575327ac41cea441482bb5710276a8c9e5794ad3"
+  },
+  "dependencies": [
+    {"package":"brotli","version":"1.2.0","file":"curl-brotli-1.2.0.tar.gz","url":"https://github.com/google/brotli/archive/refs/tags/v1.2.0.tar.gz","sha256":"816c96e8e8f193b40151dad7e8ff37b1221d019dbcb9c35cd3fadbfe6477dfec","recipeVariable":"BROTLI"},
+    {"package":"boringssl","version":"156c7b75ae9b8c3b3f847acf264f17594c3859fb","file":"curl-boringssl-156c7b75.zip","url":"https://github.com/google/boringssl/archive/156c7b75ae9b8c3b3f847acf264f17594c3859fb.zip","sha256":"450e169b284697c6eafe523cb7679f4221fbe1a0993f773a566c33b188762844","recipeVariable":"BORINGSSL"},
+    {"package":"nghttp2","version":"1.63.0","file":"curl-nghttp2-1.63.0.tar.bz2","url":"https://github.com/nghttp2/nghttp2/releases/download/v1.63.0/nghttp2-1.63.0.tar.bz2","sha256":"607b174554d22a828bc532d1d734fe0f729b5d5ed207f2f12e96a62e83f29c55","recipeVariable":"NGHTTP2"},
+    {"package":"ngtcp2","version":"1.20.0","file":"curl-ngtcp2-1.20.0.tar.bz2","url":"https://github.com/ngtcp2/ngtcp2/releases/download/v1.20.0/ngtcp2-1.20.0.tar.bz2","sha256":"871ec97ad86803cf312901b0c393b0ee70163e25a87c9b2894d1234341ce4e97","recipeVariable":"NGTCP2"},
+    {"package":"nghttp3","version":"1.15.0","file":"curl-nghttp3-1.15.0.tar.bz2","url":"https://github.com/ngtcp2/nghttp3/releases/download/v1.15.0/nghttp3-1.15.0.tar.bz2","sha256":"c6c491a52804814098e446630e6efc459afc0d3da7952ffe6cbdc0b3f99b2b62","recipeVariable":"NGHTTP3"},
+    {"package":"zlib","version":"1.3.1","file":"curl-zlib-1.3.1.tar.gz","url":"https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz","sha256":"9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23","recipeVariable":"ZLIB"},
+    {"package":"zstd","version":"1.5.7","file":"curl-zstd-1.5.7.tar.gz","url":"https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz","sha256":"eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3","recipeVariable":"ZSTD"},
+    {"package":"curl","version":"curl-8_21_0","file":"curl-8_21_0-source.tar.gz","url":"https://github.com/curl/curl/archive/curl-8_21_0.tar.gz","sha256":"ec753aa6f408a3ca9f0d6d5f7a77417aecd1544db13c03ae5d443612bf367364","recipeVariable":"CURL"}
+  ],
+  "scope": "Exact Windows DLL origin and upstream recipe source pins; build flags and additional binary dependencies remain independently audited.",
+  "redistributionApproved": false
+}

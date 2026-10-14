@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "mode": "public",
+  "product": "cueflora",
+  "owner": null,
+  "extensionIds": {"chrome": null},
+  "privacyUrl": null,
+  "downloadUrl": null,
+  "supportUrl": null,
+  "runtimeInventorySha256": null,
+  "sourceInventorySha256": null,
+  "signing": "unsigned",
+  "evidence": null,
+  "storeApproval": null,
+  "publicReleaseAuthorized": false,
+  "redistributionApproved": false,
+  "note": "Not installable. Store identity must come from the publisher account; candidate builds need no identity. Private preview bindings remain separate."
+}

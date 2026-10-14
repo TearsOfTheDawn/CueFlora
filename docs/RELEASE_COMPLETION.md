@@ -1,0 +1,48 @@
+# CueFlora 0.1.4 release completion
+
+This source prepares Windows x64 / Chrome candidates. It does not publish, install into the live environment, provision AI services or certify semantic subtitle accuracy. Substrata and previous packages remain separate.
+
+## Build from public source
+
+Obtain exact input caches using `packaging/bootstrap_public_cache.py --online`, then restore the pinned Python environment using `packaging/bootstrap_offline.py --official`. The command restores official Node 24.19.0/npm 11.17.0 and validates the archive/executable and all 1921 npm files; no installed/global npm module dependency is needed. Run preparation with the restored interpreter:
+
+```text
+python packaging/prepare_windows.py --output artifacts/fresh-candidate --cache artifacts/inputs --evidence-cache artifacts/evidence --audio-cache artifacts/audio-inputs
+```
+
+The command restores the portable compiler, builds FFmpeg/ffprobe 9.0.2 and Opus 1.6.1, rebuilds the same yt-dlp 2026.08.19 source on pinned Python 3.13.15, runs public synthetic conformance checks, tests/builds both extensions, and builds two runtime/Setup pairs. It needs neither old FFmpeg executables nor private source/commit history. `--audio-build` can instead copy and reverify a preserved source build without modifying it. Inputs never fall back to latest. The downloader's 13 exact upstream dependency wheel/source pins are cached under `<cache>/downloader` (or an explicit `--downloader-cache`). No media or inference is requested during its metadata/extractor checks.
+
+The preserved official downloader embeds Python 3.10.11/OpenSSL 1.1.1t. New candidates use the same yt-dlp source release rebuilt on Python 3.13.15/OpenSSL 3.5.7. Its extractor list and optional capabilities are compared against the old executable, and local EJS bytes must remain identical. The upstream Python-version marker selects websockets 17.0.1 instead of the old runtime's 16.1.1; this dependency difference is recorded, not described as byte-identical. Audio preparation and inference settings do not change. Python source/notice archives, including GPL Mutagen, are supplied. Native DLLs must match the pinned interpreter or dependency wheels. [Python lifecycle](https://peps.python.org/pep-0619/), [OpenSSL release notes](https://www.openssl-library.org/news/openssl-1.1.1-notes/).
+
+The exact embedded curl-impersonate DLL matches the upstream Windows 2.0.0 archive. Its source recipe and eight hash-matched dependency source archives/notices are preserved, including BoringSSL and curl. Windows uses native IDN in that recipe; aggregate Linux notices are not evidence that libidn2 is shipped here. This closes the earlier curl-origin uncertainty but does not automatically prove every static build option or grant redistribution approval. Interpreter/native extension and Deno/V8 transitive notice/source review remains explicit.
+
+Preparation also restores 26 V8/binding source-tree notices omitted by the pinned v8 crate. Fixed source-commit archives, Cargo/crate checksum, version headers and Deno's reported V8 version are checked; dirty crate VCS metadata is not hidden. Notices ship with runtime/Setup, while those source archives stay in the separate source bundle. This is original core-notice evidence, not proof of complete Rust/V8 submodule coverage or the Windows binary's exact build flags.
+
+Ten original native interpreter notices cover eleven component families. Locked-interpreter version probes distinguish Windows' bundled Expat 2.8.2 from the standalone source catalog's Unix Expat entry, and confirm the external mpdecimal 4.0.0 used by this build. Windows Expat's original COPYING is read from the exact CPython source archive. These records do not grant Microsoft runtime redistribution rights or infer complete binary-source equivalence.
+
+For reproducibility checks, build paths are effective inputs: FFmpeg records them in its configuration. The controlled two-compilation experiment uses the same visible path and fixed inputs; only measured PE metadata differences are normalized, and unexplained payload changes fail. This experiment passed locally. It is not a promise of byte-identical executables across different build roots, and it does not adopt fresh audio binaries automatically.
+
+Exact Deno Cargo and fixed-commit repository notice replay is now part of preparation. Root/declared licence evidence is distinguished from nested test notices, and unresolved/applicability cases stay explicit. See [Deno notice evidence](DENO_NOTICE_EVIDENCE.md). These original notice files do not enable runtime component downloads, imply binary shipment or grant release approval.
+
+For the final identity, copy `packaging/public-identity.template.json` outside the source tree and fill actual publisher/repository, assigned Chrome ID/public key and HTTPS privacy/download/support locations. Keep approval flags false. Pass `--public-config <file>` to preparation. It builds a matching acceptance extension plus keyless Store upload and exact-bound Setup. Missing identities do not block preview builds but do block public binding. Do not use test fixture values or the development identity.
+
+## Approval without rebuilding
+
+Candidate construction is separate from publication. `external-approvals.json` starts with every gate pending. Reports must contain the same source, runtime inventory, installer and Store ZIP hashes, gate/status, reviewer and reason; their actual contents are hash-checked. Only clean-Windows and real-Chrome acceptance may be explicitly waived by the publisher. Licensing, policy/security, genuine screenshots, real public locations, Store approval and publication authorization cannot be waived or inferred from tests. Recorded declarations are not authenticated legal/store decisions.
+
+`licence-assessment.template.json` is pending, not an approval. Where the ledger identifies review-required native/Deno ambiguity, a later actual licence reviewer must supply an assessment bound to that exact ledger and candidate, address every issue, and reference actual candidate-relative notice/source/recipe/terms/scope files by hash. Non-shipment judgments require scope evidence. Mandatory missing source/notices and unassigned files cannot be cleared by this review path; they must be fixed. The tooling verifies recorded claims and unchanged evidence bytes, not the reviewer's identity or legal expertise. A mere `passed` flag without the complete assessment does not clear incomplete dependency evidence.
+
+The pending template is also copied into `release-assets` and covered by its inventory. In the dependency ledger, each file's component `ledgerRow` refers to a zero-based entry in `rows`, which retains the complete original notice/source evidence. These references avoid repeating entire notice lists for every file; no original evidence is removed, and unmatched files or mismatched hashes still fail or remain blockers.
+
+The installer payload does not embed mutable approval records. Freeze candidate bytes before review. Keep exact verified sources, notices and build instructions together with binaries; promote the same reviewed artifacts, not a rebuilt substitute.
+
+`release-assets` contains immutable versioned filenames plus checksums/inventories. `promote_release.py` validates every required external decision and unchanged candidate bytes before producing a dry-run promotion command. Execution additionally requires `--execute --confirm-version <exact-version>` and publisher-controlled GitHub CLI authentication; it verifies existing remote review assets and promotes a prerelease only. It does not create a repository, release, tag, replacement upload or Store publication. No such execution is authorized or performed during implementation.
+
+## Minimum publisher steps
+
+1. Supply GitHub owner/repository/public contact and create a Chrome developer draft using the prepared keyless ZIP. Supply its assigned ID and public key. Do not share account passwords or private signing keys.
+2. Attempt one clean Windows/Chrome install and real Run using existing compatible AI services, capturing genuine screenshots. A later explicit testing waiver is recorded as untested, never passed; genuine Store screenshots are still required.
+3. Authorize source/Pages and clearly labelled review-candidate hosting, then submit with automatic publication disabled. Reviewer instructions disclose helper installation, temporary audio download, native challenge execution, configured service prerequisites and data transfers. Any requested reviewer-only credentials stay out of public source/artifacts.
+4. After actual Store approval and resolved licensing obligations, explicitly authorize launch. Promote the matching GitHub release and Store item. If review objects to the architecture, obtain a separate approved remedy rather than disguising the behavior.
+
+GitHub Releases holds Setup/source bundles, GitHub Pages holds privacy/install pages, and GitHub Issues provides support. The first installer is unsigned; do not disable antivirus. No signing, ownership, licence approval, real-browser result, genuine screenshot, Store approval or public URL is invented by the preparation command. Firefox/other-platform packaging and AI provisioning remain outside this release.

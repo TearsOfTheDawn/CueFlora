@@ -1,0 +1,6 @@
+{
+  "name": "CueFlora",
+  "description": "AI Subtitles & Translation for YouTube",
+  "nativeHost": "cueflora_host",
+  "previewOnly": true
+}

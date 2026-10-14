@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "ytDlpVersion": "2026.08.19",
+  "pythonVersion": "3.13.15",
+  "source": {
+    "file": "yt-dlp-2026.08.19-source.zip",
+    "sha256": "ca8070b2c4c6de9e65a330ff7c01d6e0b25b128f32e3a6d323333fc2f5208005",
+    "url": "https://codeload.github.com/yt-dlp/yt-dlp/zip/refs/tags/2026.08.19",
+    "role": "licence-source-evidence"
+  },
+  "selection": "Exact tag pin/pin-curl-cffi markers evaluated for Windows CPython 3.13; no optional feature removed",
+  "dependencies": [
+    {
+      "name": "brotli",
+      "version": "1.2.0",
+      "wheel": {
+        "file": "brotli-1.2.0-cp313-cp313-win_amd64.whl",
+        "url": "https://files.pythonhosted.org/packages/ff/91/e739587be970a113b37b821eae8097aac5a48e5f0eca438c22e4c7dd8648/brotli-1.2.0-cp313-cp313-win_amd64.whl",
+        "sha256": "b63daa43d82f0cdabf98dee215b375b4058cce72871fd07934f179885aad16e8"
+      },
+      "source": {
+        "file": "brotli-1.2.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz",
+        "sha256": "e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a"
+      },
+      "declaredLicence": "MIT",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "wheel": {
+        "file": "certifi-2026.7.22-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl",
+        "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775"
+      },
+      "source": {
+        "file": "certifi-2026.7.22.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz",
+        "sha256": "741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55"
+      },
+      "declaredLicence": "MPL-2.0",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "wheel": {
+        "file": "cffi-2.1.1-cp313-cp313-win_amd64.whl",
+        "url": "https://files.pythonhosted.org/packages/60/a6/8b149b2c3f2e11aaa1618ef64500b45f50f22c57a977a4dff1aff1f91042/cffi-2.1.1-cp313-cp313-win_amd64.whl",
+        "sha256": "1aa5645c30469b09530c4ebca77ebf8f17618293c58f8549cb1a543a50236e7d"
+      },
+      "source": {
+        "file": "cffi-2.1.1.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz",
+        "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be"
+      },
+      "declaredLicence": "MIT-0",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.0",
+      "wheel": {
+        "file": "charset_normalizer-3.5.0-cp313-cp313-win_amd64.whl",
+        "url": "https://files.pythonhosted.org/packages/fb/88/6018cc8d76ea2b7cb02918f37e23e86c261d1a102713d7e88d2cfb8b211c/charset_normalizer-3.5.0-cp313-cp313-win_amd64.whl",
+        "sha256": "72982d9958a42f8132bf2d6b90214ed66477295ef1188731f98ae3511c6eeb5a"
+      },
+      "source": {
+        "file": "charset_normalizer-3.5.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/cb/31/4971872b3ed8715346231fb6eb4da8fcba65a4143c189db151ee28a2812b/charset_normalizer-3.5.0.tar.gz",
+        "sha256": "49bd5feb59b0bf3cbf6ebcf4352e371c95b9da9bacd4449f8b64d0ad2c10a26e"
+      },
+      "declaredLicence": "MIT",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "curl-cffi",
+      "version": "0.16.0",
+      "wheel": {
+        "file": "curl_cffi-0.16.0-cp310-abi3-win_amd64.whl",
+        "url": "https://files.pythonhosted.org/packages/ad/03/b9df2973f1119f9d11d8fb3bf2682e5ffe5c52ef3ab89f720473c60fe97e/curl_cffi-0.16.0-cp310-abi3-win_amd64.whl",
+        "sha256": "e22a8212d830108e977ff394237f637238e265f5f65037d6c1ee71ea8cc03bcb"
+      },
+      "source": {
+        "file": "curl_cffi-0.16.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/b4/23/d32e113b16dbfb458bea408871ed98dd12f306a366a04215e84537e0af7e/curl_cffi-0.16.0.tar.gz",
+        "sha256": "b00b423da8028eb6221e3b63bcd63d681150c07cee8b16000d1f7ea292731895"
+      },
+      "declaredLicence": "MIT",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "idna",
+      "version": "3.18",
+      "wheel": {
+        "file": "idna-3.18-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/1e/5e/d4e9f1a599fb8e573b7b87160658329fbf28d19eac2718f51fc3def3aa5a/idna-3.18-py3-none-any.whl",
+        "sha256": "7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2"
+      },
+      "source": {
+        "file": "idna-3.18.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/cd/63/9496c57188a2ee585e0f1db071d75089a11e98aa86eb99d9d7618fc1edce/idna-3.18.tar.gz",
+        "sha256": "ffb385a7e039654cef1ab9ef32c6fafe283c0c0467bba1d9029738ce4a14a848"
+      },
+      "declaredLicence": "BSD-3-Clause",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "mutagen",
+      "version": "1.48.1",
+      "wheel": {
+        "file": "mutagen-1.48.1-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/47/d8/a29e4e3991765e7ce4ed1f7e4074fe1ba9da03e0048639734de60f9cadb9/mutagen-1.48.1-py3-none-any.whl",
+        "sha256": "4f077fe87d3fc7fba259aa63d8c026b18382ca6a42ef37c61e16f1b1b5b82fe7"
+      },
+      "source": {
+        "file": "mutagen-1.48.1.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/df/70/1675da133ea92227da41bf5b24e1c66be597ff736a1533ade41da986852f/mutagen-1.48.1.tar.gz",
+        "sha256": "8f95637ab9f6f305cec6bd1294e197debe207998e3e068596563c74f86b0a173"
+      },
+      "declaredLicence": "GPL-2.0-or-later",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0",
+      "wheel": {
+        "file": "pycparser-3.0-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/0c/c3/44f3fbbfa403ea2a7c779186dc20772604442dde72947e7d01069cbe98e3/pycparser-3.0-py3-none-any.whl",
+        "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992"
+      },
+      "source": {
+        "file": "pycparser-3.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/1b/7d/92392ff7815c21062bea51aa7b87d45576f649f16458d78b7cf94b9ab2e6/pycparser-3.0.tar.gz",
+        "sha256": "600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29"
+      },
+      "declaredLicence": "BSD-3-Clause",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "pycryptodomex",
+      "version": "3.23.0",
+      "wheel": {
+        "file": "pycryptodomex-3.23.0-cp37-abi3-win_amd64.whl",
+        "url": "https://files.pythonhosted.org/packages/69/96/11f36f71a865dd6df03716d33bd07a67e9d20f6b8d39820470b766af323c/pycryptodomex-3.23.0-cp37-abi3-win_amd64.whl",
+        "sha256": "52e5ca58c3a0b0bd5e100a9fbc8015059b05cffc6c66ce9d98b4b45e023443b9"
+      },
+      "source": {
+        "file": "pycryptodomex-3.23.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/c9/85/e24bf90972a30b0fcd16c73009add1d7d7cd9140c2498a68252028899e41/pycryptodomex-3.23.0.tar.gz",
+        "sha256": "71909758f010c82bc99b0abf4ea12012c98962fbf0583c2164f8b84533c2e4da"
+      },
+      "declaredLicence": "BSD, Public Domain",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "wheel": {
+        "file": "requests-2.34.2-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+        "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"
+      },
+      "source": {
+        "file": "requests-2.34.2.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz",
+        "sha256": "f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed"
+      },
+      "declaredLicence": "Apache-2.0",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "urllib3",
+      "version": "2.7.0",
+      "wheel": {
+        "file": "urllib3-2.7.0-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl",
+        "sha256": "9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897"
+      },
+      "source": {
+        "file": "urllib3-2.7.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz",
+        "sha256": "231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c"
+      },
+      "declaredLicence": "MIT",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "websockets",
+      "version": "17.0.1",
+      "wheel": {
+        "file": "websockets-17.0.1-cp313-cp313-win_amd64.whl",
+        "url": "https://files.pythonhosted.org/packages/81/2f/ea1380f72bb11b64fc5bc7ae0d42de5bbf3e6dc13b965706b2a1d4e17cdf/websockets-17.0.1-cp313-cp313-win_amd64.whl",
+        "sha256": "409d93efcaa14f7a99592c5baaef5ec6ca94fba0f5aec1a86f693977c69c9c1c"
+      },
+      "source": {
+        "file": "websockets-17.0.1.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/f7/96/e01084f83a64bcb3a27994bd0cb0db68ff29d9c6707fae37ec19b18ba990/websockets-17.0.1.tar.gz",
+        "sha256": "5baa9bc0dfbae8c507e51c8cf1b6d4628086f7a87bbd3a9952bd5f035451f1cc"
+      },
+      "declaredLicence": "BSD-3-Clause",
+      "upstreamWheelHashVerified": true
+    },
+    {
+      "name": "yt-dlp-ejs",
+      "version": "0.8.0",
+      "wheel": {
+        "file": "yt_dlp_ejs-0.8.0-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/e3/bd/520769863744b669440a924271a6159ddd82ad5ae26b4ac4d4b69e9f8d44/yt_dlp_ejs-0.8.0-py3-none-any.whl",
+        "sha256": "79300e5fca7f937a1eeede11f0456862c1b41107ce1d726871e0207424f4bdb4"
+      },
+      "source": {
+        "file": "yt_dlp_ejs-0.8.0.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/d3/e6/cceb9530e8f4e5940f6f7822d90e9d94f1b85343329a16baaf47bbbb3de1/yt_dlp_ejs-0.8.0.tar.gz",
+        "sha256": "d5fa1639f63b5c4af8d932495f60689d5370f1a095782c944f7f62a303eb104e"
+      },
+      "declaredLicence": "Unlicense AND MIT AND ISC",
+      "upstreamWheelHashVerified": true
+    }
+  ],
+  "redistributionApproved": false,
+  "completeNativeClosure": false
+}

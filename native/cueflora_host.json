@@ -1,0 +1,7 @@
+{
+  "name": "cueflora_host",
+  "description": "cueflora native messaging host — downloads YouTube audio via yt-dlp and transcribes via Whisper API",
+  "path": "PLACEHOLDER_WILL_BE_SET_BY_INSTALL_SCRIPT",
+  "type": "stdio",
+  "allowed_extensions": ["PLACEHOLDER_REQUIRES_EXPLICIT_FIREFOX_IDENTITY"]
+}

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "denoVersion": "2.9.7",
+  "bindingVersion": "150.4.0",
+  "v8Version": "15.0.245.2-rusty",
+  "bindingCommit": "5c15a6995c9bb4bacd3e341b59fff32c909c80bf",
+  "v8Commit": "ac1e23989121713ca642f6650b34deff7b686896",
+  "files": [
+    {
+      "file": "rusty-v8-5c15a699-source.zip",
+      "url": "https://codeload.github.com/denoland/rusty_v8/zip/5c15a6995c9bb4bacd3e341b59fff32c909c80bf",
+      "sha256": "d39c1c3514165c851c4c9ee5751add69353c443bab9281151a14908097d65f34",
+      "root": "rusty_v8-5c15a6995c9bb4bacd3e341b59fff32c909c80bf"
+    },
+    {
+      "file": "v8-ac1e2398-source.zip",
+      "url": "https://codeload.github.com/denoland/v8/zip/ac1e23989121713ca642f6650b34deff7b686896",
+      "sha256": "e8c3732f306a2c07c5ca9117acd5ea30edd08eeeca6887c5b61af3d6746c63b5",
+      "root": "v8-ac1e23989121713ca642f6650b34deff7b686896"
+    }
+  ],
+  "scope": "Missing original core/source-tree notice evidence. Crate VCS reports dirty; a source-version/commit match is not a complete binary-source or third-party closure proof.",
+  "redistributionApproved": false
+}

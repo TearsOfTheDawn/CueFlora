@@ -1,0 +1,10 @@
+{
+  "prototypeOnly": true,
+  "redistributionApproved": false,
+  "provenance": "Existing local tool binaries; no public redistribution clearance. Paths are supplied explicitly at build time.",
+  "tools": [
+    {"name": "yt-dlp", "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a"},
+    {"name": "ffmpeg", "sha256": "851aa8ea5366b5af33c0681cc292d662829c7088e9ac96f6e9b37030e6835ba4"},
+    {"name": "ffprobe", "sha256": "01dd9a776db5df93d0e3a9b8714a7a7500402e8e628cdc68608ed781454f8b71"}
+  ]
+}

@@ -1,0 +1,40 @@
+name: Chrome candidate build only (no publication)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.19.0'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: node --test scripts/release-config.test.mjs
+      - run: npm run zip:chrome
+        env:
+          CUEFLORA_BUILD_PROFILE: store-candidate
+      - run: python3 packaging/source_export.py --output artifacts/source-export
+      - run: sha256sum .output/*chrome.zip artifacts/source-export/CueFlora-source.zip
+      - uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        if: github.event.repository.private == false
+        with:
+          subject-path: .output/*chrome.zip
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: keyless-chrome-candidate-not-approved
+          path: |
+            .output/*chrome.zip
+            artifacts/source-export/*
+          if-no-files-found: error
+          retention-days: 7
+      # The exact uploaded ZIP is attested. Origin is not safety/store approval.

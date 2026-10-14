@@ -1,0 +1,12 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; accent-color: #8b5cf6; }
+body { margin: 0; background: light-dark(#f6f4fa,#17151d); color: light-dark(#211b30,#f0ebfa); }
+main { max-width: 760px; margin: 32px auto; padding: 24px; }
+header { display: flex; align-items: center; gap: 16px; } h1 { margin: 0; } header p { margin: 6px 0; }
+section, fieldset { border: 1px solid light-dark(#d6cde4,#484051); border-radius: 12px; padding: 20px; margin: 16px 0; }
+legend { font-weight: 650; } label { display: block; margin: 12px 0; }
+input:not([type=checkbox]):not([type=radio]), select { display: block; width: 100%; box-sizing: border-box; padding: 9px; margin-top: 6px; border-radius: 6px; border: 1px solid #82748f; font: inherit; }
+.choices { display: flex; flex-wrap: wrap; gap: 12px; } .choices label { flex: 1; min-width: 190px; padding: 12px; border: 1px solid #82748f; border-radius: 8px; }
+button { font: inherit; border: 1px solid #8b5cf6; border-radius: 7px; padding: 9px 14px; margin: 6px 4px 6px 0; cursor: pointer; }
+button:disabled { opacity: .55; cursor: wait; } :focus-visible { outline: 3px solid #8b5cf6; outline-offset: 3px; }
+[hidden] { display: none !important; } [role=status] { white-space: pre-wrap; overflow-wrap: anywhere; }
+details { margin: 16px 0; } footer { margin-top: 32px; font-size: .85rem; opacity: .8; }

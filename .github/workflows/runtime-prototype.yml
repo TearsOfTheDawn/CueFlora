@@ -1,0 +1,75 @@
+name: Full Windows/Chrome candidate from public source (no publication)
+on:
+  workflow_dispatch:
+    inputs:
+      share_review_candidate:
+        type: boolean
+        default: false
+        description: Explicitly authorize sharing a review candidate only after reviewing complete licence evidence
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13.15'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.19.0'
+      - name: Install exact hash-locked build packages
+        run: python -m pip install --require-hashes -r packaging/requirements-windows-hashed.lock
+      - name: Fetch exact public input caches
+        run: python packaging/bootstrap_public_cache.py --cache artifacts/inputs --audio-cache artifacts/audio-inputs --evidence-cache artifacts/evidence --online
+      - name: Restore exact official interpreter and wheels
+        run: python packaging/bootstrap_offline.py --cache artifacts/inputs --output artifacts/build-python --official
+      - name: Seed exact package-lock tarballs
+        run: node scripts/cache-npm.mjs artifacts/inputs/npm
+      - name: Full offline source build, synthetic tests, two builds and simulated lifecycle
+        run: artifacts/build-python/venv/Scripts/python.exe packaging/prepare_windows.py --output artifacts/candidate --cache artifacts/inputs --evidence-cache artifacts/evidence --audio-cache artifacts/audio-inputs
+      - name: Report gates and independently verified hashes
+        id: gates
+        shell: pwsh
+        run: |
+          $report = Get-Content artifacts/candidate/readiness.json -Raw | ConvertFrom-Json
+          $ledger = Get-Content artifacts/candidate/release-ledger/dependency-ledger.json -Raw | ConvertFrom-Json
+          if (-not $report.engineeringPassed) { throw 'Engineering failed' }
+          "licenceEvidenceComplete=$($ledger.licenceEvidenceComplete.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+          $report.artifactBindings | ConvertTo-Json
+          Write-Output 'Build origin is not safety or Store approval. No publication is performed.'
+      - uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        if: github.event.repository.private == false
+        with:
+          subject-path: |
+            artifacts/candidate/setup-1/dist/CueFlora Setup.exe
+            artifacts/candidate/delivery/CueFlora Setup/CueFlora-Chrome-store-upload.zip
+            artifacts/candidate/source-export/CueFlora-source.zip
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-candidate-reports-and-source
+          path: |
+            artifacts/candidate/readiness.json
+            artifacts/candidate/release-gates.json
+            artifacts/candidate/source-export/*
+            artifacts/candidate/release-ledger/*.json
+            artifacts/candidate/build-comparison.json
+            artifacts/candidate/verification/*
+            artifacts/candidate/audio-verification/audio-conformance.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: github.event.repository.private == true || (inputs.share_review_candidate && steps.gates.outputs.licenceEvidenceComplete == 'true')
+        with:
+          name: windows-private-or-explicit-review-candidate
+          path: |
+            artifacts/candidate/delivery/*
+            artifacts/candidate/source-bundle/*
+          if-no-files-found: error
+      # No tags, GitHub Release creation, browser installation, inference,
+      # Store credentials/submission, automatic approval or stable publication.

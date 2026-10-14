@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "ffmpegVersion": "9.0.2",
+  "signingFingerprint": "FCF986EA15E6E293A5644F10B4322F04D67658D8",
+  "files": [
+    {"file":"ffmpeg-9.0.2.tar.xz","url":"https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz","sha256":"8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e","role":"source"},
+    {"file":"ffmpeg-9.0.2.tar.xz.asc","url":"https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz.asc","sha256":"d617fd94ea354dadd2a8bb16243d37c44e1e9729b06b6ad58fe30bfb0fa943f2","role":"signature"},
+    {"file":"ffmpeg-devel.asc","url":"https://ffmpeg.org/ffmpeg-devel.asc","sha256":"397b3becedcd5a98769967ff1ff8501ddc89f8368b8f766e4701377d7dbaabe5","role":"public-key"},
+    {"file":"opus-1.6.1.tar.gz","url":"https://downloads.xiph.org/releases/opus/opus-1.6.1.tar.gz","sha256":"6ffcb593207be92584df15b32466ed64bbec99109f007c82205f0194572411a1","role":"source"},
+    {"file":"msys2-base-x86_64-20260927.tar.xz","url":"https://github.com/msys2/msys2-installer/releases/download/2026-09-27/msys2-base-x86_64-20260927.tar.xz","sha256":"ea2f31a0b6ade63914ce441ffb022f0f6aa96982bfefa2326460a26d5fb01322","role":"build-only-toolchain"}
+  ],
+  "redistributionApproved": false
+}

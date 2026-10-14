@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "denoSourceSha256": "962fe2fe7665ee9b14501526c8613f4f1b8bf6db6290b092096eb76672847d8c",
+  "cargoLockSha256": "4b501f05a28bf12c453593f0b558407890575b5f34b9dcbb2dc8e172d58a0c95",
+  "registryPackageCount": 1046,
+  "registryPinInventorySha256": "24a7328d3fee72ffc42c6c86a9886739b8ee5843861cafa8a862bffdaa2dabdb",
+  "repositoryNoticeInputSha256": "8b37874e9a450ac5f52e5046026c4a806b89615fe6a1bb734488b24a56e08b0a",
+  "scope": "Exact source Cargo-lock superset, not a binary inventory",
+  "redistributionApproved": false
+}
