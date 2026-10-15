@@ -13,6 +13,7 @@ sys.path.insert(0,str(ROOT / 'native'))
 from cueflora_setup.bundle import digest, verify_bundle
 from cueflora_setup.package_policy import validate_package
 from verify_archive import verify_archive
+from installation_guide import render as installation_guide
 
 
 def extension_identity(key):
@@ -41,6 +42,8 @@ def assemble(setup, runtime, extension, output, store_extension=None, release_le
     shutil.copy2(setup,contents / 'CueFlora Setup.exe')
     if not public: shutil.copytree(extension,contents / 'Chrome-preview')
     elif 'key' in manifest: shutil.copytree(extension,contents/'Chrome-acceptance')
+    (contents/'START_HERE.md').write_text(installation_guide(release, metadata['hostVersion'],
+        acceptance=public and 'key' in manifest), encoding='utf-8')
     # A future store upload must not carry the unpacked preview identity. The
     # store-assigned identity will require a separately bound future installer.
     store_extension = store_extension or extension

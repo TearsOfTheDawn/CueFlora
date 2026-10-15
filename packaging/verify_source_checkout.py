@@ -27,6 +27,11 @@ def verify(cache, output):
     environment = {**os.environ,'NPM_CONFIG_USERCONFIG':str(output/'user.npmrc'),'NPM_CONFIG_GLOBALCONFIG':str(output/'global.npmrc')}
     environment.pop('CUEFLORA_PUBLIC_CONFIG',None)
     environment.pop('CUEFLORA_BUILD_PROFILE',None)
+    # A clean-source check must not import private modules or enable captures.
+    for name in ('PYTHONPATH','PYTHONHOME','PYTHONSTARTUP','PYTHONUSERBASE','NODE_PATH','NODE_OPTIONS',
+            'CUEFLORA_PROVIDER_CONFIG','CUEFLORA_EVIDENCE_DIR','YT_DLP_PATH','FFMPEG_PATH','FFPROBE_PATH','DENO_PATH'):
+        environment.pop(name,None)
+    environment['PYTHONNOUSERSITE'] = '1'
     npm = ['cmd.exe','/d','/c','npm'] if os.name=='nt' else ['npm']
     checks = [('npm-ci',npm+['ci','--offline','--cache',str(cache),'--no-audit','--no-fund'],workspace)]
     checks += [(name,npm+['run',name],workspace) for name in ('typecheck','test','build:chrome','build:firefox')]

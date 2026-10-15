@@ -28,7 +28,7 @@ The source copy includes current uncommitted improvements, without Substrata Git
 | Extension framework | [WXT](https://wxt.dev/) v0.20+ | Manifest V3, builds for Firefox & Chrome |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest + jsdom, Python unittest | 292 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 104 packaging tests; 5 Node profile/release tests; full candidate results remain authoritative in readiness |
+| Testing | Vitest + jsdom, Python unittest | 292 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 108 packaging tests; 5 Node profile/release tests; full candidate results remain authoritative in readiness |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -367,7 +367,9 @@ Frozen GUI/CLI Repair supplies its matching verified Setup executable as a new m
 
 `smoke_setup.py --release ... --launcher ...` tests actual payload/Setup lifecycle using simulated registration/shortcuts and restricted-PATH framed PING in Unicode/spaced temporary roots. `verify_installer.py` tests headless extraction, Tcl, detection, embedded hashes and malformed-payload reports without windows/installation.
 
-`assemble_preview.py` delivers Setup, unpacked Chrome, keyless store-upload candidate, available notices, dependency inventory and checksums. The candidate is not store-approved; its eventual identity needs a future matching installer. `verify_archive.py` independently streams the complete final ZIP inventory/hashes.
+`assemble_preview.py` delivers Setup, the matching unpacked Chrome profile, keyless store-upload candidate, available notices, dependency inventory and checksums. `installation_guide.py` generates `START_HERE.md` from the actual configured identity/version: private packages use `Chrome-preview`, public-key acceptance uses `Chrome-acceptance`, and packages without an unpacked acceptance extension do not suggest loading a keyless ZIP. The guide never dumps provider/configuration payloads. The candidate is not Store-approved. `verify_archive.py` independently streams the complete final ZIP inventory/hashes.
+
+Full preparation also runs `verify_source_checkout.py` on its final audited source export and requires the archive hash to match the candidate. That checkout has no Git/private baseline; inherited Python/Node import hooks, provider/capture configuration and developer tool overrides are removed from child commands, with user-site packages disabled. A failed command keeps the check failed and stops later steps. Production-code tests cover guide profiles/privacy/malformed inputs and the real exporter plus command/environment/failure orchestration.
 
 `verify_local.py` retains logs for TypeScript/native/packaging/release-config tests, typecheck, both browser builds, Python compilation and staged/unstaged/new-file whitespace validation. `check_new_whitespace.py` checks untracked sources without modifying the index. `verify_isolation.py` verifies original source hashes/Git status, intact licence, copied source accounting and operational namespace separation. Source baseline is `artifacts/source-baseline.json`; private artifacts are ignored. The latest security work is in `docs/SECURITY_HARDENING_HANDOFF.md`; earlier handoffs remain historical.
 

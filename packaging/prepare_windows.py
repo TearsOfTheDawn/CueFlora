@@ -203,6 +203,10 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         run('source-bundle',[python,'packaging/bundle_sources.py','--audio',runtime/'corresponding-source/audio',
             '--evidence',output/'licence-evidence','--output',output/'source-bundle'])
         report['sourceArchive'] = json.loads((output/'source-export/source-audit.json').read_text())
+        run('clean-source',[python,'packaging/verify_source_checkout.py','--cache',cache/'npm','--output',output/'clean-source-verification'])
+        report['cleanSourceVerification'] = json.loads((output/'clean-source-verification/clean-source-verification.json').read_text())
+        if report['cleanSourceVerification'].get('passed') is not True or report['cleanSourceVerification'].get('sourceArchiveSha256') != report['sourceArchive']['archiveSha256']:
+            raise ValueError('Clean-source verification does not match this candidate source archive')
         if inputs != source_inventory(): raise ValueError('Source changed during preparation; rebuild from a stable source snapshot')
         if any(digest(Path(path)) != expected for path,expected in prior_hashes.items()):
             raise ValueError('Previous preview changed during preparation')
