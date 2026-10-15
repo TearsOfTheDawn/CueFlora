@@ -1,6 +1,6 @@
 # CueFlora third-party redistribution ledger
 
-0.1.4 current preparation: signature-verified FFmpeg/ffprobe 9.0.2 shared builds report LGPL 2.1-or-later and retain pinned core/Opus sources, recipe, notices and exact DLL/executable hashes. The unchanged yt-dlp tag is rebuilt on pinned Python 3.13.15/OpenSSL 3.5.7, with exact upstream wheel/source pins and byte-matched curl recipe evidence. Original V8/binding notices and Windows interpreter component notices are collected separately. See RELEASE_COMPLETION.md and each fresh candidate's generated ledger; notices and source evidence do not automatically grant redistribution approval.
+0.1.6 preparation: signature-verified FFmpeg/ffprobe 9.0.2 shared builds report LGPL 2.1-or-later and retain pinned core/Opus sources, recipe, notices and exact DLL/executable hashes. The unchanged yt-dlp tag is rebuilt on pinned Python 3.13.15/OpenSSL 3.5.7, with exact upstream wheel/source pins and byte-matched curl recipe evidence. Original V8/binding and Windows interpreter notices are collected separately. Current source recovers repository notices for 68 Cargo packages, including 13 additional fixed-commit notice-only selections; 52 source-notice rows remain unresolved. This is not proof of binary shipment or corresponding-source closure. See RELEASE_COMPLETION.md and each fresh candidate's generated ledger; notices and source evidence do not automatically grant redistribution approval.
 
 This records unresolved obligations, not legal clearance. The generated private preview is not approved for public redistribution. CueFlora application source retains Substrata's original MIT licence/copyright unchanged; renaming the application does not remove attribution or third-party obligations.
 
@@ -25,7 +25,7 @@ Preserved audio inputs still match their prior hashes; yt-dlp additionally match
 
 0.1.2 adds `release-ledger/dependency-ledger.json`, consolidated notices, source-notice hashes and separately locked supplemental evidence. Runtime file hashes, Setup archive entry hashes (including Tcl/Tk/native DLLs), actual interpreter matches, observed yt-dlp metadata, emitted JavaScript and build-only Python are distinct evidence scopes. curl_cffi/websockets source archives and Deno's pinned V8-binding crate do not automatically cover their embedded curl/BoringSSL/V8 native sources. The tested dated FFmpeg archive is not byte-identical to the preserved tools; see `FFMPEG_REPLACEMENT_PROPOSAL.md`. No ledger row automatically grants clearance.
 
-Final owner/public browser IDs remain blank in `packaging/release.template.json`. The development key and private permission do not provide public-release approval. Signing, scanner results, browser-store approval, credentials and publication authorization are separate gates.
+Example templates remain intentionally unconfigured. The publisher has supplied the actual Store identity and public locations in the separate local release binding; those inputs are not missing merely because a template is blank. The development key and private permission do not provide public-release approval. Signing, scanner results, browser-store approval, credentials and publication authorization are separate gates.
 
 Historical preserved tool SHA-256 inputs:
 
