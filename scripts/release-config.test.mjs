@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { validateReleaseConfig, refusePublication } from './release-config.mjs';
 import { buildProfile, chromeIdentity, bundledModulesPlugin } from './build-profile.mjs';
 import { createHash, generateKeyPairSync } from 'node:crypto';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 const valid = { CUEFLORA_RELEASE_OWNER: 'Fixture only', CHROME_EXTENSION_ID: 'a'.repeat(32),
   CUEFLORA_PRIVACY_URL: 'https://example.invalid/privacy', CUEFLORA_DOWNLOAD_URL: 'https://example.invalid/download', CUEFLORA_SUPPORT_URL: 'https://example.invalid/support' };
 test('final binding needs owner, Chrome and public URLs, not Firefox or GitHub', () => {
@@ -41,4 +44,28 @@ test('per-entrypoint inventories do not overwrite each other or expose absolute 
   assert.ok(!inventories[0].source.includes('C:/'));
   const notices=assets.filter(asset=>asset.fileName.startsWith('cueflora-third-party-notices'));
   assert.equal(notices.length,2); assert.ok(notices[0].source.includes('MIT'));
+});
+
+test('real bundle collector retains LICENCE and UNLICENSE original terms, not README text', () => {
+  const temporary=mkdtempSync(join(tmpdir(),'cueflora-notice-test-'));
+  try {
+    const root=join(temporary,'node_modules','synthetic-notice-fixture');
+    mkdirSync(root,{recursive:true});
+    writeFileSync(join(root,'package.json'),JSON.stringify({name:'synthetic-notice-fixture',version:'1.0.0',license:'MIT'}));
+    writeFileSync(join(root,'LICENCE.md'),'Original synthetic British terms\r\n');
+    writeFileSync(join(root,'UNLICENSE'),'Original synthetic dedication\n');
+    writeFileSync(join(root,'README.md'),'This is not licence text');
+    const module=root.replaceAll('\\','/')+'/index.js';
+    const assets=[];
+    bundledModulesPlugin().generateBundle.call({emitFile(asset){assets.push(asset);}}, {},
+      {'fixture.js':{type:'chunk',modules:{[module]:{}}}});
+    const record=JSON.parse(assets.find(asset=>asset.fileName.startsWith('cueflora-bundled-dependencies')).source);
+    assert.deepEqual(record.packages[0].notices.map(item=>item.entry).sort(),['LICENCE.md','UNLICENSE']);
+    assert.equal(record.packages[0].notices.find(item=>item.entry==='LICENCE.md').sha256,
+      createHash('sha256').update('Original synthetic British terms\r\n').digest('hex'));
+    const terms=assets.find(asset=>asset.fileName.startsWith('cueflora-third-party-notices')).source;
+    assert.ok(terms.includes('Original synthetic British terms\r\n'));
+    assert.ok(terms.includes('Original synthetic dedication\n'));
+    assert.ok(!terms.includes('This is not licence text'));
+  } finally { rmSync(temporary,{recursive:true,force:true}); }
 });

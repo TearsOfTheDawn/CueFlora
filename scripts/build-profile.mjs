@@ -33,7 +33,7 @@ export function bundledModulesPlugin() {
       const root = module.slice(0, module.lastIndexOf('/node_modules/')) + '/node_modules/' + name;
       try {
         const pkg = JSON.parse(readFileSync(root + '/package.json', 'utf8'));
-        const noticeFiles = readdirSync(root,{withFileTypes:true}).filter(entry=>entry.isFile() && /license|copying|notice/i.test(entry.name));
+        const noticeFiles = readdirSync(root,{withFileTypes:true}).filter(entry=>entry.isFile() && /licen[cs]e|copying|notice|copyright/i.test(entry.name));
         const records = noticeFiles.map(entry=>{const content=readFileSync(root+'/'+entry.name,'utf8'); notices.set(name+'/'+entry.name,content); return {entry:entry.name,sha256:createHash('sha256').update(content).digest('hex')};});
         if (!records.length) throw Error('Bundled package has no retained notice: '+name);
         packages.set(name, { name, version: pkg.version, license: pkg.license, notices:records });

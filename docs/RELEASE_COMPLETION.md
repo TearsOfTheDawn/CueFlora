@@ -1,4 +1,4 @@
-# CueFlora 0.1.6 release completion
+# CueFlora 0.1.7 release completion
 
 This source prepares Windows x64 / Chrome candidates. It does not publish, install into the live environment, provision AI services or certify semantic subtitle accuracy. Substrata and previous packages remain separate.
 
@@ -6,7 +6,7 @@ This source prepares Windows x64 / Chrome candidates. It does not publish, insta
 
 The audited source is public at `TearsOfTheDawn/CueFlora` under the publisher's explicit source/pages authorization. Prelaunch privacy/help pages are live: deployment success and all six exact HTTPS response hashes were verified on 2026-10-15. Source and help publication is not a software launch. The chosen launch route is a public Store listing once the remaining gates are resolved, not a mandatory private test release. The original source import and packaged candidates remain preserved. Remote regression checks complement local engineering evidence; neither establishes clean-machine/browser acceptance or distribution clearance.
 
-Version 0.1.6 supersedes the earlier 0.1.4/0.1.5 candidates using the same assigned Store identity. It incorporates the 13 recovered dependency-notice records, with 68 recovered packages/77 notice files and 52 unresolved source-notice rows. Notice-only inputs are not corresponding-source archives or redistribution approval. Earlier packages remain immutable. App version fields in package.json, both npm root records, native pyproject and the native editable-project lock must agree; the metadata regression test checks these actual files. Third-party dependency versions and production subtitle settings are unchanged.
+Version 0.1.7 supersedes the earlier candidates using the same assigned Store identity. It corrects notice filename discovery for LICENCE/UNLICENSE across native/source/extension collectors. Exact offline Cargo replay preserves 1672 original files, 13 more than 0.1.6, and reduces missing package-root notices from 125 to 122. The separate fixed-commit repository catalog remains 68 recovered packages/77 notice files and 52 historical unresolved lookup rows; these are not a combined shipment/coverage count. Neither notice recovery nor notice-only inputs establish corresponding-source compliance or redistribution approval. Earlier packages remain immutable. App version fields in package.json, both npm root records, native pyproject and the native editable-project lock must agree; the metadata regression test checks these actual files. Third-party dependency versions and production subtitle settings are unchanged.
 
 Obtain exact input caches using `packaging/bootstrap_public_cache.py --online`, then restore the pinned Python environment using `packaging/bootstrap_offline.py --official`. The command restores official Node 24.19.0/npm 11.17.0 and validates the archive/executable and all 1921 npm files; no installed/global npm module dependency is needed. Run preparation with the restored interpreter:
 

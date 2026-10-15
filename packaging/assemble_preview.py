@@ -14,6 +14,7 @@ from cueflora_setup.bundle import digest, verify_bundle
 from cueflora_setup.package_policy import validate_package
 from verify_archive import verify_archive
 from installation_guide import render as installation_guide
+from notice_names import is_notice_name
 
 
 def extension_identity(key):
@@ -104,7 +105,7 @@ def assemble(setup, runtime, extension, output, store_extension=None, release_le
         notices = []
         if folder.is_dir():
             for file in folder.iterdir():
-                if file.is_file() and any(word in file.name.lower() for word in ['license','copying','notice']):
+                if file.is_file() and is_notice_name(file.name):
                     target = contents / 'notices/npm' / hashlib.sha256(path.encode()).hexdigest()[:12] / file.name
                     target.parent.mkdir(parents=True,exist_ok=True)
                     shutil.copy2(file,target)

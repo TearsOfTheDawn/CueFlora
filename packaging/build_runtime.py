@@ -12,6 +12,7 @@ from runtime_notices import collect_interpreter_notices
 from release_inputs import inspect_ejs, shipped_python, source_inventory
 from build_isolation import environment, native_inputs
 from source_export import source_identity
+from notice_names import is_notice_name
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -125,7 +126,7 @@ def build(output, tool_lock=None, audio_build=None, transport_policy='preview', 
         component = distribution.metadata['Name']
         if component.lower().replace('_','-') not in notice_dependencies: continue
         for entry in distribution.files or []:
-            if any(marker in entry.name.lower() for marker in ('license', 'copying', 'notice')):
+            if is_notice_name(entry.name):
                 source = Path(distribution.locate_file(entry))
                 if source.is_file():
                     folder = licenses / distribution.metadata['Name']

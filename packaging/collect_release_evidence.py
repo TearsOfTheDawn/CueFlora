@@ -5,6 +5,7 @@ import shutil
 import tomllib
 import zipfile
 from release_inputs import digest, inspect_ejs
+from notice_names import is_notice_name
 
 
 def collect(cache, output, lock, evidence_cache=None, source_audio=False, downloader_build=None):
@@ -28,7 +29,7 @@ def collect(cache, output, lock, evidence_cache=None, source_audio=False, downlo
             text = archive.extract(name).decode('utf-8', errors='replace')
             fields = dict(line.split(': ',1) for line in text.splitlines() if line.startswith(('Name: ', 'Version: ', 'License: ')))
             metadata[normalized] = fields
-        if 'license' in normalized.lower() or normalized == 'THIRD_PARTY_LICENSES.txt':
+        if any(is_notice_name(part) for part in normalized.split('/')):
             content = archive.extract(name)
             if not isinstance(content, bytes): continue
             target = output / 'yt-dlp-exact-notices' / normalized
@@ -43,7 +44,7 @@ def collect(cache, output, lock, evidence_cache=None, source_audio=False, downlo
         (output/'Deno-Cargo.lock').write_bytes(archive.read(name))
         for name in archive.namelist():
             if name.endswith('/') or '/tests/' in name: continue
-            if any(marker in Path(name).name.lower() for marker in ('license','notice','copyright')):
+            if is_notice_name(Path(name).name):
                 target = output/'deno-source-notices'/name.split('/',1)[1]
                 target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(archive.read(name))
     report = {'sources':sources,'ytDlpEmbeddedMetadata':metadata,'ytDlpEmbeddedNoticeHashes':exact_notices,

@@ -8,6 +8,7 @@ import tarfile
 from urllib.parse import urlsplit
 import zipfile
 from release_inputs import ROOT, digest
+from notice_names import is_notice_name
 
 
 def supplemental(cache, output, lock, source_audio=False):
@@ -35,7 +36,7 @@ def supplemental(cache, output, lock, source_audio=False):
         if not name.endswith(('.crate','.tar.gz')): continue
         with tarfile.open(cache/name) as archive:
             for entry in archive.getmembers():
-                if not entry.isfile() or entry.size>1024*1024 or not re.search('license|copying|notice|copyright',Path(entry.name).name,re.I): continue
+                if not entry.isfile() or entry.size>1024*1024 or not is_notice_name(Path(entry.name).name): continue
                 content=archive.extractfile(entry).read()
                 filename=hashlib.sha256((name+':'+entry.name).encode()).hexdigest()[:16]+'.txt'
                 target=output/'source-notices'/filename; target.parent.mkdir(exist_ok=True); target.write_bytes(content)
@@ -259,7 +260,7 @@ def write(runtime, extension, source_report, extra, output, source_notices=None,
     js_notice_text = []
     for name,row in js_rows.items():
         package = ROOT/'node_modules'/name
-        notices = [path for path in package.iterdir() if path.is_file() and re.search('license|copying|notice',path.name,re.I)] if package.is_dir() else []
+        notices = [path for path in package.iterdir() if path.is_file() and is_notice_name(path.name)] if package.is_dir() else []
         row['noticeEvidence'] = [{'packageEntry':path.name,'sha256':digest(path)} for path in notices]
         row['noticeEvidenceComplete'] = bool(notices)
         for path in notices:

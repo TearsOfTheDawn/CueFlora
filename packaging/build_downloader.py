@@ -13,6 +13,7 @@ from release_inputs import ROOT,digest,inspect_ejs,shipped_python
 from bootstrap_offline import bootstrap
 from build_isolation import environment
 from pin_downloader_inputs import download
+from notice_names import is_notice_name
 
 
 def validate_lock(lock):
@@ -142,7 +143,7 @@ def build(inputs,cache,output,online=False):
                 if name.endswith('/'): continue
                 data=wheel.read(name)
                 if name.lower().endswith(('.dll','.pyd')): wheel_hashes[hashlib.sha256(data).hexdigest()]={'package':dependency['name'],'version':dependency['version'],'wheelEntry':name,'wheelSha256':dependency['wheel']['sha256']}
-                if re.search('license|copying|notice',Path(name).name,re.I):
+                if is_notice_name(Path(name).name):
                     target=notices/(dependency['name']+'-'+hashlib.sha256(name.encode()).hexdigest()[:12]+'.txt'); target.write_bytes(data)
                     notice_origins[target.name]={'package':dependency['name'],'version':dependency['version'],'entry':name,'sha256':digest(target)}
     for name in archive.toc:

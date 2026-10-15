@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 from urllib.request import urlopen
 import zipfile
 from packaging.version import Version
+from notice_names import is_notice_name
 
 ALIASES={'Cryptodome':'pycryptodomex','brotli':'brotli','certifi':'certifi','curl_cffi':'curl_cffi','mutagen':'mutagen',
     'requests':'requests','urllib3':'urllib3','websockets':'websockets','yt_dlp_ejs':'yt-dlp-ejs'}
@@ -60,10 +61,10 @@ def collect(audit,cache,output,online=False):
             notices={}
             if name.endswith('.zip'):
                 with zipfile.ZipFile(path) as archive:
-                    entries=[(entry.filename,archive.read(entry)) for entry in archive.infolist() if not entry.is_dir() and entry.file_size<1024*1024 and re.search('license|copying|notice',Path(entry.filename).name,re.I)]
+                    entries=[(entry.filename,archive.read(entry)) for entry in archive.infolist() if not entry.is_dir() and entry.file_size<1024*1024 and is_notice_name(Path(entry.filename).name)]
             else:
                 with tarfile.open(path) as archive:
-                    entries=[(entry.name,archive.extractfile(entry).read()) for entry in archive if entry.isfile() and entry.size<1024*1024 and re.search('license|copying|notice',Path(entry.name).name,re.I)]
+                    entries=[(entry.name,archive.extractfile(entry).read()) for entry in archive if entry.isfile() and entry.size<1024*1024 and is_notice_name(Path(entry.name).name)]
             for original,content in entries:
                 target=output/'notices'/(package+'-'+hashlib.sha256(original.encode()).hexdigest()[:12]+'.txt')
                 target.parent.mkdir(exist_ok=True); target.write_bytes(content)

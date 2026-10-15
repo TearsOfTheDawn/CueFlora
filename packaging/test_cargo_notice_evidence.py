@@ -49,6 +49,25 @@ class CargoNoticeEvidenceTests(unittest.TestCase):
             result=inspect(item,path,root/'output')
             self.assertTrue(result['packageRootNoticeAvailable']); self.assertEqual(len(result['notices']),1)
 
+    def test_british_and_unlicense_bytes_preserve_root_and_nested_scope(self):
+        for filename in ('LICENCE', 'LICENCE.md', 'UNLICENSE'):
+            for nested in (False, True):
+                with self.subTest(filename=filename,nested=nested), tempfile.TemporaryDirectory() as temp:
+                    root=Path(temp); path=root/'source.crate'; item=pins(self.fixture())[0]
+                    original=b'Exact synthetic original terms\r\n'
+                    relative=('tests/' if nested else '')+filename
+                    with tarfile.open(path,'w') as archive:
+                        for name,data in {'Cargo.toml':b'[package]\nname="example"\nversion="1.2.3"\nlicense="MIT"\n',relative:original}.items():
+                            member=tarfile.TarInfo('example-1.2.3/'+name); member.size=len(data)
+                            archive.addfile(member,io.BytesIO(data))
+                    result=inspect(item,path,root/'output')
+                    self.assertEqual(result['packageRootNoticeAvailable'],not nested)
+                    self.assertTrue(result['anyOriginalNoticeAvailable'])
+                    self.assertEqual(len(result['notices']),1)
+                    name,record=next(iter(result['notices'].items()))
+                    self.assertEqual((root/'output'/name).read_bytes(),original)
+                    self.assertEqual(record['sourceEntry'],'example-1.2.3/'+relative)
+
     def test_changed_cargo_lock_cannot_be_resigned_by_its_own_report(self):
         packages=pins(self.fixture()); raw=b'exact synthetic lock'; source={'sha256':'a'*64}
         policy={'schema':1,'redistributionApproved':False,'denoSourceSha256':'a'*64,'cargoLockSha256':hashlib.sha256(raw).hexdigest(),

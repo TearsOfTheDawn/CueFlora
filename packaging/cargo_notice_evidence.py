@@ -10,6 +10,7 @@ import tomllib
 from urllib.request import urlopen
 import zipfile
 from release_inputs import ROOT,digest
+from notice_names import is_notice_name
 
 REGISTRY='registry+https://github.com/rust-lang/crates.io-index'
 
@@ -87,7 +88,7 @@ def inspect(item,path,output):
             if not member.isfile() or member.size>1024*1024 or not member.name.startswith(prefix): continue
             relative=member.name.removeprefix(prefix)
             if '..' in PurePosixPath(relative).parts or '\\' in relative or ':' in relative: raise ValueError('Unsafe Cargo notice member')
-            if member.name!=explicit and not re.fullmatch(r'(?:LICENSE|COPYING|NOTICE|COPYRIGHT)(?:[._-].*)?',Path(relative).name,re.I): continue
+            if member.name!=explicit and not is_notice_name(Path(relative).name,strict=True): continue
             data=archive.extractfile(member).read()
             name=item['name']+'/'+item['version']+'/'+hashlib.sha256(member.name.encode()).hexdigest()[:16]+'.txt'
             target=output/'notices'/name; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(data)
