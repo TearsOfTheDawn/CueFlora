@@ -14,10 +14,11 @@ from bootstrap_offline import bootstrap
 from build_isolation import environment
 from pin_downloader_inputs import download
 from notice_names import is_notice_name
+from downloader_security import validate_origin,verify_source_pins,security_manifest,verify_runtime_overrides
 
 
 def validate_lock(lock):
-    if not isinstance(lock,dict) or lock.get('schema')!=1 or lock.get('ytDlpVersion')!='2026.08.19' or lock.get('pythonVersion')!='3.13.15' or lock.get('redistributionApproved') is not False or not isinstance(lock.get('dependencies'),list):
+    if not isinstance(lock,dict) or type(lock.get('schema')) is not int or lock.get('schema') not in (1,2) or lock.get('ytDlpVersion')!='2026.08.19' or lock.get('pythonVersion')!='3.13.15' or lock.get('redistributionApproved') is not False or not isinstance(lock.get('dependencies'),list):
         raise ValueError('Exact supported-interpreter downloader lock required')
     names=set(); files=set()
     def entry_valid(entry):
@@ -32,10 +33,11 @@ def validate_lock(lock):
     expected=next(item for item in main['files'] if item['file']=='yt-dlp-2026.08.19-source.zip')
     if source!=expected or lock['pythonVersion']!=main['pythonVersion']: raise ValueError('Downloader source/interpreter pin mismatch')
     for item in lock['dependencies']:
-        if not isinstance(item,dict) or not re.fullmatch('[a-z0-9-]+',str(item.get('name',''))) or item['name'] in names or not re.fullmatch(r'\d+(?:\.\d+){1,3}',str(item.get('version',''))) or item.get('upstreamWheelHashVerified') is not True:
+        if not isinstance(item,dict) or not re.fullmatch('[a-z0-9-]+',str(item.get('name',''))) or item['name'] in names or not re.fullmatch(r'\d+(?:\.\d+){1,3}',str(item.get('version',''))):
             raise ValueError('Malformed downloader dependency pin')
         names.add(item['name'])
         for entry in (item.get('wheel'),item.get('source')): entry_valid(entry)
+        validate_origin(item,lock['schema'])
     required={'brotli','certifi','charset-normalizer','idna','mutagen','pycryptodomex','requests','urllib3','websockets','yt-dlp-ejs','cffi','curl-cffi','pycparser'}
     if names!=required: raise ValueError('Upstream optional capabilities are incomplete or unexpected')
     return lock
@@ -84,6 +86,8 @@ def validate_build(folder):
         raise ValueError('Verified same-version downloader binding required')
     if inspect_ejs(folder/'bin/yt-dlp.exe')!=main['ejs']: raise ValueError('Local EJS solver bytes changed')
     validate_capabilities(report.get('before',{}),report.get('after',{}))
+    if report.get('securityOverrides',[])!=security_manifest(lock): raise ValueError('Downloader security override evidence mismatch')
+    verify_runtime_overrides(lock,report.get('after',{}))
     from PyInstaller.archive.readers import CArchiveReader
     archive=CArchiveReader(str(folder/'bin/yt-dlp.exe'))
     native={name:hashlib.sha256(archive.extract(name)).hexdigest() for name in archive.toc if name.lower().endswith(('.dll','.pyd'))}
@@ -93,6 +97,9 @@ def validate_build(folder):
         files={path.relative_to(folder/prefix).as_posix():digest(path) for path in (folder/prefix).rglob('*') if path.is_file()}
         if not files or files!=report.get(key): raise ValueError('Downloader evidence inventory mismatch')
         if any(path.is_symlink() for path in (folder/prefix).rglob('*')): raise ValueError('Linked downloader evidence')
+    source=folder/'corresponding-source'/lock['source']['file']
+    if digest(source)!=lock['source']['sha256']: raise ValueError('Downloader corresponding source differs from exact upstream')
+    verify_source_pins(lock,source)
     return report
 
 
@@ -102,6 +109,7 @@ def build(inputs,cache,output,online=False):
     lock=obtain(cache,online); main=json.loads((ROOT/'packaging/inputs-windows.lock.json').read_text())
     source=inputs/lock['source']['file']
     if source.is_symlink() or digest(source)!=lock['source']['sha256']: raise ValueError('Downloader source hash mismatch')
+    verify_source_pins(lock,source)
     output.mkdir(parents=True)
     bootstrap(inputs,output/'python',official=True)
     python=output/'python/venv/Scripts/python.exe'
@@ -131,6 +139,7 @@ def build(inputs,cache,output,online=False):
     if inspect_ejs(executable)!=main['ejs']: raise ValueError('Local EJS solver bytes changed or are missing')
     previous=probe(inputs/'yt-dlp.exe',inputs/'deno.exe'); current=probe(executable,inputs/'deno.exe')
     validate_capabilities(previous,current)
+    verify_runtime_overrides(lock,current)
     destination=output/'bin'; destination.mkdir(); shutil.copy2(executable,destination/'yt-dlp.exe')
     notices=output/'notices'; notices.mkdir()
     from PyInstaller.archive.readers import CArchiveReader
@@ -158,13 +167,16 @@ def build(inputs,cache,output,online=False):
     shutil.copy2(source,corresponding/source.name)
     shutil.copy2(ROOT/'packaging/downloader-inputs.lock.json',corresponding/'downloader-inputs.lock.json')
     shutil.copy2(Path(__file__),corresponding/'build_downloader.py')
+    shutil.copy2(ROOT/'packaging/downloader_security.py',corresponding/'downloader_security.py')
+    for item in security_manifest(lock):
+        shutil.copy2(ROOT/'packaging/source-metadata'/item['metadata']['file'],corresponding/item['metadata']['file'])
     for dependency in lock['dependencies']:
         if dependency['source']: shutil.copy2(cache/dependency['source']['file'],corresponding/dependency['source']['file'])
     report={'schema':1,'passed':True,'version':version,'pythonVersion':lock['pythonVersion'],'executableSha256':digest(destination/'yt-dlp.exe'),
         'sourceSha256':digest(source),'inputLockSha256':digest(ROOT/'packaging/downloader-inputs.lock.json'),
         'interpreterLockSha256':digest(ROOT/'packaging/inputs-windows.lock.json'),'ejs':main['ejs'],
         'nativeLibraries':native,'notices':notice_origins,'before':previous,'after':current,'inference':False,'mediaRequested':False,
-        'productionArgumentsChanged':False,'redistributionApproved':False,'completeNativeClosure':False,
+        'productionArgumentsChanged':False,'redistributionApproved':False,'completeNativeClosure':False,'securityOverrides':security_manifest(lock),
         'noticeFiles':{path.relative_to(notices).as_posix():digest(path) for path in notices.rglob('*') if path.is_file()},
         'sourceFiles':{path.relative_to(corresponding).as_posix():digest(path) for path in corresponding.rglob('*') if path.is_file()}}
     (output/'downloader-build.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

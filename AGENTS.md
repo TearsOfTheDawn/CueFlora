@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-15
+> **Last updated:** 2026-10-16
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -28,7 +28,7 @@ The source copy includes current uncommitted improvements, without Substrata Git
 | Extension framework | [WXT](https://wxt.dev/) v0.20+ | Manifest V3, builds for Firefox & Chrome |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest + jsdom, Python unittest | 292 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 121 packaging tests; 6 Node profile/release tests; full candidate results remain authoritative in readiness |
+| Testing | Vitest + jsdom, Python unittest | 292 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 126 packaging tests; 6 Node profile/release tests; full candidate results remain authoritative in readiness |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -381,7 +381,9 @@ Tcl core-8-6-12 notice is supplied only when the interpreter actually reports 8.
 
 See `docs/DISTRIBUTION.md`, `docs/INSTALLATION.md` and `docs/IMPLEMENTATION_HANDOFF.md` for exact artifacts, commands, license obligations and deferred acceptance gates.
 
-`build_downloader.py` rebuilds the unchanged yt-dlp 2026.08.19 tag using pinned Python 3.13.15 and 13 upstream hash-verified wheel/source pairs. It preserves the extractor list, optional request handlers and exact local EJS bytes, records the Python-version-selected websockets dependency change, and rejects unpinned native inputs. Preparation builds this downloader instead of embedding the preserved Python 3.10/OpenSSL 1.1.1 executable. `collect_curl_sources.py` verifies the exact DLL against upstream Windows curl-impersonate 2.0.0 bytes and its eight recipe source pins; notices/sources enter the dependency ledger and source bundle without granting legal clearance. `verify_installer.py` compares the full expected private/public configuration, not a hardcoded preview identity. The older source-only full compiler/audio build remains preserved proof; each new candidate must pass its own full checks.
+`build_downloader.py` rebuilds the unchanged yt-dlp 2026.08.19 tag using pinned Python 3.13.15 and 13 wheel/source pairs. Schema 2 `downloader-inputs.lock.json` explicitly replaces the upstream urllib3 2.7.0 pin with patched 2.8.0; the other upstream pins/hashes remain checked against the exact source archive. `downloader_security.py` validates the original baseline, same-major upgrade, primary advisory URLs and immutable original PyPI metadata under `packaging/source-metadata/`. Overrides must not claim an original upstream wheel hash. Builds retain metadata/source/recipe evidence and require the exact patched version in actual executable metadata; schema 1 original-pin records remain readable. PyPI metadata is captured once and replayed from source, not refetched as a mutable build input. It preserves the extractor list, optional request handlers and exact local EJS bytes, records the Python-version-selected websockets dependency change, and rejects unpinned native inputs. Preparation builds this downloader instead of embedding the preserved Python 3.10/OpenSSL 1.1.1 executable. `collect_curl_sources.py` verifies the exact DLL against upstream Windows curl-impersonate 2.0.0 bytes and its eight recipe source pins; notices/sources enter the dependency ledger and source bundle without granting legal clearance. `verify_installer.py` compares the full expected private/public configuration, not a hardcoded preview identity. The older source-only full compiler/audio build remains preserved proof; each new candidate must pass its own full checks.
+
+The delivered 0.1.7 candidate predates this security override and is preserved, not silently patched. An isolated downloader build has validated all 1752 extractors, optional capabilities, exact EJS and 75 native-library origins with urllib3 2.8.0. The complete refreshed installer has not yet been assembled. `docs/DEPENDENCY_SECURITY_REVIEW.md` distinguishes that source/build progress from the remaining npm tooling findings, final candidate verification and release decisions. No security or licensing approval follows from a passing advisory query or decoder test.
 
 `collect_v8_notices.py` restores original V8/binding notices omitted by the pinned crate's `LICENSE*` exclusion. `v8-notice-inputs.lock.json` binds two fixed upstream source archives; collector checks Deno bytes, Cargo/crate checksum, declared VCS commit and matching source/crate/runtime versions. Dirty crate VCS metadata remains recorded. Runtime/Setup carry 26 exact notice files and their hash/origin evidence; source archives enter the separate source bundle, not the installed runtime. Unit tests reject mismatched versions/commits, unsafe locks, missing offline inputs, changed notices and false approval/closure flags. Complete Rust/V8 transitive notice coverage is still a separate unresolved review, not inferred from these core notices.
 
