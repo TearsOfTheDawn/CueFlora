@@ -15,6 +15,7 @@ class InstallationGuideTests(unittest.TestCase):
                 self.assertIn('`' + 'a' * 32 + '`', text)
                 self.assertIn('unreleased package', text)
                 self.assertIn('Do not change or uninstall Substrata', text)
+                self.assertIn('do not run both CueFlora identities together', text)
                 self.assertIn('only Run starts AI work', text)
                 self.assertIn('Store-submission ZIP is not an unpacked preview', text)
                 for field in ('apiKey', 'chromePublicKey', 'owner'):

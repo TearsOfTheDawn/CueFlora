@@ -27,6 +27,7 @@ def render(release, version, acceptance=False):
         lines += ['2. No unpacked acceptance extension is included. Use only the matching Chrome Store extension after it becomes available; do not install this helper before then.']
     lines += ['', 'The Store-submission ZIP is not an unpacked preview. Do not load it expecting the same extension ID.', '',
         '## Existing CueFlora installation', '',
+        'Disable any older CueFlora extension before loading a different CueFlora identity; do not run both CueFlora identities together.', '',
         'Setup refuses to take over a different extension identity. If you choose to replace an earlier CueFlora preview, remove its helper through its own Setup first, keep the old package for recovery, then install the matching new package. Settings and evidence are retained. Do not change or uninstall Substrata.', '',
         '## AI services and maintenance', '',
         'Your existing service supplies its API address, optional key and model name. Configure transcription and translation independently. CueFlora does not install models or start services, and does not choose a provider for you. Metadata checks do not generate subtitles; only Run starts AI work.', '',

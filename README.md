@@ -28,9 +28,11 @@ Install the Chrome Store extension → download and run the matching Windows Set
 
 The Store item and public installer downloads are not live yet. The Store draft identity/public key and prelaunch help locations are established; final artifacts and external release reviews remain separate. GitHub Releases will host matching binaries/sources, GitHub Pages privacy/install information, and GitHub Issues support. Do not use a keyless submission ZIP as an unpacked preview expecting it to match the development helper.
 
+The intended first Store release is **public**, not a private testing release. Version 0.1.5 replaces the earlier 0.1.4 upload candidate; upload the new ZIP to the existing Store item rather than creating another item. Live installation/Run testing is deferred until after launch at the publisher's choice, not reported as passed. Genuine Store screenshots and the remaining licence, security/policy, download and Google review gates still apply. See [the public-launch checklist](docs/PUBLIC_LAUNCH_CHECKLIST.md).
+
 ## Status and boundaries
 
-Version 0.1.4 adds complete public-source build orchestration, isolated hash-locked Node/npm, public synthetic audio checks independent of private old binaries, a same-version yt-dlp rebuild on pinned modern Python, byte-matched curl source evidence, exact-bound acceptance builds, external approval sidecars, embedded extension notices and public-page/release preparation. See [release completion](docs/RELEASE_COMPLETION.md) and each fresh candidate's measured readiness. Software is not publicly released or Store-approved. The real Store draft ID/public key has been matched and prelaunch hosting verified; artifact-bound acceptance and external reviews remain separate. Earlier previews remain preserved. The first installer is unsigned.
+Version 0.1.5 aligns extension/native metadata and locks, adds a metadata-consistency regression check, and refreshes the Store-bound package and identity-switching guidance without changing subtitle processing. It retains the 0.1.4 public-source build orchestration, isolated hash-locked Node/npm, public synthetic audio checks, pinned modern downloader runtime, source evidence, exact-bound acceptance builds and external approval sidecars. See [release completion](docs/RELEASE_COMPLETION.md) and each fresh candidate's measured readiness. Software is not publicly released or Store-approved. The real Store draft ID/public key has been matched and prelaunch hosting verified; artifact-bound external reviews remain separate. Earlier previews remain preserved. The first installer is unsigned.
 
 Windows/Chrome public-release preparation now includes bundled Deno, local EJS checks, hash-locked offline inputs, separate preview/keyless candidates and build-only automation. Use [the preparation command](docs/PUBLIC_RELEASE_PREPARATION.md), [handoff](docs/PUBLIC_RELEASE_HANDOFF.md) and [explicit release blockers](docs/PUBLIC_RELEASE_BLOCKERS.md). This is not public-release clearance; nothing is submitted automatically.
 
@@ -38,7 +40,7 @@ The previous 0.1.2 milestone introduced [Windows-protected remembered keys](docs
 
 The preview is unsigned, not a public release. Stable development Chrome ID: `klnnagigpdlgchlablabnafceoldfalm`. It is separate from Substrata's extension, registration, settings, files and evidence. No settings or credentials are imported. No live installation or browser automation was performed during implementation.
 
-Clean-machine, actual Chrome/native Run, GUI/scanner acceptance, signing, store publication, final public binding, redistribution clearance and macOS/Linux/Firefox certification remain deferred. The keyless store-upload ZIP is a candidate, not permission to publish; the supplied Store identity needs a matching future installer. ChatGPT sign-in and AI-service/model provisioning are not implemented.
+Clean-machine and actual Chrome/native Run are deferred until after launch; GUI/scanner acceptance, signing, Store publication, redistribution clearance and macOS/Linux/Firefox certification remain unverified or separate future work. The keyless store-upload ZIP is a candidate, not approval to publish; the matching installer is bound to the supplied Store identity. ChatGPT sign-in and AI-service/model provisioning are not implemented.
 
 ## Development
 
