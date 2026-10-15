@@ -7,6 +7,7 @@ import re
 import tarfile
 import tomllib
 from urllib.request import urlopen
+from urllib.parse import quote
 import zipfile
 from cargo_notice_evidence import source_pins,obtain
 from release_inputs import digest
@@ -27,7 +28,59 @@ def origin(item,path):
     return {'repository':safe_repository(metadata.get('repository')),'vcs':vcs}
 
 
+def raw_notice_pins(entry):
+    """Notice-only assets are not corresponding-source archives or licence clearance."""
+    if not isinstance(entry,dict) or not isinstance(entry.get('vcs'),dict) or not isinstance(entry['vcs'].get('git'),dict):
+        raise ValueError('Malformed notice-only origin')
+    repository=safe_repository(entry.get('repository')); commit=entry.get('vcs',{}).get('git',{}).get('sha1')
+    sources=entry.get('noticeSources'); notices=entry.get('notices')
+    if not repository or not re.fullmatch('[0-9a-f]{40}',str(commit or '')) or 'sourceArchive' in entry or not isinstance(sources,dict) or not sources or not isinstance(notices,dict) or not notices:
+        raise ValueError('Exact notice-only origin required; mixed source forms are ambiguous')
+    expected={}; seen=set()
+    for name,notice in notices.items():
+        if not isinstance(notice,dict) or not isinstance(notice.get('sourceEntry'),str):
+            raise ValueError('Malformed notice-only source member')
+        relative=notice.get('sourceEntry',''); parsed=PurePosixPath(relative)
+        if not re.fullmatch(r'[0-9a-f]{24}\.txt',name) or not relative or parsed.is_absolute() or '..' in parsed.parts or parsed.as_posix()!=relative or '\\' in relative or ':' in relative or relative in seen or notice.get('repository')!=repository or notice.get('commit')!=commit:
+            raise ValueError('Unsafe notice-only source member')
+        seen.add(relative); record=sources.get(relative)
+        url='https://raw.githubusercontent.com/'+repository.removeprefix('https://github.com/')+'/'+commit+'/'+quote(relative,safe='/')
+        if not isinstance(record,dict) or set(record)!={'file','url','sha256','gitBlobSha','bytes'} or record.get('url')!=url or not re.fullmatch('[0-9a-f]{64}',str(record.get('sha256',''))) or record['sha256']!=notice.get('sha256') or record.get('file')!=record['sha256']+'.txt' or not re.fullmatch('[0-9a-f]{40}',str(record.get('gitBlobSha',''))) or type(record.get('bytes')) is not int or not 0<record['bytes']<=1024*1024:
+            raise ValueError('Malformed or unpinned notice-only asset')
+        expected[relative]=record
+    if set(sources)!=set(expected): raise ValueError('Unlisted notice-only asset')
+    return expected
+
+
+def verify_raw_notice(record,path):
+    if path.is_symlink() or not path.is_file() or path.stat().st_size!=record['bytes']:
+        raise ValueError('Missing/linked/oversized notice-only asset')
+    data=path.read_bytes()
+    if hashlib.sha256(data).hexdigest()!=record['sha256'] or hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()!=record['gitBlobSha']:
+        raise ValueError('Notice-only content or Git blob mismatch')
+    return data
+
+
+def obtain_raw_notices(entry,cache,online=False):
+    for record in raw_notice_pins(entry).values():
+        path=cache/record['file']
+        if not path.exists():
+            if not online: raise ValueError('Missing exact notice-only input: '+record['file'])
+            with urlopen(record['url'],timeout=30) as response:
+                if response.geturl()!=record['url']: raise ValueError('Unexpected notice-only redirect')
+                data=response.read(record['bytes']+1)
+            if len(data)!=record['bytes'] or hashlib.sha256(data).hexdigest()!=record['sha256'] or hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()!=record['gitBlobSha']:
+                raise ValueError('Downloaded notice-only content mismatch')
+            # Exclusive creation: never replace a cached input or follow a link.
+            with path.open('xb') as stream: stream.write(data)
+        verify_raw_notice(record,path)
+
+
 def inspect_notice_archive(item,entry,cache):
+    if 'noticeSources' in entry:
+        sources=raw_notice_pins(entry)
+        return {name:(verify_raw_notice(sources[notice['sourceEntry']],cache/sources[notice['sourceEntry']]['file']),notice)
+            for name,notice in entry['notices'].items()}
     repository=safe_repository(entry.get('repository')); vcs=entry.get('vcs',{}); commit=vcs.get('git',{}).get('sha1')
     record=entry.get('sourceArchive',{})
     expected_url='https://codeload.github.com/'+repository.removeprefix('https://github.com/')+'/zip/'+commit if repository and isinstance(commit,str) else None
@@ -62,6 +115,9 @@ def obtain_inputs(cache,inventory_path,online=False):
     cache.mkdir(parents=True,exist_ok=True)
     for entry in inventory['packages']:
         if entry['status']!='notices-found': continue
+        if 'noticeSources' in entry:
+            obtain_raw_notices(entry,cache,online)
+            continue
         record=entry['sourceArchive']; repo=safe_repository(entry['repository']); commit=entry['vcs'].get('git',{}).get('sha1')
         if not repo or not re.fullmatch('[0-9a-f]{40}',str(commit or '')) or record.get('url')!='https://codeload.github.com/'+repo.removeprefix('https://github.com/')+'/zip/'+commit or not re.fullmatch(r'[0-9a-f]{64}\.zip',str(record.get('file',''))) or not re.fullmatch('[0-9a-f]{64}',str(record.get('sha256',''))):
             raise ValueError('Unpinned repository source input')
@@ -111,13 +167,17 @@ def collect(inputs,registry_cache,repository_cache,inventory_path,output,online=
                 if not target.exists(): target.write_bytes(data)
                 elif target.read_bytes()!=data: raise ValueError('Conflicting shared source notice')
                 record['notices'][name]=notice; notice_files[name]=digest(target)
-            record['sourceArchive']=entry['sourceArchive']; record['repositoryInference']=entry.get('repositoryInference')
+            if 'noticeSources' in entry:
+                record['noticeSources']=entry['noticeSources']
+            else:
+                record['sourceArchive']=entry['sourceArchive']
+            record['repositoryInference']=entry.get('repositoryInference')
         rows.append(record)
     report={'schema':1,'sourceInput':source,'cargoLockSha256':hashlib.sha256(raw).hexdigest(),'inputInventorySha256':digest(inventory_path),
         'packages':rows,'noticeFiles':notice_files,'recoveredPackageCount':sum(item['status']=='notices-found' for item in rows),
         'unresolvedPackages':[{'name':item['name'],'version':item['version'],'reason':item['reason']} for item in rows if item['status']=='unresolved'],
         'redistributionApproved':False,'licenceApplicabilityProven':False,'binaryDependencyClosureComplete':False,
-        'scope':'Exact registry/VCS/source archive/notice bytes linked; ancestor notice applicability and actual binary shipment remain separate review questions'}
+        'scope':'Exact registry/VCS/archive or original notice-only bytes linked; notice-only assets are not full corresponding source. Ancestor applicability and actual binary shipment remain separate review questions'}
     (output/'repository-notice-inventory.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps({'recoveredPackages':report['recoveredPackageCount'],'noticeFiles':len(notice_files),'unresolved':len(report['unresolvedPackages'])}))
     return report
@@ -141,7 +201,7 @@ def validate_evidence(folder):
         seen.add(key); expected=selected[key]
         for field in ('status','repository','vcs','reason'):
             if row.get(field)!=expected.get(field): raise ValueError('Repository evidence selection changed')
-        if row['status']=='notices-found' and (row.get('sourceArchive')!=expected.get('sourceArchive') or row.get('notices')!=expected.get('notices')):
+        if row['status']=='notices-found' and (row.get('sourceArchive')!=expected.get('sourceArchive') or row.get('noticeSources')!=expected.get('noticeSources') or row.get('notices')!=expected.get('notices')):
             raise ValueError('Recovered repository evidence origin changed')
     if seen!=set(selected) or report.get('recoveredPackageCount')!=sum(row['status']=='notices-found' for row in rows):
         raise ValueError('Repository evidence omitted source rows')

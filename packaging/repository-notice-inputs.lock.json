@@ -516,15 +516,36 @@
     {
       "name": "cranelift-isle",
       "version": "0.117.2",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/bytecodealliance/wasmtime/tree/main/cranelift/isle",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/bytecodealliance/wasmtime",
       "vcs": {
         "git": {
           "sha1": "398694a59e24d37acde915086a9be308ec51f626"
         },
         "path_in_vcs": "cranelift/isle/isle"
-      }
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasmtime/398694a59e24d37acde915086a9be308ec51f626/LICENSE",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "gitBlobSha": "f9d81955f4bcb8f96a025e2ecc46f39ec536d465",
+          "bytes": 12243
+        }
+      },
+      "notices": {
+        "dd3acfe08409288771fa2ec3.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "repository": "https://github.com/bytecodealliance/wasmtime",
+          "commit": "398694a59e24d37acde915086a9be308ec51f626",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "deno-tower-lsp-macros",
@@ -1461,67 +1482,172 @@
     {
       "name": "opentelemetry",
       "version": "0.32.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/open-telemetry/opentelemetry-rust",
       "vcs": {
         "git": {
           "sha1": "ec289cb3c6f8260951699c51df968560943c1451"
         },
         "path_in_vcs": "opentelemetry"
-      }
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "url": "https://raw.githubusercontent.com/open-telemetry/opentelemetry-rust/ec289cb3c6f8260951699c51df968560943c1451/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "bytes": 11357
+        }
+      },
+      "notices": {
+        "c2a490d57174846a3eb8f9a4.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+          "commit": "ec289cb3c6f8260951699c51df968560943c1451",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "opentelemetry-http",
       "version": "0.32.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry-http",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/open-telemetry/opentelemetry-rust",
       "vcs": {
         "git": {
           "sha1": "ec289cb3c6f8260951699c51df968560943c1451"
         },
         "path_in_vcs": "opentelemetry-http"
-      }
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "url": "https://raw.githubusercontent.com/open-telemetry/opentelemetry-rust/ec289cb3c6f8260951699c51df968560943c1451/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "bytes": 11357
+        }
+      },
+      "notices": {
+        "c2a490d57174846a3eb8f9a4.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+          "commit": "ec289cb3c6f8260951699c51df968560943c1451",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "opentelemetry-otlp",
       "version": "0.32.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry-otlp",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/open-telemetry/opentelemetry-rust",
       "vcs": {
         "git": {
           "sha1": "ec289cb3c6f8260951699c51df968560943c1451"
         },
         "path_in_vcs": "opentelemetry-otlp"
-      }
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "url": "https://raw.githubusercontent.com/open-telemetry/opentelemetry-rust/ec289cb3c6f8260951699c51df968560943c1451/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "bytes": 11357
+        }
+      },
+      "notices": {
+        "c2a490d57174846a3eb8f9a4.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+          "commit": "ec289cb3c6f8260951699c51df968560943c1451",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "opentelemetry-semantic-conventions",
       "version": "0.32.1",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry-semantic-conventions",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/open-telemetry/opentelemetry-rust",
       "vcs": {
         "git": {
           "sha1": "74cb6f3a4129bf11fa3191f28d38c518c4ec4ae6"
         },
         "path_in_vcs": "opentelemetry-semantic-conventions"
-      }
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "url": "https://raw.githubusercontent.com/open-telemetry/opentelemetry-rust/74cb6f3a4129bf11fa3191f28d38c518c4ec4ae6/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "bytes": 11357
+        }
+      },
+      "notices": {
+        "fab59c6b7e54088883df4b0a.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+          "commit": "74cb6f3a4129bf11fa3191f28d38c518c4ec4ae6",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "opentelemetry_sdk",
       "version": "0.32.1",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry-sdk",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/open-telemetry/opentelemetry-rust",
       "vcs": {
         "git": {
           "sha1": "284a37d93b3856e1975c2807ba3af1421ebd9b52"
         },
         "path_in_vcs": "opentelemetry-sdk"
-      }
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "url": "https://raw.githubusercontent.com/open-telemetry/opentelemetry-rust/284a37d93b3856e1975c2807ba3af1421ebd9b52/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "bytes": 11357
+        }
+      },
+      "notices": {
+        "a6441b1c6424b8c80568339b.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+          "commit": "284a37d93b3856e1975c2807ba3af1421ebd9b52",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "par-core",
@@ -2541,41 +2667,194 @@
     {
       "name": "wasm-encoder",
       "version": "0.244.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wasm-encoder",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/bytecodealliance/wasm-tools",
       "vcs": {
         "git": {
           "sha1": "d4e317f22c3bace76cb3205003bcc34b4929037d"
         },
         "path_in_vcs": "crates/wasm-encoder"
-      }
+      },
+      "noticeSources": {
+        "LICENSE-APACHE": {
+          "file": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "gitBlobSha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1",
+          "bytes": 10847
+        },
+        "LICENSE-Apache-2.0_WITH_LLVM-exception": {
+          "file": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "gitBlobSha": "f9d81955f4bcb8f96a025e2ecc46f39ec536d465",
+          "bytes": 12243
+        },
+        "LICENSE-MIT": {
+          "file": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "gitBlobSha": "31aa79387f27e730e33d871925e152e35e428031",
+          "bytes": 1023
+        }
+      },
+      "notices": {
+        "715e2b47afd00665807ae3d1.txt": {
+          "sourceEntry": "LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "55878e5ec6a99c052656ac7c.txt": {
+          "sourceEntry": "LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "6252239f22d474aead6d227f.txt": {
+          "sourceEntry": "LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "wasm-metadata",
       "version": "0.244.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wasm-metadata",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/bytecodealliance/wasm-tools",
       "vcs": {
         "git": {
           "sha1": "d4e317f22c3bace76cb3205003bcc34b4929037d"
         },
         "path_in_vcs": "crates/wasm-metadata"
-      }
+      },
+      "noticeSources": {
+        "LICENSE-APACHE": {
+          "file": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "gitBlobSha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1",
+          "bytes": 10847
+        },
+        "LICENSE-Apache-2.0_WITH_LLVM-exception": {
+          "file": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "gitBlobSha": "f9d81955f4bcb8f96a025e2ecc46f39ec536d465",
+          "bytes": 12243
+        },
+        "LICENSE-MIT": {
+          "file": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "gitBlobSha": "31aa79387f27e730e33d871925e152e35e428031",
+          "bytes": 1023
+        }
+      },
+      "notices": {
+        "715e2b47afd00665807ae3d1.txt": {
+          "sourceEntry": "LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "55878e5ec6a99c052656ac7c.txt": {
+          "sourceEntry": "LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "6252239f22d474aead6d227f.txt": {
+          "sourceEntry": "LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "wasmparser",
       "version": "0.244.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wasmparser",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/bytecodealliance/wasm-tools",
       "vcs": {
         "git": {
           "sha1": "d4e317f22c3bace76cb3205003bcc34b4929037d"
         },
         "path_in_vcs": "crates/wasmparser"
-      }
+      },
+      "noticeSources": {
+        "LICENSE-APACHE": {
+          "file": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "gitBlobSha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1",
+          "bytes": 10847
+        },
+        "LICENSE-Apache-2.0_WITH_LLVM-exception": {
+          "file": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "gitBlobSha": "f9d81955f4bcb8f96a025e2ecc46f39ec536d465",
+          "bytes": 12243
+        },
+        "LICENSE-MIT": {
+          "file": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "gitBlobSha": "31aa79387f27e730e33d871925e152e35e428031",
+          "bytes": 1023
+        }
+      },
+      "notices": {
+        "715e2b47afd00665807ae3d1.txt": {
+          "sourceEntry": "LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "55878e5ec6a99c052656ac7c.txt": {
+          "sourceEntry": "LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "6252239f22d474aead6d227f.txt": {
+          "sourceEntry": "LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "web-transport-proto",
@@ -2618,7 +2897,7 @@
     {
       "name": "win_uds",
       "version": "0.2.2",
-      "status": "unresolved",
+      "status": "notices-found",
       "repository": "https://github.com/kouhe3/win_uds",
       "repositoryInference": null,
       "vcs": {
@@ -2627,14 +2906,27 @@
         },
         "path_in_vcs": ""
       },
-      "sourceArchive": {
-        "file": "0aa91e33926fb81079241828ee9e8b3343f088647f36a83d929b4fa35a96dc72.zip",
-        "url": "https://codeload.github.com/kouhe3/win_uds/zip/3a3214bd7256c515d6add9496dd4fefe7d78e165",
-        "sha256": "daff7cd25ea58724b41059cc9a4cf2155b9b147619ea3d56041d1dd44fd89940"
+      "notices": {
+        "24e79f5d336016510aaa103f.txt": {
+          "sourceEntry": "UNLICENSE",
+          "sha256": "b5065838cbac452dfc855ba6e6e031481ad2c68406f70d21ead9321374653e6c",
+          "repository": "https://github.com/kouhe3/win_uds",
+          "commit": "3a3214bd7256c515d6add9496dd4fefe7d78e165",
+          "packageLevel": true,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
       },
-      "notices": {},
-      "reason": "No package/ancestor notice found at fixed source commit",
-      "licenceApplicabilityProven": false
+      "reason": null,
+      "licenceApplicabilityProven": false,
+      "noticeSources": {
+        "UNLICENSE": {
+          "file": "b5065838cbac452dfc855ba6e6e031481ad2c68406f70d21ead9321374653e6c.txt",
+          "url": "https://raw.githubusercontent.com/kouhe3/win_uds/3a3214bd7256c515d6add9496dd4fefe7d78e165/UNLICENSE",
+          "sha256": "b5065838cbac452dfc855ba6e6e031481ad2c68406f70d21ead9321374653e6c",
+          "gitBlobSha": "efb98088164f5786b17e83ed384971fc3c74f93c",
+          "bytes": 1212
+        }
+      }
     },
     {
       "name": "winapi-i686-pc-windows-gnu",
@@ -2701,28 +2993,130 @@
     {
       "name": "wit-component",
       "version": "0.244.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wit-component",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/bytecodealliance/wasm-tools",
       "vcs": {
         "git": {
           "sha1": "d4e317f22c3bace76cb3205003bcc34b4929037d"
         },
         "path_in_vcs": "crates/wit-component"
-      }
+      },
+      "noticeSources": {
+        "LICENSE-APACHE": {
+          "file": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "gitBlobSha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1",
+          "bytes": 10847
+        },
+        "LICENSE-Apache-2.0_WITH_LLVM-exception": {
+          "file": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "gitBlobSha": "f9d81955f4bcb8f96a025e2ecc46f39ec536d465",
+          "bytes": 12243
+        },
+        "LICENSE-MIT": {
+          "file": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "gitBlobSha": "31aa79387f27e730e33d871925e152e35e428031",
+          "bytes": 1023
+        }
+      },
+      "notices": {
+        "715e2b47afd00665807ae3d1.txt": {
+          "sourceEntry": "LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "55878e5ec6a99c052656ac7c.txt": {
+          "sourceEntry": "LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "6252239f22d474aead6d227f.txt": {
+          "sourceEntry": "LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "wit-parser",
       "version": "0.244.0",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wit-parser",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/bytecodealliance/wasm-tools",
       "vcs": {
         "git": {
           "sha1": "d4e317f22c3bace76cb3205003bcc34b4929037d"
         },
         "path_in_vcs": "crates/wit-parser"
-      }
+      },
+      "noticeSources": {
+        "LICENSE-APACHE": {
+          "file": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "gitBlobSha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1",
+          "bytes": 10847
+        },
+        "LICENSE-Apache-2.0_WITH_LLVM-exception": {
+          "file": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "gitBlobSha": "f9d81955f4bcb8f96a025e2ecc46f39ec536d465",
+          "bytes": 12243
+        },
+        "LICENSE-MIT": {
+          "file": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3.txt",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "gitBlobSha": "31aa79387f27e730e33d871925e152e35e428031",
+          "bytes": 1023
+        }
+      },
+      "notices": {
+        "715e2b47afd00665807ae3d1.txt": {
+          "sourceEntry": "LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "55878e5ec6a99c052656ac7c.txt": {
+          "sourceEntry": "LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "6252239f22d474aead6d227f.txt": {
+          "sourceEntry": "LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "repository": "https://github.com/bytecodealliance/wasm-tools",
+          "commit": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     },
     {
       "name": "yaml_parser",
@@ -2808,15 +3202,51 @@
     {
       "name": "zune-jpeg",
       "version": "0.4.13",
-      "status": "unresolved",
-      "reason": "Missing supported repository or exact VCS commit",
-      "repository": "https://github.com/etemesi254/zune-image/tree/dev/crates/zune-jpeg",
+      "status": "notices-found",
+      "reason": null,
+      "repository": "https://github.com/etemesi254/zune-image",
       "vcs": {
         "git": {
           "sha1": "d45a0a0380530e164ac9a58d62ea330c95d74daf"
         },
         "path_in_vcs": "crates/zune-jpeg"
-      }
+      },
+      "noticeSources": {
+        "LICENSE-ZLIB": {
+          "file": "7fa429541e55b1509909e058f2d21a37467e4958ec713b357f6e0cf9dc4ee352.txt",
+          "url": "https://raw.githubusercontent.com/etemesi254/zune-image/d45a0a0380530e164ac9a58d62ea330c95d74daf/LICENSE-ZLIB",
+          "sha256": "7fa429541e55b1509909e058f2d21a37467e4958ec713b357f6e0cf9dc4ee352",
+          "gitBlobSha": "582ec653390adaf4893b71f3e113a6ac4d392463",
+          "bytes": 818
+        },
+        "LICENSE.md": {
+          "file": "c6dff146a9f31848ac296faa5a08a4253caf2c384c86f906dc99e7fc0a39cc8c.txt",
+          "url": "https://raw.githubusercontent.com/etemesi254/zune-image/d45a0a0380530e164ac9a58d62ea330c95d74daf/LICENSE.md",
+          "sha256": "c6dff146a9f31848ac296faa5a08a4253caf2c384c86f906dc99e7fc0a39cc8c",
+          "gitBlobSha": "4761bfa9a6eb62b4a85927b479294df2fdf1a307",
+          "bytes": 357
+        }
+      },
+      "notices": {
+        "abd4651fd6e6e62b46cfee54.txt": {
+          "sourceEntry": "LICENSE-ZLIB",
+          "sha256": "7fa429541e55b1509909e058f2d21a37467e4958ec713b357f6e0cf9dc4ee352",
+          "repository": "https://github.com/etemesi254/zune-image",
+          "commit": "d45a0a0380530e164ac9a58d62ea330c95d74daf",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        },
+        "a91ccc27414a81fb2cd71cb8.txt": {
+          "sourceEntry": "LICENSE.md",
+          "sha256": "c6dff146a9f31848ac296faa5a08a4253caf2c384c86f906dc99e7fc0a39cc8c",
+          "repository": "https://github.com/etemesi254/zune-image",
+          "commit": "d45a0a0380530e164ac9a58d62ea330c95d74daf",
+          "packageLevel": false,
+          "scope": "Exact original repository/ancestor notice; licence applicability requires review"
+        }
+      },
+      "repositoryInference": null,
+      "licenceApplicabilityProven": false
     }
   ],
   "errors": [],
