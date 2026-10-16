@@ -1,6 +1,6 @@
 # Dependency security follow-up — 2026-10-16
 
-Source 0.1.8 combines the downloader security patch and audited developer-tool migration. This is engineering evidence, not independent security certification, legal clearance or Store approval. No browser automation, live installation, media download or AI inference is used. Existing packages, including 0.1.7, remain immutable and predate these fixes. Only a complete fresh candidate's matching readiness, inventories and handoff establish its rebuilt results; changing source does not patch old installers.
+Source 0.1.9 retains the downloader/tooling security changes from 0.1.8 and corrects copied-notice attribution. This is engineering evidence, not independent security certification, legal clearance or Store approval. No browser automation, live installation, media download or AI inference is used. Existing packages remain immutable; packages through 0.1.7 predate the security fixes. Only a complete fresh candidate's matching readiness, inventories and handoff establish its rebuilt results; changing source does not patch old installers.
 
 ## Confirmed shipped dependency update
 
@@ -36,10 +36,18 @@ WXT's npm tarball omitted its MIT notice. The [original release-tag notice](http
 
 Root checks passed after migration: 293 TypeScript tests, 95 native/setup tests (two Windows symlink-privilege skips), 128 packaging tests and eight Node tests, plus typecheck, both browser builds, compilation and whitespace checks. Two further production-workspace tests bring packaging coverage to 130; full preparation reruns the complete current suite. Manifest comparison found only application version and an explicit `options_ui.open_in_tab: false`, equivalent to the earlier omitted default. Live browser behavior and semantic translation quality are not inferred from automated results.
 
+## Copied-notice attribution correction in 0.1.9
+
+The 0.1.8 package retained the exact original WXT notice in its extension and also copied it into `licenses/upstream/` in the native runtime. The extension row was correct, but that extra runtime notice lacked a per-file owner. No licence text was missing. The existing release gate correctly remained blocked; however, complete preparation could still report engineering success with that attribution gap.
+
+`licence_attribution.py` now validates the source-retained package identity and notice bytes against both the inventory and actual runtime file. It records a notice-only row, explicitly not a claim that WXT code is embedded in the Python host. Unknown upstream files are not guessed into an owner. `dependency_ledger.require_file_attribution` independently recomputes coverage and rejects missing rows, changed hashes, fabricated flags or inconsistent stored coverage. Full preparation invokes it before later acceptance/assembly steps.
+
+A production replay against the unchanged 0.1.8 payload accounts for every runtime-inventory file while retaining the three substantive review groups: yt-dlp native dependencies, Deno/V8, and CPython/native redistribution. That replay is not a modified or newly approved 0.1.8 installer. Five added regressions bring packaging coverage to 135; the new full candidate must pass its own complete preparation. No source closure, legal/security approval or Store acceptance is inferred from corrected attribution.
+
 ## Remaining execution
 
 1. Verify final applied dependency locks and retain the new exact offline cache; preserve architecture/layout/pipeline and earlier packages.
-2. Full fresh preparation reruns root and actual clean-source suites/builds, rebuilding matching 0.1.8 runtime/Setup/store/source packages with notices and inventories.
+2. Full fresh preparation reruns root and actual clean-source suites/builds, rebuilding matching current-version runtime/Setup/store/source packages with notices and inventories.
 3. Verify synthetic DPAPI, temporary-root simulated lifecycle, restricted-PATH/Unicode PING, archive hashes and original-project preservation. The complete candidate's measured reports supersede interim checks.
 4. Continue the existing licensing, native-security/download-policy, public hosting, genuine Store assets, Google approval and final publication gates. No gate is cleared by this document or the isolated build.
 

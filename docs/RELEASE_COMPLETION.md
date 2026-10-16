@@ -1,4 +1,4 @@
-# CueFlora 0.1.8 release preparation
+# CueFlora 0.1.9 release preparation
 
 This source prepares Windows x64 / Chrome candidates. It does not publish, install into the live environment, provision AI services or certify semantic subtitle accuracy. Substrata and previous packages remain separate.
 
@@ -6,7 +6,7 @@ This source prepares Windows x64 / Chrome candidates. It does not publish, insta
 
 The audited source is public at `TearsOfTheDawn/CueFlora` under the publisher's explicit source/pages authorization. Prelaunch privacy/help pages are live: deployment success and all six exact HTTPS response hashes were verified on 2026-10-15. Source and help publication is not a software launch. The chosen launch route is a public Store listing once the remaining gates are resolved, not a mandatory private test release. The original source import and packaged candidates remain preserved. Remote regression checks complement local engineering evidence; neither establishes clean-machine/browser acceptance or distribution clearance.
 
-Source 0.1.8 adds the explicit urllib3 2.8.0 downloader patch and audited WXT/Vite/Vitest tooling migration, using the same assigned Store identity. See [dependency security review](DEPENDENCY_SECURITY_REVIEW.md). Earlier packages, including 0.1.7, predate those fixes and must not be published as the final package. Only a complete fresh candidate's reports establish what was rebuilt and verified.
+Source 0.1.9 retains the explicit urllib3 2.8.0 patch and audited tooling from 0.1.8, and corrects the native runtime's copied WXT-notice attribution. The original notice was present; this fixes its ledger ownership, without claiming native WXT code shipment. Preparation now independently requires consistent actual file coverage and fails on any unattributed file before delivery. See [dependency security review](DEPENDENCY_SECURITY_REVIEW.md). Assigned Store identity and subtitle processing remain unchanged. Earlier packages remain immutable; only the fresh candidate's reports establish its results.
 
 It retains 0.1.7's corrected LICENCE/UNLICENSE discovery. Exact offline Cargo replay preserves 1672 original files, 13 more than 0.1.6, and reduces missing package-root notices from 125 to 122. The separate fixed-commit repository catalog remains 68 recovered packages/77 notice files and 52 historical unresolved lookup rows; these are not a combined shipment/coverage count. Neither notice recovery nor notice-only inputs establish corresponding-source compliance or redistribution approval. Earlier packages remain immutable. App version fields in package.json, both npm root records, native pyproject and the native editable-project lock must agree; the metadata regression test checks these actual files. Production subtitle settings and source remain unchanged.
 

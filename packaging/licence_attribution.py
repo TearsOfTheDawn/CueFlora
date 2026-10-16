@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import zipfile
 from release_inputs import digest
+from npm_notices import ROOT, supplemental_notices
 
 
 def augment(metadata, report, runtime):
@@ -24,6 +25,21 @@ def augment(metadata, report, runtime):
     for name,item in notices.items():
         if name not in files or item['sha256'] != files[name]: raise ValueError('Notice origin and shipment hashes disagree')
         add('notice:'+item['component'],item['scope'],item['version'],item['licence'],[name],[name],verified=True)
+    # The runtime also carries public upstream notices for the complete package.
+    # Attribute those exact notice bytes without claiming the extension code is
+    # embedded in the Python host. Unknown files still have no automatic owner.
+    policy=json.loads((ROOT/'packaging/npm-notices.lock.json').read_text(encoding='utf-8'))
+    for package in policy['packages']:
+        name='licenses/upstream/'+package['file']
+        if name not in files: continue
+        notice,=supplemental_notices(package['name'],package['version'])
+        if files[name]!=notice['sha256'] or digest(runtime/name)!=notice['sha256']:
+            raise ValueError('Supplemental runtime notice origin mismatch')
+        add('extension-original-notice:'+package['name'],'original extension notice only; native code shipment not asserted',
+            package['version'],'see exact original upstream notice',[name],[name],verified=True)
+        rows[-1].update({'packageCodeShippedByThisRow':False,
+            'sourceCoverage':'original source-retained notice; extension code assessed separately',
+            'noticeOrigin':{'url':notice['origin'],'npmIntegrity':notice['integrity'],'sha256':notice['sha256']}})
     for component in ('Python','Tcl','Tk'):
         names = [name for name in files if name.startswith('licenses/interpreter/'+component+'-') or component=='Tcl' and name=='licenses/upstream/Tcl-8.6.12-license.terms']
         if names:

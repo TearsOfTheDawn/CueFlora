@@ -142,6 +142,18 @@ def file_evidence(files, rows):
     return result
 
 
+def require_file_attribution(report):
+    """Engineering needs actual per-file attribution, not a declared green flag."""
+    files=report.get('completeRuntimeFileInventory')
+    if not isinstance(files,dict) or not files or not isinstance(report.get('rows'),list):
+        raise ValueError('Complete runtime inventory and attribution rows required')
+    expected=file_evidence(files,report['rows'])
+    if (any(not item['components'] for item in expected.values()) or report.get('fileCoverage')!=expected or
+            report.get('unassignedRuntimeFiles')!=[] or report.get('fileAttributionComplete') is not True):
+        raise ValueError('Runtime file attribution is incomplete or inconsistent')
+    return True
+
+
 def setup_inventory(executable, analysis, interpreter_hashes, runtime_hashes=None):
     from PyInstaller.archive.readers import CArchiveReader
     from release_inputs import shipped_python

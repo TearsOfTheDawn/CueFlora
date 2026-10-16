@@ -5,12 +5,30 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
-from dependency_ledger import ledger, supplemental, setup_inventory, file_evidence
+from dependency_ledger import ledger, supplemental, setup_inventory, file_evidence, require_file_attribution
 from release_inputs import explain_frozen_differences, explain_library_order
 import zipfile
 
 
 class LedgerTests(unittest.TestCase):
+    def test_engineering_attribution_gate_requires_actual_complete_rows_and_hashes(self):
+        files={'notice':'a'*64}
+        rows=[{'id':'notice-only','shippedFiles':[{'path':'notice','sha256':'a'*64}]}]
+        report={'completeRuntimeFileInventory':files,'rows':rows,'fileCoverage':file_evidence(files,rows),
+            'unassignedRuntimeFiles':[],'fileAttributionComplete':True,'redistributionApproved':False}
+        self.assertTrue(require_file_attribution(report))
+        self.assertFalse(report['redistributionApproved'])
+        for changed in ({'rows':[]},{'fileCoverage':{}},{'unassignedRuntimeFiles':['notice']},
+                {'fileAttributionComplete':False},{'completeRuntimeFileInventory':{}},
+                {'rows':[{'id':'changed','shippedFiles':[{'path':'notice','sha256':'b'*64}]}]}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError): require_file_attribution({**report,**changed})
+
+    def test_green_declaration_does_not_clear_an_unattributed_file(self):
+        files={'unknown.dll':'a'*64}
+        report={'completeRuntimeFileInventory':files,'rows':[],'fileCoverage':file_evidence(files,[]),
+            'unassignedRuntimeFiles':[],'fileAttributionComplete':True}
+        with self.assertRaisesRegex(ValueError,'incomplete'): require_file_attribution(report)
+
     def test_every_file_has_hash_and_unmatched_attribution_stays_unresolved(self):
         rows = [{'id':'example','version':'1','licence':'MIT','shippedFiles':[{'path':'known','sha256':'a'*64}]}]
         result = file_evidence({'known':'a'*64,'unknown':'b'*64},rows)

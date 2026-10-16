@@ -193,9 +193,10 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         source_evidence['repositoryNoticeEvidence']=json.loads((repository_notices/'repository-notice-inventory.json').read_text())
         run('tool-dependency-audit',[python,'packaging/audit_bundled_tools.py','--cache',cache,'--output',output/'tool-dependency-audit','--downloader-build',downloader_build])
         report['evidenceLockSha256']=digest(ROOT/'packaging/evidence-windows.lock.json')
-        from dependency_ledger import write as write_ledger
-        write_ledger(runtime,output/('Chrome-acceptance' if public_config else 'Chrome-preview'),source_evidence,source_evidence['supplemental'],output/'release-ledger',output/'licence-evidence/supplemental/source-notices',
+        from dependency_ledger import write as write_ledger, require_file_attribution
+        measured_ledger=write_ledger(runtime,output/('Chrome-acceptance' if public_config else 'Chrome-preview'),source_evidence,source_evidence['supplemental'],output/'release-ledger',output/'licence-evidence/supplemental/source-notices',
             setup,output/'setup-1/work/CueFlora Setup/Analysis-00.toc')
+        require_file_attribution(measured_ledger)
         run('capabilities',[python,'packaging/verify_capabilities.py','--runtime',runtime,'--output',output/'capability-verification'])
         run('credentials',[python,'packaging/verify_credentials.py','--runtime',runtime,'--output',output/'credential-verification'])
         run('installer',[python,'packaging/verify_installer.py','--setup',setup,'--runtime',runtime,'--output',output/'installer-verification'])
