@@ -15,6 +15,9 @@ jobs:
           node-version: '24.19.0'
           cache: npm
       - run: npm ci
+      - name: Full dependency advisory check (including build/test dependencies)
+        run: npm audit --include=dev --audit-level=low
+        timeout-minutes: 3
       - run: npm run typecheck
       - run: npm test
       - run: node --test scripts/release-config.test.mjs

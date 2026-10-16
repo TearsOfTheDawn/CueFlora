@@ -1,10 +1,10 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import background from '../background';
 import { providerDefaults } from '../../utils/providers';
-beforeEach(()=>{fakeBrowser.reset();vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation(()=>{});vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation(()=>{});background.main();});
+beforeEach(()=>{fakeBrowser.reset();vi.spyOn(fakeBrowser.storage.local,'setAccessLevel').mockResolvedValue();vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation(()=>{});vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation(()=>{});background.main();});
 const options=()=>({id:fakeBrowser.runtime.id,url:fakeBrowser.runtime.getURL('/options.html')});
-const call=async(message:object,sender:object=options())=>(await fakeBrowser.runtime.onMessage.trigger(message,sender))[0];
+const call=async(message:object,sender:object=options())=>(await fakeBrowser.runtime.onMessage.trigger(message,sender,vi.fn()))[0];
 it('restricts Finish/reconciliation to options and validates shapes before mutation',async()=>{
     const player={id:fakeBrowser.runtime.id,url:'https://www.youtube.com/watch?v=U_V6Jqg7PV4',frameId:0,tab:{id:1}};
     expect(await call({type:'SETTINGS_RECONCILE'},player)).toHaveProperty('error');

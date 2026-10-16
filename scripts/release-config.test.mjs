@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validateReleaseConfig, refusePublication } from './release-config.mjs';
 import { buildProfile, chromeIdentity, bundledModulesPlugin } from './build-profile.mjs';
+import { supplementalNotices } from './npm-notices.mjs';
 import { createHash, generateKeyPairSync } from 'node:crypto';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -12,6 +13,24 @@ test('final binding needs owner, Chrome and public URLs, not Firefox or GitHub',
   assert.equal(validateReleaseConfig(valid).publicReleaseAuthorized, false);
   for (const key of Object.keys(valid)) assert.throws(()=>validateReleaseConfig({...valid,[key]:''}));
   for (const url of ['http://example.invalid', 'https://secret@example.invalid', 'https://example.invalid/?secret=x']) assert.throws(()=>validateReleaseConfig({...valid,CUEFLORA_PRIVACY_URL:url}));
+});
+
+test('omitted WXT notice uses the exact original source release and npm identity', () => {
+  const [notice] = supplementalNotices('wxt','0.21.4');
+  assert.equal(notice.sha256,'7b0b00fcdbc6a036078aad84d0bc0fae240ac67144b86c911149c2daa37c9f85');
+  assert.ok(notice.content.includes('Copyright (c) 2023 Aaron'));
+  assert.throws(()=>supplementalNotices('wxt','0.20.20'));
+  assert.throws(()=>supplementalNotices('wxt','0.21.4',{lock:{packages:{}}}));
+  assert.throws(()=>supplementalNotices('wxt','0.21.4',{read:()=>Buffer.from('changed')}));
+  assert.deepEqual(supplementalNotices('unlisted-package','1.0.0'),[]);
+});
+
+test('supplemental notice locks reject duplicate and unsafe bindings', () => {
+  const item={name:'fixture',version:'1.0.0',integrity:'sha512-AAAA',file:'LICENSE',entry:'LICENSE',sha256:'a'.repeat(64),origin:'https://raw.githubusercontent.com/example/repo/tag/LICENSE'};
+  const lock={packages:{'node_modules/fixture':{version:item.version,integrity:item.integrity}}};
+  for (const policy of [{schema:2,packages:[item]},{schema:1,packages:[item,item]},
+    ...['../LICENSE','.','..'].map(file=>({schema:1,packages:[{...item,file}]}))])
+    assert.throws(()=>supplementalNotices('fixture','1.0.0',{lock,policy,read:()=>Buffer.from('fixture')}));
 });
 test('preview has stable key, candidates have none and unknown profiles fail', () => {
   assert.equal(buildProfile(), 'preview');

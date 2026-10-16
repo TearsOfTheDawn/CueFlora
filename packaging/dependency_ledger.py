@@ -9,6 +9,7 @@ from urllib.parse import urlsplit
 import zipfile
 from release_inputs import ROOT, digest
 from notice_names import is_notice_name
+from npm_notices import supplemental_notices
 
 
 def supplemental(cache, output, lock, source_audio=False):
@@ -262,6 +263,10 @@ def write(runtime, extension, source_report, extra, output, source_notices=None,
         package = ROOT/'node_modules'/name
         notices = [path for path in package.iterdir() if path.is_file() and is_notice_name(path.name)] if package.is_dir() else []
         row['noticeEvidence'] = [{'packageEntry':path.name,'sha256':digest(path)} for path in notices]
+        origins = supplemental_notices(name,row['version']) if not notices else []
+        for item in origins:
+            notices.append(item['path'])
+            row['noticeEvidence'].append({'packageEntry':item['entry'],'sha256':item['sha256'],'origin':item['origin']})
         row['noticeEvidenceComplete'] = bool(notices)
         for path in notices:
             target = output/'javascript-notices'/name.replace('/','_')/path.name

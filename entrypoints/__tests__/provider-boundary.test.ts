@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import background from '../background';
 import { providerDefaults } from '../../utils/providers';
 import { beginWorkflow } from '../../utils/workflow';
+import { messageTab } from './browserFixture';
 
 describe('background provider trust boundary', () => {
     const health={status:'PONG',tools:{},capabilities:{credentialProtection:'windows-dpapi-v1'}};
     beforeEach(() => {
-        fakeBrowser.reset(); vi.spyOn(fakeBrowser.action.onClicked, 'addListener').mockImplementation(() => {}); vi.spyOn(fakeBrowser.runtime.onInstalled, 'addListener').mockImplementation(() => {});
+        fakeBrowser.reset(); vi.spyOn(fakeBrowser.storage.local,'setAccessLevel').mockResolvedValue(); vi.spyOn(fakeBrowser.action.onClicked, 'addListener').mockImplementation(() => {}); vi.spyOn(fakeBrowser.runtime.onInstalled, 'addListener').mockImplementation(() => {});
         vi.spyOn(fakeBrowser.runtime,'connectNative').mockImplementation(()=>{
             let listener:(value:unknown)=>void=()=>{};
             return {onMessage:{addListener:(fn:typeof listener)=>{listener=fn;}},onDisconnect:{addListener:()=>{}},disconnect:()=>{},
@@ -15,9 +16,9 @@ describe('background provider trust boundary', () => {
         });
         background.main();
     });
-    const player = () => ({ id: fakeBrowser.runtime.id, url: 'https://www.youtube.com/watch?v=U_V6Jqg7PV4', frameId: 0, tab: { id: 1 } });
+    const player = () => ({ id: fakeBrowser.runtime.id, url: 'https://www.youtube.com/watch?v=U_V6Jqg7PV4', frameId: 0, tab: messageTab });
     const options = () => ({ id: fakeBrowser.runtime.id, url: fakeBrowser.runtime.getURL('/options.html') });
-    const call = async (message: object, sender = player()) => (await fakeBrowser.runtime.onMessage.trigger(message, sender))[0];
+    const call = async (message: object, sender = player()) => (await fakeBrowser.runtime.onMessage.trigger(message, sender, vi.fn()))[0];
     const configure = async () => {
         const settings = providerDefaults(); settings.transcription.apiKey = 'secret'; settings.translation.apiKey = 'secret';
         for (const stage of ['transcription','translation'] as const) { settings[stage].baseUrl = 'https://fixture.example/v1'; settings[stage].model = 'fixture'; }
@@ -84,7 +85,7 @@ describe('background provider trust boundary', () => {
         expect(postMessage.mock.calls.find(([request])=>request.type==='TRANSCRIBE_NATIVE')![0]).toMatchObject({ whisperConfig: { apiKey: '', credential:{schema:1,method:'windows-dpapi-v1',blob:'QUJDRA=='}, baseUrl: saved.transcription.baseUrl } });
         expect(JSON.stringify(await fakeBrowser.storage.session.get(null))).not.toContain('secret');
         expect(JSON.stringify(await fakeBrowser.storage.session.get(null))).not.toContain('QUJDRA==');
-        await expect(call({ type: 'TRANSCRIBE_NATIVE', jobId: 'job', videoId: 'U_V6Jqg7PV4' }, { ...player(), tab: { id: 2 } })).resolves.toHaveProperty('error');
+        await expect(call({ type: 'TRANSCRIBE_NATIVE', jobId: 'job', videoId: 'U_V6Jqg7PV4' }, { ...player(), tab: { ...messageTab, id: 2 } })).resolves.toHaveProperty('error');
     });
     it('freezes processing controls per Run rather than trusting page values or later edits', async () => {
         const saved = await configure();

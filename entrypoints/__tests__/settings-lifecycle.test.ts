@@ -1,9 +1,10 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import background from '../background';
 let installed:(details:any)=>void, clicked:()=>void;
 beforeEach(()=>{
     fakeBrowser.reset();
+    vi.spyOn(fakeBrowser.storage.local,'setAccessLevel').mockResolvedValue();
     vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation((fn:(details:any)=>void)=>{installed=fn;});
     vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation((fn:(tab:any)=>void)=>{clicked=()=>fn({} as any);});
     background.main();

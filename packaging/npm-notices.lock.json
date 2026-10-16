@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "packages": [{
+    "name": "wxt",
+    "version": "0.21.4",
+    "integrity": "sha512-iyVMTXb37BQAbsPHCuPzrK3ZxnO9pZmvbKl7VJWIHe3RG40On2NyP2FOjArtOITO96plEYnh3o+iUlRp9qE90w==",
+    "entry": "LICENSE",
+    "file": "wxt-0.21.4-LICENSE.txt",
+    "sha256": "7b0b00fcdbc6a036078aad84d0bc0fae240ac67144b86c911149c2daa37c9f85",
+    "origin": "https://raw.githubusercontent.com/wxt-dev/wxt/wxt-v0.21.4/LICENSE"
+  }]
+}

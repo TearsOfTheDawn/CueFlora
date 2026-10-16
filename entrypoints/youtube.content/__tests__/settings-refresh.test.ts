@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { providerDefaults, providerSummary } from '../../../utils/providers';
 vi.mock('../render',async original=>({...await original<typeof import('../render')>(),startRenderLoop:vi.fn(),runSubtitleWorkflow:vi.fn()}));
 let cleanup:(()=>void)|null=null;
@@ -28,7 +28,7 @@ it('does not refresh an active Run or an open appearance draft',async()=>{
 });
 it('rejects a preference reply if Run starts during refresh',async()=>{
     const {send,state}=await setup();let reply!:(value:unknown)=>void;
-    send.mockImplementation(async (message:any)=>message.type==='PROVIDERS_SUMMARY'?providerSummary(providerDefaults()):new Promise(resolve=>{reply=resolve;}));
+    send.mockImplementation(async (message:any)=>message.type==='PROVIDERS_SUMMARY'?providerSummary(providerDefaults()):new Promise<unknown>(resolve=>{reply=resolve;}));
     window.dispatchEvent(new Event('focus'));await vi.waitFor(()=>expect(reply).toBeTypeOf('function'));
     state.workflow.status='transcribing';reply({cueflora_transcription_lang:'ja'});await Promise.resolve();await Promise.resolve();
     expect((document.getElementById('cueflora-transcription-lang') as HTMLSelectElement).value).toBe('en');

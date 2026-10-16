@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { state } from '../../../utils/state';
 import { beginWorkflow } from '../../../utils/workflow';
 import { TRANSCRIPTION_NORMALIZATION_VERSION } from '../../../utils/constants';
@@ -62,9 +62,9 @@ describe('production evidence and normalization cache boundaries', () => {
             diagnostics: { normalizationVersion: TRANSCRIPTION_NORMALIZATION_VERSION, captureId: 'capture' } });
         await startTranscription('zh-CN', 'job');
         const stored = await fakeBrowser.storage.local.get(CACHE_PREFIX + key);
-        expect(stored[CACHE_PREFIX + key].metadata).toMatchObject({
+        expect(stored[CACHE_PREFIX + key]).toMatchObject({ metadata: {
             normalizationVersion: TRANSCRIPTION_NORMALIZATION_VERSION, fingerprint: await sha256(source),
-        });
+        } });
         expect(localStorage.getItem(metaKey)).toBeNull();
         expect(state.workflow.diagnostics?.transcription.captureId).toBe('capture');
     });

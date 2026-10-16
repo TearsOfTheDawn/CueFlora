@@ -1,6 +1,6 @@
 {
   "name": "cueflora",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -27,10 +27,13 @@
     "pinyin-pro": "^3.28.0"
   },
   "devDependencies": {
+    "@types/node": "25.5.2",
+    "@wxt-dev/browser": "0.1.39",
+    "@wxt-dev/storage": "1.2.8",
     "jsdom": "^29.0.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.4",
-    "web-ext": "^10.1.0",
-    "wxt": "^0.20.0"
+    "vite": "8.3.4",
+    "vitest": "4.1.12",
+    "wxt": "0.21.4"
   }
 }

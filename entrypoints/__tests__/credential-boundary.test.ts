@@ -1,5 +1,5 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
-import {fakeBrowser} from 'wxt/testing';
+import {fakeBrowser} from 'wxt/testing/fake-browser';
 vi.mock('../../utils/releasePolicy',()=>({transportPolicy:'https-remote'}));
 import background from '../background';
 import {providerDefaults,LEGACY_PROVIDERS_KEY} from '../../utils/providers';
@@ -7,8 +7,8 @@ import {providerDefaults,LEGACY_PROVIDERS_KEY} from '../../utils/providers';
 describe('store-candidate credential/transport background boundary',()=>{
     const options=()=>({id:fakeBrowser.runtime.id,url:fakeBrowser.runtime.getURL('/options.html')});
     const player=()=>({id:fakeBrowser.runtime.id,url:'https://www.youtube.com/watch?v=U_V6Jqg7PV4',frameId:0,tab:{id:1}});
-    const call=async(message:object,sender=options())=>(await fakeBrowser.runtime.onMessage.trigger(message,sender))[0];
-    beforeEach(()=>{fakeBrowser.reset(); vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation(()=>{}); vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation(()=>{}); background.main();});
+    const call=async(message:object,sender=options())=>(await fakeBrowser.runtime.onMessage.trigger(message,sender,vi.fn()))[0];
+    beforeEach(()=>{fakeBrowser.reset(); vi.spyOn(fakeBrowser.storage.local,'setAccessLevel').mockResolvedValue(); vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation(()=>{}); vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation(()=>{}); background.main();});
     afterEach(()=>vi.useRealTimers());
     const bindKeyedRun=async()=>{
         vi.spyOn(fakeBrowser.runtime,'connectNative').mockImplementation(()=>{

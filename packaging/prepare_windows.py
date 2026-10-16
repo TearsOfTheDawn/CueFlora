@@ -22,6 +22,20 @@ BLOCKERS = ['Exact source-built FFmpeg/Opus sources supplied; dependency-specifi
     'Unsigned first release accepted; clean-Windows/real-Chrome acceptance absent; other platforms not certified']
 
 
+def copy_extension_sources(root, workspace):
+    """All source inputs used by config/plugins, without installed/private files."""
+    workspace.mkdir()
+    for directory in ['entrypoints','utils','public','scripts']:
+        shutil.copytree(root/directory,workspace/directory)
+    for name in ['package.json','package-lock.json','wxt.config.ts','tsconfig.json','vitest.config.ts','preview-identity.json','LICENSE.md']:
+        shutil.copy2(root/name,workspace/name)
+    # The bundle plugin reads original supplemental notice bytes at build time.
+    # Copy the complete public notice directory, not an installed dependency patch.
+    (workspace/'packaging').mkdir()
+    shutil.copy2(root/'packaging/npm-notices.lock.json',workspace/'packaging/npm-notices.lock.json')
+    shutil.copytree(root/'packaging/notices',workspace/'packaging/notices')
+
+
 def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio_cache=None, toolchain=None, public_config=None, downloader_cache=None):
     if os.name != 'nt':
         raise ValueError('Windows x64 preparation only')
@@ -126,11 +140,8 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
             'conformanceSha256':digest(audio_build/'audio-conformance.json'),
             'inputLockSha256':digest(ROOT/'packaging/audio-inputs.lock.json'),
             'toolchainLockSha256':digest(ROOT/'packaging/audio-toolchain.lock.json'),'privateBaselineRequired':False}
-        workspace = output/'offline-extension-workspace'; workspace.mkdir()
-        for directory in ['entrypoints','utils','public','scripts']:
-            shutil.copytree(ROOT/directory,workspace/directory)
-        for name in ['package.json','package-lock.json','wxt.config.ts','tsconfig.json','vitest.config.ts','preview-identity.json','LICENSE.md']:
-            shutil.copy2(ROOT/name,workspace/name)
+        workspace = output/'offline-extension-workspace'
+        copy_extension_sources(ROOT,workspace)
         run('offline-npm-ci',['cmd.exe','/d','/c','npm','ci','--offline','--cache',cache/'npm','--no-audit','--no-fund','--update-notifier=false'],cwd=workspace)
         npm = ['cmd.exe','/d','/c','npm']
         for profile in profiles:

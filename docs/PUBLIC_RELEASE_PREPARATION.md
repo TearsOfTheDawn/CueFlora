@@ -1,6 +1,6 @@
 # Repeating Windows/Chrome preparation
 
-For 0.1.3, follow [PUBLIC_CANDIDATE.md](PUBLIC_CANDIDATE.md): add `--audio-build <verified-9.0.2-build>` to preparation. The official Python bootstrap replaces the private snapshot and old FFmpeg inputs are skipped. The commands/old-tool discussion below document the historical 0.1.2 baseline, not adoption instructions for 0.1.3.
+For current 0.1.8 preparation, follow [DISTRIBUTION.md](DISTRIBUTION.md) and [RELEASE_COMPLETION.md](RELEASE_COMPLETION.md). The exact npm lock now uses WXT 0.21.4/Vite 8.3.4/Vitest 4.1.12; populate a fresh npm cache for that lock rather than reusing an old cache inventory. Downloader schema 2 requires the exact urllib3 2.8.0 inputs. Official Node/npm and Python are restored from pinned public archives. Audio can be built with `--audio-cache` or copied/reverified with `--audio-build <verified-9.0.2-build>`. `--public-config` binds a real Store identity without granting release approval. The older commands, unresolved-FFmpeg-origin discussion and identity statements below document the historical 0.1.2 baseline, not current adoption instructions.
 
 Run from `C:\AI\CueFlora` with the exact cached inputs and the pinned Python environment:
 

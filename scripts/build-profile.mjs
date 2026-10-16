@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { createHash, createPublicKey } from 'node:crypto';
+import { supplementalNotices } from './npm-notices.mjs';
 
 export function buildProfile(value = 'preview') {
   if (!['preview', 'store-candidate', 'acceptance'].includes(value)) throw Error('Unknown CueFlora build profile');
@@ -35,6 +36,9 @@ export function bundledModulesPlugin() {
         const pkg = JSON.parse(readFileSync(root + '/package.json', 'utf8'));
         const noticeFiles = readdirSync(root,{withFileTypes:true}).filter(entry=>entry.isFile() && /licen[cs]e|copying|notice|copyright/i.test(entry.name));
         const records = noticeFiles.map(entry=>{const content=readFileSync(root+'/'+entry.name,'utf8'); notices.set(name+'/'+entry.name,content); return {entry:entry.name,sha256:createHash('sha256').update(content).digest('hex')};});
+        if (!records.length) for (const {content,...record} of supplementalNotices(name,pkg.version)) {
+          notices.set(name+'/'+record.entry,content); records.push(record);
+        }
         if (!records.length) throw Error('Bundled package has no retained notice: '+name);
         packages.set(name, { name, version: pkg.version, license: pkg.license, notices:records });
       } catch (error) { throw Error('Bundled dependency licence evidence unavailable: '+name,{cause:error}); }

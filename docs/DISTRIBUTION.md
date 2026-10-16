@@ -1,6 +1,6 @@
 # CueFlora Windows/Chrome preview distribution
 
-Current source version is 0.1.4, a prepublication candidate. [RELEASE_COMPLETION.md](RELEASE_COMPLETION.md) documents complete public-source preparation, signature-verified FFmpeg/ffprobe 9.0.2 shared builds, the supported-Python same-version downloader rebuild, exact dependency notice/source evidence, public-identity construction and separate approval gates. Earlier artifacts and historical evidence remain preserved. Public publisher/identity/hosting, external acceptance and remaining licence/policy questions are not automatically cleared.
+Current source version is 0.1.8, a prepublication security candidate. [RELEASE_COMPLETION.md](RELEASE_COMPLETION.md) documents complete public-source preparation, signature-verified FFmpeg/ffprobe 9.0.2 shared builds, the supported-Python same-version downloader rebuild, exact dependency notice/source evidence, public-identity construction and separate approval gates. [DEPENDENCY_SECURITY_REVIEW.md](DEPENDENCY_SECURITY_REVIEW.md) records the urllib3/tooling updates. Earlier artifacts remain preserved. Supplied publisher/Store identity and URLs do not automatically clear hosting, licence, policy or Store-review gates.
 
 Independent project at `C:\AI\CueFlora`, copied from current modified Substrata source. Fresh local Git repository; no inherited commits/remotes, credentials, private captures, dependency environments, backups or previous outputs. Original MIT copyright/licence retained. All recorded original hashes and Git status remain unchanged.
 
@@ -10,7 +10,7 @@ The delivery is created in a fresh directory by `release:prepare`; its `readines
 
 An unsigned onefile **CueFlora Setup.exe** self-extracts Setup and an immutable embedded bundle. The installed native runtime is onedir. The bundle includes Python, host, yt-dlp, ffmpeg, ffprobe, Deno, notices, exact inventory and Chrome-only private configuration.
 
-Development identity: `klnnagigpdlgchlablabnafceoldfalm`, derived from the retained public key in `preview-identity.json`. No private key is retained. The preview configuration binds `product: cueflora`, that ID and the runtime inventory SHA-256. `publicReleaseAuthorized` and `redistributionApproved` remain false. Final public identities/owner are not assigned.
+Development identity: `klnnagigpdlgchlablabnafceoldfalm`, derived from the retained public key in `preview-identity.json`. No private key is retained. Without a public configuration, preparation binds that identity. With the supplied real publisher configuration, it instead builds an acceptance extension/helper bound to Store ID `akcolbcdfnjcahhhodnpablekjagfadf`, alongside a keyless submission ZIP. Runtime-inventory SHA-256 is required in either mode. `publicReleaseAuthorized` and `redistributionApproved` remain false; identity is not approval.
 
 Installation is per-user, explicit Chrome selection/confirmation, no administrator access, persistent companion, PATH modification or AI provisioning. Native registration name is `cueflora_host`; installation root is `%LOCALAPPDATA%\CueFlora`. State, cache, DOM, CSS, bridge events and evidence names are separate from Substrata.
 
@@ -21,7 +21,7 @@ Lifecycle retains ownership checks, locks, version activation, matching-identity
 Use the hash-locked build environment and exact offline input cache. The preparation command selects all four explicit tool paths, verifies local EJS, builds/compares fresh pairs and retains evidence. No model is downloaded and no inference occurs. Each output directory must be fresh. Earlier three-tool commands/lock are historical, not the current portable contract.
 
 ```powershell
-npm run release:prepare -- --output artifacts/distribution/new-preparation --cache artifacts/input-cache-0.1.4 --evidence-cache artifacts/redistribution-evidence-014 --audio-cache artifacts/audio-tool-inputs-9.0.2
+npm run release:prepare -- --output artifacts/distribution/new-preparation --cache artifacts/input-cache-018 --evidence-cache artifacts/redistribution-evidence-014 --audio-cache artifacts/audio-tool-inputs-9.0.2 --downloader-cache artifacts/downloader-security-cache-018
 ```
 
 Do not delete/regenerate `preview-identity.json` during rebuilds; this would break identity continuity. Its key is public development metadata, not a signing credential. Final public builds need a separately assigned identity and matching installer; non-dry publication is deliberately blocked in the inherited release script.

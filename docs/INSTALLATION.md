@@ -1,5 +1,7 @@
 # CueFlora private preview: install and remove
 
+This guide is only for development-identity private previews. Public-identity candidates must use their own generated `START_HERE.md` and matching `Chrome-acceptance` folder; do not mix identities/helpers or treat an older package as updated by source changes. Public release remains gated by the current candidate's reports and [launch checklist](PUBLIC_LAUNCH_CHECKLIST.md).
+
 Windows x64 / Google Chrome only. This is unsigned development software, not a published Chrome Web Store release. Installation/testing is optional; existing Substrata can remain installed unchanged.
 
 ## Install
