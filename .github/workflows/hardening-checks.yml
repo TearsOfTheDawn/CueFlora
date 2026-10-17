@@ -37,7 +37,7 @@ jobs:
       - name: Native unit-test and frozen-inventory inspection dependencies (not a release build)
         run: python -m pip install httpx==0.28.1 pyinstaller==6.22.0 pyinstaller-hooks-contrib==2026.7 pefile==2024.8.26
       - working-directory: native
-        run: python -m unittest cueflora_setup.test_setup cueflora_setup.test_maintenance cueflora_host.test_provider_check cueflora_host.test_credentials cueflora_host.test_deno cueflora_host.test_runtime_tools cueflora_host.test_controlled_evidence cueflora_host.test_audio_preparation cueflora_host.test_translate cueflora_host.test_whisper_regressions cueflora_host.test_evidence cueflora_host.test_quality_benchmark cueflora_host.test_quality_translation cueflora_host.test_native_protocol
+        run: python -m unittest cueflora_setup.test_setup cueflora_setup.test_maintenance cueflora_setup.test_terms cueflora_host.test_provider_check cueflora_host.test_credentials cueflora_host.test_deno cueflora_host.test_runtime_tools cueflora_host.test_controlled_evidence cueflora_host.test_audio_preparation cueflora_host.test_translate cueflora_host.test_whisper_regressions cueflora_host.test_evidence cueflora_host.test_quality_benchmark cueflora_host.test_quality_translation cueflora_host.test_native_protocol
       - run: python -m compileall -q native/cueflora_host native/cueflora_setup packaging
       - run: python -m unittest discover -s packaging -p 'test_*.py'
       - run: git diff --check

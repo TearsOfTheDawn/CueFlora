@@ -1,0 +1,78 @@
+)]}'
+{
+  "id": "63eed58f0937ba832a2195cd848f9f53ef8ecea9",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b4f56c0de9819e828bec272dfe804ddb5dceb32f",
+      "name": ".clang-format"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "39a2e3a07b16e5c97cf9ba27c42a8d7aceb4600c",
+      "name": ".gitignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3dabd87b9c58776ba8f19561787662407957bc55",
+      "name": "CMakeLists.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "fbb6cbf38baf60a05dcca9025e50f3a25c961b73",
+      "name": "CREDITS.TXT"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b75c0441bcd5be32b5a07e2a1ffc7e67b6d99f16",
+      "name": "LICENSE.TXT"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "8a6fbd36d4b63b33a099432ef38ae05506ef8432",
+      "name": "cmake"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ea823642833b0d1772f8be728e3f4a6a2c056ca3",
+      "name": "fuzz"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "55fbdd2c35d81b787762a8b9b405adbe602e6c2e",
+      "name": "include"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ecbd231d6f30c6b9f560d9e74ddc742a70e40c3c",
+      "name": "lib"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "2e81e644550420fecea461b765f0811799de3913",
+      "name": "src"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "58c512ad5d1011a936176cc52177413ff2df5e6e",
+      "name": "test"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "e1881b24588bf2b05db7ad60a98f90e079b47115",
+      "name": "www"
+    }
+  ]
+}

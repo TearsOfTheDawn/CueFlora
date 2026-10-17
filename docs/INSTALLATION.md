@@ -58,6 +58,8 @@ These do not open a GUI, install or verify real browser registration. Use fresh 
 
 CLI mutations require `--apply`; install additionally requires explicit `--browser chrome`. Reports never overwrite existing files. Actual clean-machine/browser/GUI testing remains optional and deferred for this milestone.
 
+Install and repair also require `--accept-third-party-terms`. Read them with `CueFlora Setup.exe terms`; in the GUI use **Third-party terms** before the existing confirmation. Original component licences remain authoritative. Keep `CueFlora-third-party-sources.zip` with binary redistribution, including the LGPL/GPL/MPL sources and recipes. This acknowledgement does not restrict open-source rights or require agreement to uninstall.
+
 ## Not a public distribution
 
 The included keyless `CueFlora-Chrome-store-upload.zip` is a future-upload candidate. Do not load it instead of `Chrome-preview` for this installer: the preview key is intentionally absent. Final store ID, matching release package, store approvals, signing and third-party redistribution clearance remain separate work.

@@ -1,0 +1,474 @@
+)]}'
+{
+  "id": "d98732e01d640da3e34fc5502d4faf2bf99f92a7",
+  "entries": [
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "89bc64382f109a483a50da83421a32772f9716e1",
+      "name": ".bazelci"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "69fa449dd96e2405945b2e4cff2fd0ab8b102097",
+      "name": ".bazelignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "24409250d56368c050d572f01548cca8143798c0",
+      "name": ".bazeliskrc"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "0a90905b2d4ae817f7476cdd47d362068e5e34d2",
+      "name": ".bazelrc"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "7dbe4334b956deceeb7e657b6eec722135d7d7e0",
+      "name": ".bcr"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "24d97f2b22d8625646c765b3f385cfd62026731a",
+      "name": ".clang-format"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "99fc84c0663ccc77eeab701e646b9802e2909f8b",
+      "name": ".gitattributes"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "5daf56a65bc4327ce55f2ff2677d8294d6be3925",
+      "name": ".github"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3bd40f102cf070e329faffba953c53cc6348b036",
+      "name": ".gitignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "name": ".gitmodules"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "10e8fbdc6f7949c7668ad8b790db79143870ea0a",
+      "name": ".readthedocs.yml"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8926b04e55a871e7f9615543f6b23fae49da0fb9",
+      "name": "BUILD.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "daad407cfcbd2b4a842c62b40513cd8e4fc33489",
+      "name": "BUILD.gn"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d0f7f05158973eda6042471e99f26ec65144980f",
+      "name": "CMakeLists.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ba19063083427b97d458d22bdd6ba1d3369f7963",
+      "name": "CODE_OF_CONDUCT.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b1d5d1ee3b6ecfd0046d15cacea05e9713870dad",
+      "name": "CONTRIBUTING.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "c2da98f2c6c9dd5f007567db2a329753bb37c38d",
+      "name": "CONTRIBUTORS.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "f1a7bbff636fcd26b588d496a18f94e718881e4a",
+      "name": "Cargo.bazel.lock"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "92d0819d9fa1aca9c3d7960b51bf61708b095e35",
+      "name": "Cargo.lock"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8024ae2b8b014fcdc775dca58e631d0b8b01dac6",
+      "name": "DEPS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "208cc2fb9dc251ef17081e2c9f8830a99672d442",
+      "name": "DIR_METADATA"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "baa83832f51813161ab98115a54583bc9dbea741",
+      "name": "Disable_bundle_install.patch"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "19b305b00060a774a9180fb916c14b49edb2008f",
+      "name": "LICENSE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "dbd294602c2d5820f0ecf573fbd8fd22ac60db5a",
+      "name": "MODULE.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "48ccca6c7cd656312620b912ff6f465059b63a53",
+      "name": "Neverlink_jruby_jars.patch"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8e95e61dfe09a75dad4b050599d7cdd29c88365c",
+      "name": "OWNERS"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "e08a130bce319577ff33577af8aa04e4ff1b87c2",
+      "name": "PrivacyInfo.xcprivacy"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ad844e9d58b56a7b647d705d9465e7194561d7ba",
+      "name": "Protobuf.podspec"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "41211cd2109405137f5f04e2eac064e4da87a1fd",
+      "name": "README.chromium"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "6b3b48c4d9c98663a9cffd2b0a31a07482b225bd",
+      "name": "README.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "76a40ee066a0b8390ee16dc2cd8a6568b442d58a",
+      "name": "SECURITY.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "5a4b2f458d1a60f0c19ae150bba621b9dff677bb",
+      "name": "WORKSPACE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "4f78c73fac38179dbcc8a892a530d0ea94c2bb8c",
+      "name": "WORKSPACE.bzlmod"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "c8c51990e2be239dce12c8228b45c6a93828b3a4",
+      "name": "appveyor.bat"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "1e2834bf44d8a90abec5214bcf788a6fa66443bb",
+      "name": "appveyor.yml"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "02d0f8f85b76701a62e398ab9b5dd8cfb3bd31e0",
+      "name": "bazel"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4f5dd6cc40d13766ec8d43ea809dcf154cd61d07",
+      "name": "benchmarks"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "b20b7437c7e5349fd12f5b3bb5b32943b9c14171",
+      "name": "build_defs"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "e0b77ffe3b074bb1e2c6fc81e9c47900790c807c",
+      "name": "ci"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "41c8f5adbf5bcd2d4f237a6ed438577e2c590b51",
+      "name": "cmake"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "3d881bf160d39387a5034855fb3ce557135a8e5d",
+      "name": "conformance"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "a30cf9f71f6e61d3a6d8bc595b518f110b17313f",
+      "name": "csharp"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "cdde39a7a021dd817e42946bd9256941192812ac",
+      "name": "docs"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "033e14795d6bace62ee5230c2a5b1f63a1856ae7",
+      "name": "editions"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "8ca474fb469eea0d75b2ddd4e993c86824c3f07c",
+      "name": "editors"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "6a0dde67426171d827f6f33d9e5e35c91ae821bd",
+      "name": "examples"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "f33c25c3067b1ad849a0ebfcbe82b5272984f7a1",
+      "name": "fix_permissions.sh"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "1e4a20b2fb61da16691508e1467d01bc41710eaa",
+      "name": "gen_extra_chromium_files.py"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "0eb158146fef517f5c6e77791ef6d02f0bf95579",
+      "name": "generate_descriptor_proto.sh"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ade0252834d84f0ec8430d9105d8edc7177834ab",
+      "name": "global.json"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "afd24b9b1deea7c34fd3b89eb27957edb846c77e",
+      "name": "go"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "572c4caee32e04ad3f691a1494d5df041a11cebf",
+      "name": "google3_export_generated_files.sh"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "c43f428fd650c171c5370904ff0aa8332c41805e",
+      "name": "hpb"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ed289a9b92c0e103392af37a836c92c08f0a6c0d",
+      "name": "hpb_generator"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "75fe0bc78483405f0d96b530eb3e086c43134847",
+      "name": "java"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "a292c4bebd1a5fead34a6892783651b3ae2d9204",
+      "name": "lua"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "44a9b0be9e8c94e34923bea96296abea8a1eff00",
+      "name": "maven_dev_install.json"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b617e7d329d8bb4251cfe4888bad15d83ff37b03",
+      "name": "maven_install.json"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "56223be559147035df86e1d0392569474a8acefc",
+      "name": "objectivec"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "2768c57bd6033816dad2ac77a51373fe21ce1f6e",
+      "name": "patches"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "e1225a2b270787bc26bbfca2ef261f98163ccc01",
+      "name": "php"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "7ea406e1fc260f99b30b59494f47207cbc49c62f",
+      "name": "pkg"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "a6889c1684fdb5736e992e1b8932ee2acb086242",
+      "name": "proto_library.gni"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "794169548dd381c42b1570facdd52a846185456c",
+      "name": "proto_sources.gni"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "fdf09bd6be7bf2ef49e04f598172c861a55934e5",
+      "name": "protobuf.bzl"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d48146341fb809fcaa4f451fa44fbe328b01391b",
+      "name": "protobuf_deps.bzl"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "67184e24c304044643aa9b80332aa35282d28783",
+      "name": "protobuf_release.bzl"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "10c424b12e4cc557f1075df88604dd1db40af16a",
+      "name": "protobuf_version.bzl"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "660cd240a6a2dcb201495b1b53c657db16c14425",
+      "name": "python"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "6fc2d46693e108191b904bca8076b19a7a79d9d7",
+      "name": "regenerate_stale_files.sh"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "878f42b2b9d732ecc0e81f7bd79f6a867df83a2a",
+      "name": "ruby"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "2613705f04850b5b15d14f78b0d7aecc1afbd374",
+      "name": "rust"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4b1b95ce93a249d0f4cd31ad4d9c9854193c1bf6",
+      "name": "src"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ff171458f3b10fae9b04dd00a716841926874254",
+      "name": "third_party"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "5f654b1ed6326f831d32f87a29fda6c81fbf55b5",
+      "name": "toolchain"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "b1fd95d53b64600a6ba2863dd34962e569af770a",
+      "name": "upb"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "52c64f34cb4564497a6041466ffa29a11eedcb2a",
+      "name": "upb_generator"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "fb9d997f663ffa3bd23dee3fbf54fb67ddfb0d02",
+      "name": "version.json"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from collect_v8_notices import ROOT,validate,obtain,match_versions,validate_evidence
+from v8_submodule_notices import load as submodule_notices
 
 
 class V8NoticeTests(unittest.TestCase):
@@ -48,6 +49,12 @@ class V8NoticeTests(unittest.TestCase):
             'icuEvidence':{'pins':icu,'dataLineageVerified':True,'originalNoticeRestored':True},
             'noticeFiles':{'core.txt':digest(b'synthetic original notice'),icu['noticeFile']:icu['noticeSha256']},
             'notices':{'core.txt':{'sha256':digest(b'synthetic original notice')},icu['noticeFile']:{'sha256':icu['noticeSha256']}}}
+        content,origins,_,sub_evidence=submodule_notices()
+        report['submoduleEvidence']=sub_evidence
+        for name,raw in content.items():
+            (folder/'notices'/name).write_bytes(raw)
+            report['noticeFiles'][name]=digest(raw)
+            report['notices'][name]=origins[name]
         (folder/'v8-notice-evidence.json').write_text(json.dumps(report))
         return deno,report
 

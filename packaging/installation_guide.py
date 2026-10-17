@@ -33,5 +33,6 @@ def render(release, version, acceptance=False):
         'Your existing service supplies its API address, optional key and model name. Configure transcription and translation independently. CueFlora does not install models or start services, and does not choose a provider for you. Metadata checks do not generate subtitles; only Run starts AI work.', '',
         'Available YouTube captions can be used without AI or the helper; availability depends on the video. API use may cost money. Remembered keys use Windows user-scoped protection, not protection against malware running as the same user.', '',
         'Windows may warn about this unsigned installer. Do not disable antivirus. For repair, upgrade, rollback, recoverable uninstall and optional headless checks, see `INSTALLATION.md`.', '',
+        'Read Third-party terms in Setup before confirming installation. CLI install/repair additionally requires `--accept-third-party-terms`; `terms` prints them without changing installation. Original component licences are retained. Keep the accompanying `CueFlora-third-party-sources.zip` available when sharing the binaries.', '',
         'Real-browser, clean-machine and visual acceptance remain separate from automated tests. Publication requires the outstanding licence, policy, screenshot and Store/publication gates.', '']
     return '\n'.join(lines)

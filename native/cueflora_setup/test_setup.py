@@ -88,8 +88,8 @@ class SetupTests(unittest.TestCase):
         config = self.base / 'release.json'
         config.write_text(json.dumps(self.private_config()))
         with patch('cueflora_setup.cli.Setup', return_value=self.setup), patch('cueflora_setup.cli.detected_browsers', return_value=['chrome']), patch('builtins.print'):
-            main(['install', '--payload', str(self.payload), '--release', str(config), '--browser', 'chrome', '--apply'])
-            main(['repair', '--payload', str(self.payload), '--apply'])
+            main(['install', '--payload', str(self.payload), '--release', str(config), '--browser', 'chrome', '--apply', '--accept-third-party-terms'])
+            main(['repair', '--payload', str(self.payload), '--apply', '--accept-third-party-terms'])
         self.assertEqual(self.setup.state()['browsers'], ['chrome'])
 
     def test_install_upgrade_rollback_and_recoverable_uninstall(self):

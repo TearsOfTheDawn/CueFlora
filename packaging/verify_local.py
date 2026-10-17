@@ -15,7 +15,7 @@ def run(output):
     npm = ['cmd.exe', '/d', '/c', 'npm'] if sys.platform == 'win32' else ['npm']
     python = sys.executable
     modules = ['cueflora_setup.test_setup', 'cueflora_host.test_runtime_tools', 'cueflora_host.test_deno',
-        'cueflora_setup.test_maintenance', 'cueflora_host.test_provider_check', 'cueflora_host.test_credentials',
+        'cueflora_setup.test_maintenance', 'cueflora_setup.test_terms', 'cueflora_host.test_provider_check', 'cueflora_host.test_credentials',
         'cueflora_host.test_controlled_evidence', 'cueflora_host.test_audio_preparation',
         'cueflora_host.test_translate', 'cueflora_host.test_whisper_regressions',
         'cueflora_host.test_evidence', 'cueflora_host.test_quality_benchmark',

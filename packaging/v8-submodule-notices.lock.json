@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "denoVersion": "2.9.7",
+  "v8Commit": "ac1e23989121713ca642f6650b34deff7b686896",
+  "depsSha256": "270d7ccc29b20787c46560376ec9c34f0bb208807713168b7e30c9a6be189a85",
+  "trees": [
+    {
+      "component": "dragonbox",
+      "repository": "https://chromium.googlesource.com/external/github.com/jk-jeon/dragonbox.git",
+      "commit": "beeeef91cf6fef89a4d4ba5e95d47ca64ccb3a44",
+      "file": "V8-submodule-dragonbox-tree.json",
+      "url": "https://chromium.googlesource.com/external/github.com/jk-jeon/dragonbox.git/+/beeeef91cf6fef89a4d4ba5e95d47ca64ccb3a44/?format=JSON",
+      "sha256": "c3c1596bf29edf7603d3c2980aff64a2b3ca9b81c1cc755973a72e31919dd4b3"
+    },
+    {
+      "component": "fast_float",
+      "repository": "https://chromium.googlesource.com/external/github.com/fastfloat/fast_float.git",
+      "commit": "05087a303dad9c98768b33c829d398223a649bc6",
+      "file": "V8-submodule-fast_float-tree.json",
+      "url": "https://chromium.googlesource.com/external/github.com/fastfloat/fast_float.git/+/05087a303dad9c98768b33c829d398223a649bc6/?format=JSON",
+      "sha256": "527ab7c775f0e984ce38cecb0cf7b53df5fd71853ca7e28b319dc9a381fea2c2"
+    },
+    {
+      "component": "simdutf",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/simdutf",
+      "commit": "f7356eed293f8208c40b3c1b344a50bd70971983",
+      "file": "V8-submodule-simdutf-tree.json",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/simdutf/+/f7356eed293f8208c40b3c1b344a50bd70971983/?format=JSON",
+      "sha256": "a321f8453a4acde24639fd441b0fed03807682f4a2c76669a849448104b59ebc"
+    },
+    {
+      "component": "abseil-cpp",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp.git",
+      "commit": "d16e32215c3ab90ba57c2e904a5344d85c7353e4",
+      "file": "V8-submodule-abseil-cpp-tree.json",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp.git/+/d16e32215c3ab90ba57c2e904a5344d85c7353e4/?format=JSON",
+      "sha256": "9053bb273ddac5289321ce25ddcf56b09229cf21a99d837de49ecad16f4f2b97"
+    },
+    {
+      "component": "zlib",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib.git",
+      "commit": "3246f1b60849cc505e231c5d19d0cbf358093555",
+      "file": "V8-submodule-zlib-tree.json",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib.git/+/3246f1b60849cc505e231c5d19d0cbf358093555/?format=JSON",
+      "sha256": "d0da0e61459ffd0a0d19468d3bf79723a88a6e39897e2a970ee9089f25ef0d12"
+    },
+    {
+      "component": "perfetto",
+      "repository": "https://chromium.googlesource.com/external/github.com/google/perfetto.git",
+      "commit": "6c63b492c9ee206e8ec31a19846f77592a3ad563",
+      "file": "V8-submodule-perfetto-tree.json",
+      "url": "https://chromium.googlesource.com/external/github.com/google/perfetto.git/+/6c63b492c9ee206e8ec31a19846f77592a3ad563/?format=JSON",
+      "sha256": "de77f50f71f4329acb0e9048b6ec50519007fd6bd28129651ada8b7d4311b3b0"
+    },
+    {
+      "component": "protobuf",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/protobuf.git",
+      "commit": "96835044c7edeb1cfa2b2dbfd3057c51588952b3",
+      "file": "V8-submodule-protobuf-tree.json",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/protobuf.git/+/96835044c7edeb1cfa2b2dbfd3057c51588952b3/?format=JSON",
+      "sha256": "1101e1aa7834fccf264f2a6e89edb1f711f09cf30f05427eb9c2e7ed1cefb844"
+    },
+    {
+      "component": "libcplusplus",
+      "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx.git",
+      "commit": "5abc7f839700f0f17338434e1c1c6a8c87c00c11",
+      "file": "V8-submodule-libcplusplus-tree.json",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx.git/+/5abc7f839700f0f17338434e1c1c6a8c87c00c11/?format=JSON",
+      "sha256": "e20066ec4df85ca6dd0ed79701e9f098d560260b33b818302cfa921d7103fac3"
+    },
+    {
+      "component": "libcplusplusabi",
+      "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi.git",
+      "commit": "8f11bb1d4438d0239d0dfc1bd9456a9f31629dda",
+      "file": "V8-submodule-libcplusplusabi-tree.json",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi.git/+/8f11bb1d4438d0239d0dfc1bd9456a9f31629dda/?format=JSON",
+      "sha256": "c3b9fde18bcbb02b989926be871b6c0162a8ecd5e9b3a6c4cbf7e5a6ead2996c"
+    },
+    {
+      "component": "libunwind",
+      "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind.git",
+      "commit": "d6c7a21e978f0adaa43accaad53bc64f0b64f6ec",
+      "file": "V8-submodule-libunwind-tree.json",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind.git/+/d6c7a21e978f0adaa43accaad53bc64f0b64f6ec/?format=JSON",
+      "sha256": "da0c7888641293cbcd59962eb04f278df66f5a26301284686e19b7a4cd129c45"
+    }
+  ],
+  "notices": [
+    {
+      "component": "dragonbox",
+      "file": "V8-submodule-dragonbox-LICENSE-Apache2-LLVM.txt",
+      "sourceEntry": "LICENSE-Apache2-LLVM",
+      "url": "https://chromium.googlesource.com/external/github.com/jk-jeon/dragonbox.git/+/beeeef91cf6fef89a4d4ba5e95d47ca64ccb3a44/LICENSE-Apache2-LLVM?format=TEXT",
+      "sha256": "9e45e856bedccee9f67254082ca11851d954de2fed7448c4bed19ad9aab99a91",
+      "gitBlobSha": "bd8b243dfa02d4e7080150180520f742d2861d15",
+      "bytes": 12262
+    },
+    {
+      "component": "dragonbox",
+      "file": "V8-submodule-dragonbox-LICENSE-Boost.txt",
+      "sourceEntry": "LICENSE-Boost",
+      "url": "https://chromium.googlesource.com/external/github.com/jk-jeon/dragonbox.git/+/beeeef91cf6fef89a4d4ba5e95d47ca64ccb3a44/LICENSE-Boost?format=TEXT",
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566",
+      "gitBlobSha": "36b7cd93cdfbac762f5be4c6ce276df2ea6305c2",
+      "bytes": 1338
+    },
+    {
+      "component": "fast_float",
+      "file": "V8-submodule-fast_float-LICENSE-APACHE.txt",
+      "sourceEntry": "LICENSE-APACHE",
+      "url": "https://chromium.googlesource.com/external/github.com/fastfloat/fast_float.git/+/05087a303dad9c98768b33c829d398223a649bc6/LICENSE-APACHE?format=TEXT",
+      "sha256": "097a889aa954d04e088b790b10a4014d6189561d0a6013935a73ce3d4ddaaf06",
+      "gitBlobSha": "26f4398f24999c3908a11653e3b5ba6f9d681123",
+      "bytes": 10767
+    },
+    {
+      "component": "fast_float",
+      "file": "V8-submodule-fast_float-LICENSE-BOOST.txt",
+      "sourceEntry": "LICENSE-BOOST",
+      "url": "https://chromium.googlesource.com/external/github.com/fastfloat/fast_float.git/+/05087a303dad9c98768b33c829d398223a649bc6/LICENSE-BOOST?format=TEXT",
+      "sha256": "8d8291caf1cee26d23acf3eb67c9f9a2d58f1c681b16a4fbe8cbfb9e3c0b5a9b",
+      "gitBlobSha": "127a5bc39ba030c7cb99cc0aedc4f280ffe27310",
+      "bytes": 1337
+    },
+    {
+      "component": "fast_float",
+      "file": "V8-submodule-fast_float-LICENSE-MIT.txt",
+      "sourceEntry": "LICENSE-MIT",
+      "url": "https://chromium.googlesource.com/external/github.com/fastfloat/fast_float.git/+/05087a303dad9c98768b33c829d398223a649bc6/LICENSE-MIT?format=TEXT",
+      "sha256": "e562f3f974ced7e69dd1db77b820b36bcf8f30377f1aa105723fba449c53c4e6",
+      "gitBlobSha": "2fb2a37ad7fda521092c8b7b16911176c3f8a81b",
+      "bytes": 1079
+    },
+    {
+      "component": "simdutf",
+      "file": "V8-submodule-simdutf-LICENSE.txt",
+      "sourceEntry": "LICENSE",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/simdutf/+/f7356eed293f8208c40b3c1b344a50bd70971983/LICENSE?format=TEXT",
+      "sha256": "fc8dbc04e03ad4efc08a647ffe7f995b811a95bc04c0e85a56d5277c6593fa5f",
+      "gitBlobSha": "74c8302ba92830e170dfae35957468edd2e25271",
+      "bytes": 1059
+    },
+    {
+      "component": "abseil-cpp",
+      "file": "V8-submodule-abseil-cpp-LICENSE.txt",
+      "sourceEntry": "LICENSE",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp.git/+/d16e32215c3ab90ba57c2e904a5344d85c7353e4/LICENSE?format=TEXT",
+      "sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747",
+      "gitBlobSha": "ccd61dcfe3dbcdf77a72794d7794b1e112a39e0b",
+      "bytes": 11361
+    },
+    {
+      "component": "zlib",
+      "file": "V8-submodule-zlib-LICENSE.txt",
+      "sourceEntry": "LICENSE",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib.git/+/3246f1b60849cc505e231c5d19d0cbf358093555/LICENSE?format=TEXT",
+      "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+      "gitBlobSha": "b7a69d058e616651eae27b3f90c0b7fd36c099b2",
+      "bytes": 1002
+    },
+    {
+      "component": "perfetto",
+      "file": "V8-submodule-perfetto-LICENSE.txt",
+      "sourceEntry": "LICENSE",
+      "url": "https://chromium.googlesource.com/external/github.com/google/perfetto.git/+/6c63b492c9ee206e8ec31a19846f77592a3ad563/LICENSE?format=TEXT",
+      "sha256": "9a682a56cffc9524dfa9b0b1c0dca9cb81a19e96d5bd0793aaf02c08a95ee7ca",
+      "gitBlobSha": "681d40008ee32ddb7e4e1413d6bf82c4f68c5b5b",
+      "bytes": 14990
+    },
+    {
+      "component": "protobuf",
+      "file": "V8-submodule-protobuf-LICENSE.txt",
+      "sourceEntry": "LICENSE",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/protobuf.git/+/96835044c7edeb1cfa2b2dbfd3057c51588952b3/LICENSE?format=TEXT",
+      "sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d",
+      "gitBlobSha": "19b305b00060a774a9180fb916c14b49edb2008f",
+      "bytes": 1732
+    },
+    {
+      "component": "libcplusplus",
+      "file": "V8-submodule-libcplusplus-LICENSE.TXT.txt",
+      "sourceEntry": "LICENSE.TXT",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx.git/+/5abc7f839700f0f17338434e1c1c6a8c87c00c11/LICENSE.TXT?format=TEXT",
+      "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+      "gitBlobSha": "e159d283443f92ac78b964d2bccebe8f95d5d445",
+      "bytes": 16703
+    },
+    {
+      "component": "libcplusplusabi",
+      "file": "V8-submodule-libcplusplusabi-LICENSE.TXT.txt",
+      "sourceEntry": "LICENSE.TXT",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi.git/+/8f11bb1d4438d0239d0dfc1bd9456a9f31629dda/LICENSE.TXT?format=TEXT",
+      "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+      "gitBlobSha": "b75c0441bcd5be32b5a07e2a1ffc7e67b6d99f16",
+      "bytes": 16706
+    },
+    {
+      "component": "libunwind",
+      "file": "V8-submodule-libunwind-LICENSE.TXT.txt",
+      "sourceEntry": "LICENSE.TXT",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind.git/+/d6c7a21e978f0adaa43accaad53bc64f0b64f6ec/LICENSE.TXT?format=TEXT",
+      "sha256": "b5efebcaca80879234098e52d1725e6d9eb8fb96a19fce625d39184b705f7b6d",
+      "gitBlobSha": "1e3120621caeb62648745a42f7a9a25d1e2731ab",
+      "bytes": 16706
+    }
+  ],
+  "scope": "Original V8 dependency notices; conservative source superset, not a binary inclusion declaration."
+}

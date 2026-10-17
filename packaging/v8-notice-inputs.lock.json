@@ -34,5 +34,6 @@
     "sourceUrl": "https://chromium.googlesource.com/chromium/deps/icu/+/ee5f27adc28bd3f15b2c293f726d14d2e336cbd5/LICENSE"
   },
   "scope": "Original core/source-tree and exact ICU data notices. Crate VCS reports dirty; source-version/commit/data matches are not complete binary-source or third-party closure proof.",
-  "redistributionApproved": false
+  "redistributionApproved": false,
+  "submoduleNoticesSha256": "f8405eae88bcdcfe00f3c06767a14dc02afbdc07c25961e65f6a340a05b2d9e6"
 }

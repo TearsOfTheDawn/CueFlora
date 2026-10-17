@@ -1,0 +1,252 @@
+)]}'
+{
+  "id": "ace871bd59bbbcf9111fc3bcfe3966de28eef89f",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "4e55c25f4620c5bd95f43cc156624b3593ddf3d0",
+      "name": ".clang-format-ignore"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "9ec5970481861795097cbd81df9f7f1fb3eef475",
+      "name": ".github"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ed5461f166c3f7ae1c177054e1a3b3e3970f3cb4",
+      "name": "ABSEIL_ISSUE_TEMPLATE.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "976d31defc263902a9fe3b54d9ba3cf0d1185447",
+      "name": "AUTHORS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "03122a958e5031fe7a4eb432e0beb1f1570304a9",
+      "name": "BUILD.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "1e29a615201019eafe30ef903229099f3b7f700e",
+      "name": "BUILD.gn"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4d641a502d5836f092ab2b934b8fbf009fc9f947",
+      "name": "CMake"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3583e3dbe46f2be6cef921ad1be69befc1c9b642",
+      "name": "CMakeLists.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "a87254c503571f530304796dddff567d4e36e018",
+      "name": "CONTRIBUTING.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "744e51f4bb764f50d39099bfa73846e45eec21a0",
+      "name": "DIR_METADATA"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "30291fe4f18f45302718b122d52126fbdf6491e4",
+      "name": "FAQ.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ccd61dcfe3dbcdf77a72794d7794b1e112a39e0b",
+      "name": "LICENSE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "cc60d224bcfbd0872ff789e08667937ec4171116",
+      "name": "MODULE.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "c93c05979749b0529c54f85c527bf067c1c69dfe",
+      "name": "OWNERS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3ff4a9d98b13eafdc813fb5394796afd6cb8486b",
+      "name": "PrivacyInfo.xcprivacy"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "27777eed6501dba5c4b042d0d89691d28bc764eb",
+      "name": "README.chromium"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "c2c851ec35bffe1b84b0962099dd71c0ad065833",
+      "name": "README.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3cac141d0f4fdf6bfa67cbe0cc6109285f01b0ec",
+      "name": "UPGRADES.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "48e1ce78384d5e85f62d0a2b45a89f9a2f16d2e1",
+      "name": "absl.gni"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ff3cf9b34cd249b4c9617c3692bacbc3a43025ad",
+      "name": "absl"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b1bfea4e94fbfaa9508c998f31e78541d86736ee",
+      "name": "absl_hardening_test.cc"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "f54a03bb9522ef1f78bbaab9e09e4e7a39c0b932",
+      "name": "ci"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "4bbc62eedd624a637cbb81f3cd00e65a6d06e92e",
+      "name": "conanfile.py"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "c20577a743af2be41ea8cfb89d8a6a3101bc03d4",
+      "name": "create_lts.py"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "c80356f84142b3441b44ff1a029369cb64006e12",
+      "name": "generate_def_files.py"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "afb86e2e3dc057f41b3130aef8bdbb4bd2b1e557",
+      "name": "patches"
+    },
+    {
+      "mode": 33261,
+      "type": "blob",
+      "id": "7243c9198233add4582bb7b81c20792297e0c0dd",
+      "name": "roll_abseil.py"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8e66c2ed6981e95d827bf441690d763170035e43",
+      "name": "symbols_arm64_dbg.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "919d182ae7027c13f335c7fc3e6fdd28501a2cd7",
+      "name": "symbols_arm64_dbg_cxx23.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "2f7bd4659b13424a6f2245d0a7dccce87ec83b9b",
+      "name": "symbols_arm64_rel.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "0f7a5b3568a93ba0d6469f13d32d4efd74bc06cc",
+      "name": "symbols_arm64_rel_cxx23.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "013946d7298c958c09c1e62f983af43ccfaa7081",
+      "name": "symbols_x64_dbg.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "5e9ee277bd5ce0be686105abcb13139709d328e1",
+      "name": "symbols_x64_dbg_cxx23.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "789e762e6e0208399e65920446173f3bad193291",
+      "name": "symbols_x64_rel.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "a63fedf89c8260eb00fc4912ebd9ec18e8b305e1",
+      "name": "symbols_x64_rel_asan.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7cf71a9f57fa8b7e82c8b7c803c4519398d72ee5",
+      "name": "symbols_x64_rel_asan_cxx23.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "39017b4205b319e9227b612a75034ad0a4471af9",
+      "name": "symbols_x64_rel_cxx23.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e3f6b9a59b2ee7671b0ced15f85838cf41ba17ba",
+      "name": "symbols_x86_dbg.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7c36c0eff03eed7b1d1cd955939c5e818d75c5b3",
+      "name": "symbols_x86_dbg_cxx23.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "a2458756f882cf8805ca1ddd9c244c3a53888ed3",
+      "name": "symbols_x86_rel.def"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "9db6c6380b42031b43c3957d63d12e83ae6811ef",
+      "name": "symbols_x86_rel_cxx23.def"
+    }
+  ]
+}

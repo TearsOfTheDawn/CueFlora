@@ -1,0 +1,42 @@
+)]}'
+{
+  "id": "6123564324038cf176c37fbd3dfac2bbee1deb32",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "05215d2610d5c4bed1381b6d3af39441bc1eb8c5",
+      "name": "BUILD.gn"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "74c8302ba92830e170dfae35957468edd2e25271",
+      "name": "LICENSE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "162cb9de2bfa0e9bc254bbce1e43eae1360b2c22",
+      "name": "OWNERS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "003c53476cc0e4a9f0460d0664480b622e7552bb",
+      "name": "README.chromium"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ebada9ab4eb6ce0e07fd55cc505525ddd3735921",
+      "name": "simdutf.cpp"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "a7a27a6697988672a8a8cd2d4650e1c8a1c334bb",
+      "name": "simdutf.h"
+    }
+  ]
+}

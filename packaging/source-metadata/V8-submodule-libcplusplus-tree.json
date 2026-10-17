@@ -1,0 +1,108 @@
+)]}'
+{
+  "id": "809750c69034fcfb0cabbdb200db96c79a61733b",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "9a455d304eb56f74fabcec0969da39fbfa1733df",
+      "name": ".clang-format"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ebbfab037926512565db86b39e0650b192338aed",
+      "name": ".clang-tidy"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "4b214ca4b3e63b2a7728a79a4f28e970ffc8bf12",
+      "name": ".gitignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "845240d1b894c1d4ee42b885e8d5d9e3d5e7dd57",
+      "name": "CMakeLists.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "aa3c8cf1a8c6e3aebf00f4dde627ed429c261640",
+      "name": "CREDITS.TXT"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e159d283443f92ac78b964d2bccebe8f95d5d445",
+      "name": "LICENSE.TXT"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d47a8e3b0ea8a11e0c4cccc7f66e86ef677acfac",
+      "name": "Maintainers.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "bc785546b48e8fb69b2630311e7c9791a7299b26",
+      "name": "TODO.TXT"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "8492fb4a4a1065c9a4590bd0542b16fdaf12724f",
+      "name": "cmake"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "74d49d08d1be837ac3d29a0d80ee453b331d0dbe",
+      "name": "docs"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "848eeea4be661594291a8587b7f9a673f39095e6",
+      "name": "include"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4ade300626e677ad60ab273a98724ce25d965521",
+      "name": "lib"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "a67bbcbb433751922860e42a94fe6cb8bbe163d3",
+      "name": "modules"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "91c2b8bcf35de623d0123a36e35b1b9c2c71ea09",
+      "name": "src"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "680be3ab3acd245bc3acb1f51e6bfde280637e15",
+      "name": "test"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "2cb42447db4415ba46c764eddf894285def96d09",
+      "name": "utils"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "69f842a2a329c3af488eedb74648e4d48404bf0b",
+      "name": "vendor"
+    }
+  ]
+}

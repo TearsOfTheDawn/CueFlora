@@ -1,0 +1,330 @@
+)]}'
+{
+  "id": "ca137c843439d1ac92c948e3cfae1fbdbef001a4",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "eff72b22a29bb0af5fb8127385382e8d7f0126b0",
+      "name": "BUILD.gn"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b569804ace08827a29051ae1a3d8452bcb27336a",
+      "name": "CMakeLists.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "45f7798a6860a53fdfe22765e9d0bee9e1d67678",
+      "name": "DIR_METADATA"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b7a69d058e616651eae27b3f90c0b7fd36c099b2",
+      "name": "LICENSE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "333dabdbae609691561d1baa8fac84a8aca35f22",
+      "name": "OWNERS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e28388bfefa982df96422834e47aec249ed660f8",
+      "name": "README"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "232ef66aeb2b4442e327d2cca67ba19fc48833cd",
+      "name": "README.chromium"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "de78b4e56b038e8d72fe90e2ae3baabcad3c730f",
+      "name": "adler32.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "08c21d3e953ac66fb5b46fbcacfddd4cdec9bc5a",
+      "name": "adler32_simd.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "0b2361a5174f7af327d52889771f94c0634184fa",
+      "name": "adler32_simd.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "77f0e29e0d6b76318295b14c70bb0e59c4cc2ffb",
+      "name": "chromeconf.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e3a7516e4f99546f4cdf51c77073f12e53d4ee91",
+      "name": "compress.c"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "e4b12fb006163ce73f0f96e65e4d72be9c3b9760",
+      "name": "contrib"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "34ae7b913af9a26db95c4a816162b9a4ce8613e8",
+      "name": "cpu_features.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "6092c7e852bda2535d5b4e3eac85429b2f1783f1",
+      "name": "cpu_features.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "2ec5ab5cebef3694b175e7c074a169d61ebb1b32",
+      "name": "crc32.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "137df68d616c5ed38913579ba37b4e4c533fa903",
+      "name": "crc32.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "1c60ae9bd3c118fd156d4c92a54e0624864c7941",
+      "name": "crc32_simd.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "84624647bcd21624e8611ad638426643dd98294a",
+      "name": "crc32_simd.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "1d54ee8d48cff60694e6d25537b8b13110208075",
+      "name": "crc_folding.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d95787f286d8a9825b163547d005146133b02b24",
+      "name": "deflate.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "c55fd8f6a07b8c9201d662072487e514a8e63551",
+      "name": "deflate.h"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "1eb826280c32b60dcbe72717db80f0d80a1c1675",
+      "name": "doc"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "90c2ba2e9a6d7882e1c71e99fd104aa5755a718f",
+      "name": "examples"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "d07f50407a0c1bef2e5bb06e5e05baa1b66a9ca4",
+      "name": "google"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "48d6a86f04b6ea57f7158c19694023a9948438da",
+      "name": "gzclose.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "f7946bdc514f9809c7111b75b49f18a1097c2296",
+      "name": "gzguts.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "2db29c8f076002bf5f8e58a0038d9977d89877ff",
+      "name": "gzlib.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "bf41d63bc6156632d310b002b922dc1eefe06236",
+      "name": "gzread.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "13a3700a83c7ca7f35608eda1f68b933c8e2e343",
+      "name": "gzwrite.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7ffb7b04486409aeb7e658998f5f442b29d0b85f",
+      "name": "infback.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "58fc5afc05469631fcfa7f8f3c83fe7700fab24f",
+      "name": "inffast.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "9ff6ce3b6a96e5a4d2ae6be296f2524d6fcdf323",
+      "name": "inffast.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "05ce88e4ff5cd4e7ffe05d3a8309af1bf3b0e989",
+      "name": "inffixed.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "0742ce10ed94a640c563f14ea6a59308b37d84f6",
+      "name": "inflate.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "f758e0dcc18dc1dcfd875d3df98d71aa5743d349",
+      "name": "inflate.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "99d8d773075055c735d5db55f5a739becab95063",
+      "name": "inftrees.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "c572f49d555fd96ad81cb82038b0bee3e6b493b4",
+      "name": "inftrees.h"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "e6a654ccfbc8f6c40482dad9ede1239b047fd196",
+      "name": "patches"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "1000b774ccb60a601e42d9a30a18e0aa00357ae1",
+      "name": "slide_hash_simd.h"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "b304b404cb75e4f129149837ca8b6e25487555de",
+      "name": "test"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "1aa15510271ac397c14c158c609339354bd62de6",
+      "name": "trees.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d35639d82a27807e49ea35c334f8bbcf64720f82",
+      "name": "trees.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "2195e785506457dbcdc72ac9a31c8b1951e3e1c5",
+      "name": "uncompr.c"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "0d52d5f5362bea14f7cd6ee32f24d69e4643a885",
+      "name": "win32"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8541c5e2ea96d2954a4ad8a0ca5455b6748592ca",
+      "name": "zconf.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "828ca617e90747c2f05ef0b8e2db4bc2b1be0e5f",
+      "name": "zconf.h.in"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7dbae943318350fd220d4544a71fe466be4405d2",
+      "name": "zlib.3"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "13909f2f8eb2910609c2a6e0358d09950b15e3c0",
+      "name": "zlib.h"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7a9100f035052b6c0113f8cbc05a60d2dccac633",
+      "name": "zlib.map"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "a392727c542b38117e3f6f530cdc8dfe20d8d00f",
+      "name": "zlib.pc.cmakein"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8252ab34ca325fe2fd3d7c873e8429203b0c3d77",
+      "name": "zlibConfig.cmake.in"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "0e30c566429e7ff15b258b18a0b4bb8135c58b2b",
+      "name": "zutil.c"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "64cd7a41ecd631156df2b77a640540553f2d3be9",
+      "name": "zutil.h"
+    }
+  ]
+}

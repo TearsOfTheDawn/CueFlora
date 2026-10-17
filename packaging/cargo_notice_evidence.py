@@ -109,9 +109,12 @@ def collect(inputs,cache,output,online=False):
         rows.append(inspect(item,obtain(item,cache,online),output))
         if index%200==0: print('Exact Cargo inputs inspected: '+str(index),flush=True)
     files={path.relative_to(output).as_posix():digest(path) for path in (output/'notices').rglob('*') if path.is_file()}
+    from cargo_declarations import collect as collect_declarations
+    declarations,source_archives=collect_declarations(rows,cache,output)
     report={'schema':1,'sourceInput':source,'cargoLockSha256':hashlib.sha256(raw).hexdigest(),'packages':rows,
         'registryPackageCount':len(rows),'registryPinsComplete':True,'noticeFiles':files,
         'missingPackageRootNotices':[{'name':item['name'],'version':item['version'],'declaredLicence':item['declaredLicence']} for item in rows if not item['packageRootNoticeAvailable']],
+        'declarationNotices':declarations,'sourceArchives':source_archives,
         'redistributionApproved':False,'binaryDependencyClosureComplete':False,
         'scope':'Conservative source-lock notice superset. No Rust code execution, licence inheritance or binary shipment inferred.'}
     (output/'cargo-notice-inventory.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
@@ -149,6 +152,8 @@ def validate_evidence(folder):
             raise ValueError('Cargo root/nested notice diagnostics mismatch')
     missing=[{'name':item['name'],'version':item['version'],'declaredLicence':item['declaredLicence']} for item in observed if not item.get('packageRootNoticeAvailable')]
     if missing!=report.get('missingPackageRootNotices'): raise ValueError('Cargo missing-notice diagnostics mismatch')
+    from cargo_declarations import validate as validate_declarations
+    validate_declarations(report,folder)
     return report
 
 

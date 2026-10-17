@@ -10,12 +10,13 @@ from .detection import detected_browsers
 from .engine import Setup
 from .manifests import validate_release
 from .distribution import distribution_root
+from .terms import TERMS,confirmation
 
 
 def main():
     window = tk.Tk()
     window.title('CueFlora Setup')
-    window.geometry('540x380')
+    window.geometry('540x420')
     frame = ttk.Frame(window, padding=18)
     frame.pack(fill='both', expand=True)
     setup = Setup()
@@ -25,6 +26,16 @@ def main():
               'AI services and browser extensions are not installed by this tool.\n'
               'This installer is unsigned; Windows may show a security warning.', wraplength=490).pack(anchor='w', pady=8)
     ttk.Label(frame, text='Installation: ' + str(setup.root), wraplength=490).pack(anchor='w')
+    def show_terms():
+        dialog=tk.Toplevel(window); dialog.title('CueFlora third-party terms'); dialog.geometry('650x480')
+        body=ttk.Frame(dialog,padding=12); body.pack(fill='both',expand=True)
+        scrollbar=ttk.Scrollbar(body); scrollbar.pack(side='right',fill='y')
+        text=tk.Text(body,wrap='word',yscrollcommand=scrollbar.set)
+        text.insert('1.0',TERMS); text.configure(state='disabled'); text.pack(fill='both',expand=True)
+        scrollbar.configure(command=text.yview)
+        ttk.Button(dialog,text='Close',command=dialog.destroy).pack(pady=8)
+        text.focus_set()
+    ttk.Button(frame,text='Third-party terms',command=show_terms).pack(anchor='w',pady=3)
     detected = detected_browsers()
     try:
         configuration = validate_release(json.loads((distribution / 'release.json').read_text(encoding='utf-8')))
@@ -70,8 +81,7 @@ def main():
         if action == 'install' and not browsers:
             status.set('Select at least one detected browser.')
             return
-        if not messagebox.askyesno('Confirm ' + action, action.title() + ' the CueFlora native runtime?\n'
-                                  'Browser/provider settings and evidence remain unchanged.', parent=window):
+        if not messagebox.askyesno('Confirm ' + action, confirmation(action), parent=window):
             return
         busy = True
         for button in buttons:

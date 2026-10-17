@@ -11,7 +11,7 @@ Updated 2026-10-17. This is the current, bounded checklist. Older version handof
 - Chrome Store identity `akcolbcdfnjcahhhodnpablekjagfadf`, separate development identity and exact-bound Windows installer.
 - Per-user installation, maintenance launcher, locking, repair, upgrade, rollback, interrupted-operation recovery, conflict rejection and recoverable uninstall.
 - Pinned offline builds, clean-source builds, notices/source inventories, archive/hash validation, regression CI and Store materials.
-- Source 0.1.11 includes the original ICU notice, exact data lineage and regression-tested collector. It retains the 0.1.10 Deno environment-isolation fix. Old installers are not rewritten. Only the fresh candidate's completed reports establish rebuild success.
+- Source 0.1.12 includes original ICU/V8 submodule notices, full Cargo source delivery, labelled upstream-declaration/attribution records, installer terms and frozen solver configuration isolation. Old installers are not rewritten. Only the fresh candidate's completed verification and exact-bound third-party assessment establish rebuild/review success. See [the dependency review](THIRD_PARTY_REVIEW.md).
 
 ## Fixed, no further publisher input needed
 
@@ -19,7 +19,7 @@ Publisher/repository, support channel, Store ID/public key and prelaunch privacy
 
 ## Actual release blockers
 
-1. **Third-party obligations and remaining native findings.** The ledger identifies three unresolved assessment groups: Deno/Rust/V8, rebuilt yt-dlp/native dependencies and CPython/native terms. Exact ICU evidence now ships, but unavailable original source-commit notices and remaining advisory applicability must not be rubber-stamped. Source-lock scanner matches are not automatically shipped vulnerabilities, and permissive code does not universally require full corresponding source or a bit-identical rebuild. This is an evidence/rights question, not a request for another UI feature or a mandatory lawyer signature.
+1. **Exact-candidate third-party assessment.** Source 0.1.12 remedies the demonstrated notice/source gaps and records scoped advisory dispositions. The collector does not approve itself: use the fresh candidate's completed hash-bound assessment, not a historical pending template or a generic missing-filename count. The [review](THIRD_PARTY_REVIEW.md) explains the actual licence conditions, source delivery, configuration hardening and remaining ordinary risk limits. No mandatory lawyer signature, mathematical safety proof or bit-identical rebuild is invented as a new requirement.
 2. **Actual helper hosting.** The installer must really be uploaded and anonymously downloadable with its required notices/sources before the normal-user route works. Public source and planned URLs are not installer hosting. The connected GitHub tools do not expose binary release-asset upload and no authenticated GitHub CLI is available. Conditional publisher authorization is already recorded; missing rights/security decisions cannot be replaced by that intent. The guarded staging command is implemented and refuses unsatisfied gates.
 3. **Chrome Store account and review.** A code change cannot complete the private developer dashboard or grant Google's approval. Upload the final higher-version ZIP to the existing item, provide accurate listing/privacy/reviewer information, choose Public and complete review/publication. Genuine listing imagery is Google's requirement if the draft lacks it, not a fabricated test result. No private Store access or approval is assumed.
 

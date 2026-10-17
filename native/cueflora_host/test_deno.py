@@ -27,6 +27,22 @@ class DenoTests(unittest.TestCase):
             result.clear()
             self.assertEqual(download_process_environment()['DENO_PERMISSION_BROKER_PATH'],'synthetic-pipe')
 
+    def test_frozen_solver_configuration_cannot_be_changed_by_ambient_flags(self):
+        values={'DENO_V8_FLAGS':'--allow-natives-syntax','deno_log':'trace','DENO_AUTH_TOKENS':'synthetic',
+            'OTEL_EXPORTER_OTLP_ENDPOINT':'https://example.invalid','otel_logs_exporter':'otlp',
+            'SSLKEYLOGFILE':'synthetic-file','NODE_OPTIONS':'synthetic-options','DENO_NO_UPDATE_CHECK':'0',
+            'DENO_PATH':'C:/explicit/deno.exe','HTTPS_PROXY':'https://proxy.example.invalid',
+            'SSL_CERT_FILE':'synthetic-ca'}
+        with patch.object(sys,'frozen',True,create=True),patch.dict('os.environ',values,clear=True):
+            result=download_process_environment()
+            self.assertEqual(result,{'DENO_PATH':values['DENO_PATH'],'HTTPS_PROXY':values['HTTPS_PROXY'],
+                'SSL_CERT_FILE':values['SSL_CERT_FILE'],'DENO_NO_UPDATE_CHECK':'1','DENO_NO_PROMPT':'1'})
+
+    def test_unfrozen_solver_retains_developer_flags_and_telemetry(self):
+        values={'DENO_V8_FLAGS':'synthetic','DENO_LOG':'trace','OTEL_LOGS_EXPORTER':'console'}
+        with patch.object(sys,'frozen',False,create=True),patch.dict('os.environ',values,clear=True):
+            self.assertEqual(download_process_environment(),values)
+
     def test_production_download_passes_the_isolated_environment_to_yt_dlp(self):
         from .download import download_audio
         with tempfile.TemporaryDirectory() as temporary,patch.object(sys,'frozen',True,create=True),\
@@ -71,3 +87,4 @@ class DenoTests(unittest.TestCase):
         with patch('cueflora_host.runtime_tools.packaged_tool', return_value='deno.exe'), patch('subprocess.run', return_value=Mock(returncode=0, stdout='deno 2.9.7')) as run:
             self.assertEqual(resolve_deno(), 'deno.exe')
             self.assertEqual(run.call_args.args[0], ['deno.exe', '--version'])
+            self.assertIsInstance(run.call_args.kwargs['env'],dict)

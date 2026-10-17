@@ -186,6 +186,7 @@ def build(output, tool_lock=None, audio_build=None, transport_policy='preview', 
         shutil.copy2(interpreter_notices/'interpreter-component-notices.json',licenses/'interpreter-component-notices.json')
     if cargo_evidence:
         shutil.copytree(cargo_notices/'notices',licenses/'deno-cargo-source-superset')
+        shutil.copytree(cargo_notices/'declarations',licenses/'deno-cargo-declarations')
         shutil.copy2(cargo_notices/'cargo-notice-inventory.json',licenses/'cargo-notice-inventory.json')
     if repository_evidence:
         shutil.copytree(repository_notices/'notices',licenses/'deno-repository-source-notices')

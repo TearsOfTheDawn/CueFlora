@@ -13,6 +13,7 @@ from urllib.request import urlopen
 import zipfile
 from release_inputs import ROOT,digest
 from icu_notice import validate as validate_icu, collect as collect_icu, notice_origin as icu_notice_origin
+from v8_submodule_notices import load as submodule_notices, validate_collected as validate_submodules, notice_name
 
 
 def validate(lock):
@@ -21,6 +22,9 @@ def validate(lock):
     for field in ('bindingCommit','v8Commit'):
         if not re.fullmatch('[0-9a-f]{40}',str(lock.get(field,''))): raise ValueError('Exact V8 commits required')
     validate_icu(lock.get('icu'))
+    if lock.get('submoduleNoticesSha256')!=digest(ROOT/'packaging/v8-submodule-notices.lock.json'):
+        raise ValueError('V8 submodule selection lock changed')
+    submodule_notices()
     names=set()
     for item in lock['files']:
         if not isinstance(item,dict): raise ValueError('Malformed V8 notice source')
@@ -89,7 +93,7 @@ def collect(inputs,cache,output,online=False):
             required=item['root']+'/LICENSE'
             if required not in archive.namelist(): raise ValueError('Core V8/binding licence missing')
             for entry in archive.infolist():
-                if entry.is_dir() or entry.file_size>1024*1024 or not re.fullmatch(r'(?:LICENSE|COPYING|NOTICE|COPYRIGHT)(?:[._-].*)?',Path(entry.filename).name,re.I): continue
+                if entry.is_dir() or entry.file_size>1024*1024 or not notice_name(Path(entry.filename).name): continue
                 content=archive.read(entry)
                 target=output/'notices'/(hashlib.sha256((item['file']+':'+entry.filename).encode()).hexdigest()[:16]+'.txt')
                 target.parent.mkdir(exist_ok=True); target.write_bytes(content)
@@ -98,7 +102,12 @@ def collect(inputs,cache,output,online=False):
     target=output/'notices'/lock['icu']['noticeFile']
     target.write_bytes(icu_notice)
     notices[target.name]=icu_notice_origin(lock['icu'])
+    sub_contents,sub_origins,sub_sources,sub_evidence=submodule_notices(deps=v8_deps)
+    for name,raw in sub_contents.items():
+        (output/'notices'/name).write_bytes(raw)
+        notices[name]=sub_origins[name]
     sources=output/'sources'; sources.mkdir()
+    for name,path in sub_sources.items(): shutil.copy2(path,sources/name)
     for item in lock['files']: shutil.copy2(cache/item['file'],sources/item['file'])
     shutil.copy2(ROOT/'packaging/v8-notice-inputs.lock.json',sources/'v8-notice-inputs.lock.json')
     shutil.copy2(icu_crate,sources/icu_crate.name)
@@ -106,7 +115,7 @@ def collect(inputs,cache,output,online=False):
         shutil.copy2(ROOT/'packaging/source-metadata'/lock['icu'][field],sources/lock['icu'][field])
     report={'schema':1,'denoSha256':expected['deno.exe'],'denoVersionOutput':version,'bindingCrateSha256':crate_hash,'crateVcs':vcs,
         'versionHeaderSha256':hashlib.sha256(crate_header).hexdigest(),'lockSha256':digest(ROOT/'packaging/v8-notice-inputs.lock.json'),
-        'sourceInputs':lock['files'],'icuEvidence':icu_evidence,'notices':notices,'noticeFiles':{path.name:digest(path) for path in (output/'notices').iterdir()},
+        'sourceInputs':lock['files'],'icuEvidence':icu_evidence,'submoduleEvidence':sub_evidence,'notices':notices,'noticeFiles':{path.name:digest(path) for path in (output/'notices').iterdir()},
         'crateLicenceExclusionObserved':'LICENSE*' in package['package'].get('exclude',[]),
         'coreNoticesRestored':True,'redistributionApproved':False,'binaryDependencyClosureComplete':False,
         'remaining':['V8 transitive submodule notices at exact pointers','Deno shipped Rust dependency notice coverage',
@@ -125,6 +134,7 @@ def validate_evidence(folder,deno):
     icu=report.get('icuEvidence',{})
     if not isinstance(icu,dict) or icu.get('pins')!=lock['icu'] or icu.get('dataLineageVerified') is not True or icu.get('originalNoticeRestored') is not True or report.get('noticeFiles',{}).get(lock['icu']['noticeFile'])!=lock['icu']['noticeSha256']:
         raise ValueError('ICU notice/lineage evidence binding mismatch')
+    validate_submodules(report.get('submoduleEvidence'),report.get('noticeFiles',{}))
     paths=list((folder/'notices').rglob('*'))
     if any(path.is_symlink() for path in paths) or {path.name:digest(path) for path in paths if path.is_file()}!=report.get('noticeFiles'):
         raise ValueError('Changed V8 notice evidence')

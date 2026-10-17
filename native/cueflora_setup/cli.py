@@ -8,20 +8,26 @@ from .engine import Setup
 from .distribution import distribution_root
 from .bundle import verify_bundle
 from .package_policy import validate_package
+from .terms import TERMS,requires_acceptance
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['detect', 'status', 'self-check', 'validate-package', 'install', 'repair', 'rollback', 'uninstall'])
+    parser.add_argument('action', choices=['detect', 'status', 'self-check', 'validate-package', 'terms', 'install', 'repair', 'rollback', 'uninstall'])
     parser.add_argument('--payload', type=Path)
     parser.add_argument('--release', type=Path)
     parser.add_argument('--browser', action='append', choices=['chrome', 'firefox'], default=[])
     parser.add_argument('--apply', action='store_true')
     parser.add_argument('--report', type=Path, help='Write JSON without requiring a console')
     parser.add_argument('--allow-prototype', action='store_true', help='Developer test only; not release certification')
+    parser.add_argument('--accept-third-party-terms',action='store_true',help='Acknowledge bundled third-party terms for install/repair; use terms to read them')
     args = parser.parse_args(argv)
+    if requires_acceptance(args.action,args.apply) and not args.accept_third_party_terms:
+        parser.error('Install/repair requires --accept-third-party-terms; read terms first. No installation was attempted.')
     setup = Setup()
-    if args.action == 'self-check':
+    if args.action == 'terms':
+        result={'terms':TERMS,'applied':False}
+    elif args.action == 'self-check':
         import tkinter
         interpreter = tkinter.Tcl()  # No window or browser is created.
         result = {'tclVersion': interpreter.eval('info patchlevel'), 'guiOpened': False,

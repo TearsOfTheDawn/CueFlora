@@ -1,0 +1,354 @@
+)]}'
+{
+  "id": "fc81aa1369c04e70dbf9d1431b74a0e6914fa81f",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "40e0b556aaee4e0111a0171e5c22113f02a6904a",
+      "name": ".bazelignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "41bb1d565d50d3ce975be53c064227fc1c92b340",
+      "name": ".bazelrc"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "6d2890793d472568bda2a7937a2b3f6496a844e6",
+      "name": ".bazelversion"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3f19e616188b75ecc8d6c0b890a1c8cd0fd7cc1d",
+      "name": ".clang-format"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8a822c2af80cef223305492cc700a149367a736b",
+      "name": ".clang-tidy"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "444384f11cef0b9f4962df43620f8597751e257f",
+      "name": ".git-blame-ignore-revs"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e62f16c4005c2837156433d8efa4f9341802fd5d",
+      "name": ".gitallowed"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "372ad93bb5e17185d646ddcee08ec418199826bc",
+      "name": ".gitattributes"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "26c8cca7647b483753ad4722ff0fa584dff42725",
+      "name": ".github"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "5a33bece341fd6df8a1aada14a9537408b7f91d3",
+      "name": ".gitignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d7ecabe8bf529ac65d29b240df2147d70cabbb23",
+      "name": ".gn"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "fdd07237cbe37372f7d5612afe4d3123ba2fedee",
+      "name": ".style.yapf"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b67784eaf1f6d5b8fa6970af4e11844c94ff2ceb",
+      "name": "Android.bp"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "760d35c53623d0a84e1a1bf3292cc1265cbd41de",
+      "name": "Android.bp.extras"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "df3c8af058115988dc1f30f8ad6d0691665bf577",
+      "name": "BUILD"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "926e489576a079e4bb7c9edffe6507d64ae9a5fe",
+      "name": "BUILD.extras"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "4956f47a5ed0dbbc4f115683c9da99d733c4d485",
+      "name": "BUILD.gn"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "67665d5dbea83a8693b2bb2957cbba5c1f613cc1",
+      "name": "CHANGELOG"
+    },
+    {
+      "mode": 40960,
+      "type": "blob",
+      "id": "dd20853b659ee48b804c93bb9b1661e0f9779cf9",
+      "name": "CLAUDE.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "4bf26a6e1a9737a4e6a361565d89264db96b7b60",
+      "name": "CONTRIBUTORS.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "6c287809b38bf14f8913d60bed72e61acffe1eca",
+      "name": "DIR_METADATA"
+    },
+    {
+      "mode": 40960,
+      "type": "blob",
+      "id": "dd20853b659ee48b804c93bb9b1661e0f9779cf9",
+      "name": "GEMINI.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "681d40008ee32ddb7e4e1413d6bf82c4f68c5b5b",
+      "name": "LICENSE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d97975ca3b99b2c09e1d43944d83625c0aee561e",
+      "name": "METADATA"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "f94686dcb5d94d0bc7c9e5113203450086e8fb36",
+      "name": "MODULE.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7c4aa62c3aa282e7e42c7808abfaf9d9af904946",
+      "name": "MODULE.bazel.lock"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "name": "MODULE_LICENSE_APACHE2"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "38d244712e422ebf9f79c6fdf200e71cb3a07842",
+      "name": "OWNERS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "315f27d596e8c3c409212f936b70bfadb9122b28",
+      "name": "OWNERS.github"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "97e7c3ac03b83c1e9a5a7e3d267de8e32953cb21",
+      "name": "PerfettoIntegrationTests.xml"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "336893eaa6ce02d3a8e203aa72072be6bbf0af84",
+      "name": "README.chromium"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3a3370b813c271ff0f0ade005ec9f0265c2ddf14",
+      "name": "README.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "cf10eb3f36a1b1ba9499fabb05b9cc1f38a572c3",
+      "name": "TEST_MAPPING"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "7db832e03c5ab4394618a0f573576802bfba697d",
+      "name": "WORKSPACE"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "55dd31546fee689bfd20b09083b1165768836dfb",
+      "name": "ai"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "895dd04246af9d2c77d5667576a65c63cf8cc8d6",
+      "name": "bazel"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4f1ada0766afcad4b12a52002dcf7a48cb4aca3f",
+      "name": "build_overrides"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ef3fd121e1a95dbe4bf380ea89fbe303110fa676",
+      "name": "buildtools"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "79787365bc7bf1f27f2f92db2f1da6767681bf26",
+      "name": "contrib"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "2613e249c2f671f6f2eabaf1103ca8f586f678f6",
+      "name": "docs"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "07e7daf2eebfad17de2dc27a919eb4abf4befa22",
+      "name": "examples"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "e5d5271093eeaec36ffeae9554defa3c96df2dd1",
+      "name": "gn"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d63e3bea1da1b831249fdd94efadba2475921652",
+      "name": "heapprofd.rc"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "d13cc185929c3efb1af4b31ce3f3f0fdcd721d5b",
+      "name": "include"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "1750f88a4124210a9187ba7800e5580550d396c7",
+      "name": "infra"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "8fb1e26275a3e89c270056747df8bbcd61f89267",
+      "name": "meson.build"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "555e197444837611209108af576aac4c51df66b0",
+      "name": "perfetto.rc"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e05428ca177ff70c22b003ad2be99ff6bf672dc2",
+      "name": "perfetto_flags.aconfig"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "3349f394d7d2ed44f7a6af478f411ce7a02d05df",
+      "name": "persistent_cfg.pbtxt"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "9d86f3e9cd8c67db2fbe47ff01b959b9da0364c4",
+      "name": "protos"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "c8a25671793d38362b5383fb71e5216b3e7b512e",
+      "name": "python"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "caaf45fe296137063b951acfe9f6a91665c8b303",
+      "name": "sdk"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4833ec279f41576c3c13c62dba0c1a0bf4a63a5f",
+      "name": "src"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "848925360aae9a54b228b219765fdfd0b25890f1",
+      "name": "test"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ac156e3e061733877b11e80e4f568903400e4276",
+      "name": "third_party"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "3d433cae79f117c229dff5f43a6497de175fb679",
+      "name": "tools"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "16b44aea324715f00d2bfc8721525639da26c50d",
+      "name": "traced_perf.rc"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "74f2e74509ef517c396789adb788418e80525da1",
+      "name": "ui"
+    }
+  ]
+}

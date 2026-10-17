@@ -1,0 +1,150 @@
+)]}'
+{
+  "id": "d4eae0d5654ec3b4dd8414ea16fcf48480035a00",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "f33ebf5f766ed22d9c727d8e1ef82ac50fbb375f",
+      "name": ".bazelrc"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ad6c3458b4cad6b86b6c3273931ae36705b8adff",
+      "name": ".cirrus.yml"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "58108c414c4c7128d6cab14d2ec1af31b4cdf69f",
+      "name": ".clang-format"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "81f4f006f2d9532b12915d864bb04b2cb6ed82c5",
+      "name": ".github"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "17a55c1df263e16db7e410f269cdf9c4b9b2c02a",
+      "name": ".gitignore"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "ae854aed89d49c68885caaed3e13c260cb833952",
+      "name": ".travis.yml"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "60c9425823208d8fe9400445ffcd648cc03480fe",
+      "name": "AUTHORS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b08e90908221939ca75024410cef6a465f21d018",
+      "name": "BUILD.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e7cedc2a4677de803e535dee31b2427a791a160d",
+      "name": "CMakeLists.txt"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "4b705554c064299c99452484cf2ea332a0b9e28e",
+      "name": "CONTRIBUTORS"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "26f4398f24999c3908a11653e3b5ba6f9d681123",
+      "name": "LICENSE-APACHE"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "127a5bc39ba030c7cb99cc0aedc4f280ffe27310",
+      "name": "LICENSE-BOOST"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "2fb2a37ad7fda521092c8b7b16911176c3f8a81b",
+      "name": "LICENSE-MIT"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "9f63ac4ef58a5fd0aee3c820c51dfb7868da6a19",
+      "name": "MODULE.bazel"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "be0f1f56c51ea088c80b93776813acf2f79a1b7c",
+      "name": "README.md"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "87c4c9b35e31765c7a8b89f3ace62974d9301064",
+      "name": "SECURITY.md"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "0445495a6270bbfb7ac9ee5d51b11000eb02c6f2",
+      "name": "benchmarks"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "70c3d4223f07504921f2f7a29c8512364f53021a",
+      "name": "ci"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "name": "clang-format-ignore.txt"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "ecd207e40ec9ea870513889fdc51ec2f31a9b377",
+      "name": "cmake"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "1cc0973494bfd7cf32d4dbc9bdd3e0fcbc99899e",
+      "name": "fuzz"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "3e2847d09f7857ad812048e446b46d88141db4e1",
+      "name": "include"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "4578c5dc89be5e350611959304c5dd3c15bbdf29",
+      "name": "script"
+    },
+    {
+      "mode": 16384,
+      "type": "tree",
+      "id": "8af0bcbc2d97ff04e108ea58fbef1ba109b66b6f",
+      "name": "tests"
+    }
+  ]
+}

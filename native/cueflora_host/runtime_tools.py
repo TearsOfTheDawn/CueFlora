@@ -34,7 +34,8 @@ def resolve_deno():
     if not candidate:
         raise RuntimeError('Deno is missing; upgrade or repair CueFlora runtime')
     try:
-        result = subprocess.run([candidate, '--version'], capture_output=True, text=True, timeout=5)
+        result = subprocess.run([candidate, '--version'], capture_output=True, text=True, timeout=5,
+                                env=download_process_environment())
         version = re.match(r'deno (\d+)\.(\d+)\.(\d+)', result.stdout)
         if result.returncode or not version or tuple(map(int, version.groups())) < (2, 3, 0):
             raise RuntimeError('Deno 2.3.0 or newer is required; upgrade CueFlora runtime')
@@ -44,17 +45,21 @@ def resolve_deno():
 
 
 def download_process_environment():
-    """Packaged solvers must not inherit a different permission authority.
+    """Packaged solvers must not inherit unrelated runtime/telemetry policy.
 
     Deno's permission broker replaces command-line permission decisions. A
     browser inheriting a global broker configuration must not silently retune
     the private solver. Developer (unfrozen) executions retain their own policy.
     Tool-path overrides, proxies and certificates are otherwise unchanged.
+    This freezes configuration, not an OS sandbox or a dependency patch.
     """
     environment = dict(os.environ)
     if getattr(sys, 'frozen', False):
         environment = {key: value for key, value in environment.items()
-                       if key.upper() != 'DENO_PERMISSION_BROKER_PATH'}
+                       if not (key.upper().startswith('DENO_') and key.upper()!='DENO_PATH')
+                       and not key.upper().startswith('OTEL_')
+                       and key.upper() not in {'SSLKEYLOGFILE','NODE_OPTIONS'}}
+        environment.update({'DENO_NO_UPDATE_CHECK':'1','DENO_NO_PROMPT':'1'})
     return environment
 
 

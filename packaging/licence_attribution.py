@@ -72,6 +72,12 @@ def augment(metadata, report, runtime):
     if cargo:
         inventory=json.loads((runtime/'licenses/cargo-notice-inventory.json').read_text())
         if inventory['cargoLockSha256']!=cargo['cargoLockSha256']: raise ValueError('Cargo source notice binding mismatch')
+        for notice,entry in inventory.get('declarationNotices',{}).items():
+            name='licenses/deno-cargo-declarations/'+notice
+            if files.get(name)!=entry['sha256'] or digest(runtime/name)!=entry['sha256']:
+                raise ValueError('Cargo declaration notice origin mismatch')
+            add('cargo-declaration:'+entry['name'],entry['scope'],entry['version'],
+                entry.get('declaredLicence') or 'see original upstream licence file',[name],[name],verified=True)
         for item in inventory['packages']:
             for notice,entry in item['notices'].items():
                 name='licenses/deno-cargo-source-superset/'+notice.removeprefix('notices/')

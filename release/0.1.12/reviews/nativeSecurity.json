@@ -1,0 +1,293 @@
+{
+  "artifacts": {
+    "sourceInventorySha256": "b4a56ef1ae2295accc37ab6aa3f84da4a4cc4a388455443db6f7f2243a03f955",
+    "runtimeInventorySha256": "917f11f832dc2573fbe586534fa20b065a322373cff5603f578ae29e4aad333c",
+    "setupSha256": "48d052c99aa7b3b0e0030e607c5a88aa0ba036f7766605cb23b7e01622184f85",
+    "extensionSha256": "637a0814cf0d6672dba421778812eeb9ba23f18702d6ed860a91a1bedc442c9e"
+  },
+  "gate": "nativeSecurity",
+  "status": "passed",
+  "reviewedBy": "Codex (automated dependency-specific engineering review)",
+  "reason": "Known native dependency findings reviewed against exact source/callers and the restricted solver contract; ambient execution configuration hardening and fresh actual-binary permission checks pass. This is scoped engineering acceptance, not patched dependency versions or a guarantee of safety.",
+  "knownPackageFindings": [
+    {
+      "name": "adler",
+      "version": "1.0.2",
+      "advisories": [
+        "RUSTSEC-2025-0056"
+      ],
+      "disposition": "maintenance-warning-not-a-demonstrated-vulnerability",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "anyhow",
+      "version": "1.0.98",
+      "advisories": [
+        "RUSTSEC-2026-0190"
+      ],
+      "disposition": "documented-API-consumer-on-WASI-only-source-chain; Deno-call-is-std-Any",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "bincode",
+      "version": "1.3.3",
+      "advisories": [
+        "RUSTSEC-2025-0141"
+      ],
+      "disposition": "maintenance-warning-not-a-demonstrated-vulnerability",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "crossbeam-epoch",
+      "version": "0.9.18",
+      "advisories": [
+        "RUSTSEC-2026-0204"
+      ],
+      "disposition": "affected-pointer-format-not-used-by-inspected-direct-consumers",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "faster-hex",
+      "version": "0.10.0",
+      "advisories": [
+        "RUSTSEC-2026-0306"
+      ],
+      "disposition": "documented-precondition-absent-in-previous-exact-source-inspection",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "h2",
+      "version": "0.4.7",
+      "advisories": [
+        "RUSTSEC-2026-0258"
+      ],
+      "disposition": "network-API-permission-boundary-observed; not-patched-or-universally-unreachable",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "hickory-proto",
+      "version": "0.25.2",
+      "advisories": [
+        "GHSA-3v94-mw7p-v465",
+        "GHSA-q2qq-hmj6-3wpp",
+        "RUSTSEC-2026-0118",
+        "RUSTSEC-2026-0119"
+      ],
+      "disposition": "network-API-permission-boundary-observed; not-patched-or-universally-unreachable",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "hickory-resolver",
+      "version": "0.25.2",
+      "advisories": [
+        "GHSA-5j98-2g5x-46v6",
+        "GHSA-6f2x-v7q7-m7m5"
+      ],
+      "disposition": "network-API-permission-boundary-observed; not-patched-or-universally-unreachable",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "memmap2",
+      "version": "0.9.5",
+      "advisories": [
+        "RUSTSEC-2026-0186"
+      ],
+      "disposition": "documented-precondition-absent-in-previous-exact-source-inspection",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "paste",
+      "version": "1.0.15",
+      "advisories": [
+        "RUSTSEC-2024-0436"
+      ],
+      "disposition": "maintenance-warning-not-a-demonstrated-vulnerability",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "quick-xml",
+      "version": "0.39.4",
+      "advisories": [
+        "RUSTSEC-2026-0194",
+        "RUSTSEC-2026-0195"
+      ],
+      "disposition": "documented-precondition-absent-in-previous-exact-source-inspection",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "quinn-proto",
+      "version": "0.11.16",
+      "advisories": [
+        "RUSTSEC-2026-0338",
+        "RUSTSEC-2026-0339",
+        "RUSTSEC-2026-0340",
+        "RUSTSEC-2026-0341",
+        "RUSTSEC-2026-0342"
+      ],
+      "disposition": "network-API-permission-boundary-observed; not-patched-or-universally-unreachable",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "rand",
+      "version": "0.8.5",
+      "advisories": [
+        "GHSA-cq8v-f236-94qc",
+        "RUSTSEC-2026-0097"
+      ],
+      "disposition": "documented-logger-ThreadRng-reentrancy-not-found-in-inspected-CLI-and-SDK-log-paths; not-a-library-patch",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "rand",
+      "version": "0.9.2",
+      "advisories": [
+        "GHSA-cq8v-f236-94qc",
+        "RUSTSEC-2026-0097"
+      ],
+      "disposition": "documented-logger-ThreadRng-reentrancy-not-found-in-inspected-CLI-and-SDK-log-paths; not-a-library-patch",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "rsa",
+      "version": "0.9.10",
+      "advisories": [
+        "RUSTSEC-2023-0071"
+      ],
+      "disposition": "no-provider-secret-key-or-decryption-service-given-to-solver; arbitrary-script-crypto-not-patched",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "rustls",
+      "version": "0.23.40",
+      "advisories": [
+        "GHSA-2mjx-qc3c-rqvc",
+        "RUSTSEC-2026-0285",
+        "RUSTSEC-2026-0346",
+        "RUSTSEC-2026-0348",
+        "RUSTSEC-2026-0349"
+      ],
+      "disposition": "network-API-permission-boundary-observed; not-patched-or-universally-unreachable",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "rustls-pemfile",
+      "version": "2.1.2",
+      "advisories": [
+        "RUSTSEC-2025-0134"
+      ],
+      "disposition": "maintenance-warning-not-a-demonstrated-vulnerability",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "scc",
+      "version": "3.7.1",
+      "advisories": [
+        "RUSTSEC-2026-0205"
+      ],
+      "disposition": "test-or-benchmark-consumer-only-in-inspected-source",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "smartstring",
+      "version": "1.0.1",
+      "advisories": [
+        "RUSTSEC-2026-0249"
+      ],
+      "disposition": "maintenance-warning-not-a-demonstrated-vulnerability",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "unicycle",
+      "version": "0.10.2",
+      "advisories": [
+        "RUSTSEC-2026-0298"
+      ],
+      "disposition": "test-or-benchmark-consumer-only-in-inspected-source",
+      "confirmedCueFloraExploit": false
+    },
+    {
+      "name": "xxhash-rust",
+      "version": "0.8.15",
+      "advisories": [
+        "GHSA-6g2r-675j-hx59"
+      ],
+      "disposition": "documented-precondition-absent-in-previous-exact-source-inspection",
+      "confirmedCueFloraExploit": false
+    }
+  ],
+  "basis": "Five maintenance warnings do not establish exploits. Test/WASI-only chains and absent API preconditions have exact caller evidence. Network/library findings remain affected upstream versions, but the normal local solver receives no network/file/process permission grants, remote/npm modules or provider secrets, and its packaged environment strips broker/logging/telemetry overrides. RSA timing lacks a persistent provider private-key/decryption service. Fresh ordinary API probes observe no loopback traffic and denied environment access. No known finding remains without a scoped disposition. Future V8/native issues and same-user malware remain residual risks, not a mathematical-safety claim. Actual confirmed newly reachable issues require remediation.",
+  "evidenceFiles": {
+    "evidence/ASSESSMENT-002.json": "ad1ce7e4164fd977acb2c5ad7f60e0f38e1ab911c66d236c19850c1d9e694ea3",
+    "evidence/faster-hex-review-001.json": "90e9a1115e00df1deaad7227c3bfe3aa44d737da066980ae05765e2fb049725b",
+    "evidence/licence-assessment-verification.json": "c8960dba4c6839e3fb615e9641c94e52418a4b61a58fed7a524ebcf06c3af03f",
+    "evidence/memory-hash-review-001.json": "a56b013d51af1515a8d5c14a7280722c650fd6915bec9c6d9b19c66562e3ed59",
+    "evidence/packaged-security-probes.json": "b3f78b6835ba3438bbf82e42a1bcd7b64b9613861f2489b8f8d0acfe19b55e74",
+    "evidence/scoped-advisory-findings-002.json": "90145b94056340674e33c3517938dfaca323eeef03455b703e15321d416b5bd8",
+    "evidence/setup-terms.json": "abc9807f308744164d6b923e9aae4b57b72bca69bde8946195bc9d63e5d8114a",
+    "evidence/THIRD_PARTY_REVIEW.md": "36ee5ad0d00a42bcd56409164b11db441a63ed134068c1899132e0319d7a92b3",
+    "evidence/triage-001.json": "04a4e51582a5f0b94ed532cd13c0ed4a3786511b0e4d94752a3d7313d399e765",
+    "evidence/advisory-snapshot/all-queries.json": "8819699e0e8ad6a943068169fbdf012c94b3dd4c8d7fe54a757837d925f242e6",
+    "evidence/advisory-snapshot/audit-summary.json": "a8e5d8fad853bf9c2e91acd24c1daca24056ef3d607d239534a25cef55bd6c14",
+    "evidence/advisory-snapshot/deno-published-advisories.json": "fc35fb3be775569aa8a77f6ceada62b7499abedc96e3c538dd3cabf083bd8d90",
+    "evidence/advisory-snapshot/GHSA-2mjx-qc3c-rqvc.json": "d24092108543cc22e848e9eb0f86c302d7f49866a9571b3f0bac2d0bf6b366a5",
+    "evidence/advisory-snapshot/GHSA-3v94-mw7p-v465.json": "5548bea9f8ffc39f389c5be1a9f9b6f16cf70c7ddda5f4a04ae42ac1e934b7f8",
+    "evidence/advisory-snapshot/GHSA-5j98-2g5x-46v6.json": "4d9f9688afe1d081e0808501e1c705f765366338d85a034de70df723a32f0419",
+    "evidence/advisory-snapshot/GHSA-6f2x-v7q7-m7m5.json": "e436a402762678b4963dfcb95bd20f932ca6db051b3e7fe8db75e97cfce0e362",
+    "evidence/advisory-snapshot/GHSA-6g2r-675j-hx59.json": "6e49fe789c71696756100883fc960d49e3570d2aedc30679930dee570c7ee886",
+    "evidence/advisory-snapshot/GHSA-cq8v-f236-94qc.json": "c07fd16bf54308adf7acbf6db0c1defb37d7b0eb93ca643c7257a44fedc6749a",
+    "evidence/advisory-snapshot/GHSA-q2qq-hmj6-3wpp.json": "bad42795b4aabc4e0483511694c7f79d94a2f6af8c418afc257265ef83ba7831",
+    "evidence/advisory-snapshot/query-001.json": "a7ef012100898b0a424d9f3370a7d9b5e02b45a3fb9e8b3ab2b5e4ee8b460459",
+    "evidence/advisory-snapshot/query-002.json": "dacb409eb8809720f50512292572c77c574916102d34b1f3e7889c4333a4de71",
+    "evidence/advisory-snapshot/query-003.json": "ca15a6291174f6f266901d8b1e7949675f632223a6355d23451d877faef93cf6",
+    "evidence/advisory-snapshot/query-004.json": "9eed46ad329dc9083e6801371f3c4bb26f04bc1be4ec34ea303ee72bdc1ac5d1",
+    "evidence/advisory-snapshot/query-005.json": "4f6a7fa5674e612624741a71d48e3c7e9e9071ad94efbf8c95f9dab762264f2d",
+    "evidence/advisory-snapshot/query-006.json": "6cc90cee69b493aadfc850f29479a0bc520691ff7bf2c7574c9f94ab2bec7271",
+    "evidence/advisory-snapshot/query-007.json": "824f3f5f3d7f206e8924fd60a73ee7d1d705a1f2f715735ea9e35f64f3718257",
+    "evidence/advisory-snapshot/query-008.json": "1f54c5073beacfbf6d0a5116a24d885047bd24c03a289400480c3cc8e568d1df",
+    "evidence/advisory-snapshot/query-009.json": "9798d7b6c73890422e635acb4291d32195b4f9d01e3bcb953fe93b835c939573",
+    "evidence/advisory-snapshot/query-010.json": "d5ee0dec43c082a6082522915d8c7d5785b60aa1ed34d8e6f49e841e15899b4a",
+    "evidence/advisory-snapshot/query-011.json": "ccc106d26eaecdf54b049e33d466319109792b645a703996e6d9dc4964e0c08d",
+    "evidence/advisory-snapshot/response-001-01.json": "3e0676c10cadf7b332d68b586399c01123ed139af10fffd91721dd976efdc9d9",
+    "evidence/advisory-snapshot/response-002-01.json": "3aab3738ae091ced717f40b92d878f301e6da71be366d32b0398fca14a7db0bf",
+    "evidence/advisory-snapshot/response-003-01.json": "0789d52c87343e0a75d17e7d2cd65e0e1c4d98755e93b8d835f78f8cb9565116",
+    "evidence/advisory-snapshot/response-004-01.json": "368a847b78a9107043de136db003692c1d07cc6a568c54e6c57cb04359c0bcae",
+    "evidence/advisory-snapshot/response-005-01.json": "dd6ac0b43497afbf1232af0fc6ad1872d723ac533421370575aa9f64e4fbfd71",
+    "evidence/advisory-snapshot/response-006-01.json": "f5379ae2a98a40eacf7c9b9bad921f8e58881bc09b96c3fc759a9ca5449f99e2",
+    "evidence/advisory-snapshot/response-007-01.json": "2941870b849b1ab3e1c85e17fa1b9adf87da9af9efcaa90dbd43be905612cd36",
+    "evidence/advisory-snapshot/response-008-01.json": "111f17a7d16d35040fcd14fe66f65502bcda88f5076f5af6ecca4d7811f2f595",
+    "evidence/advisory-snapshot/response-009-01.json": "b163ba12f00708497536717904f6196debc89b840e7c74b102767c079b1ed0e5",
+    "evidence/advisory-snapshot/response-010-01.json": "944db654f4a1bde30f0266bfad6de1f77f99d4db288b2d45764262cb91b25686",
+    "evidence/advisory-snapshot/response-011-01.json": "a7fd2699638da1ef17a69be1e1127ace3f16c330a8c5e959e4a68f74fc18ec2e",
+    "evidence/advisory-snapshot/RUSTSEC-2023-0071.json": "fc75336a09eea33128a4be6a8d439dce6d5c4bfcbd3bbd8adbd0945d58f285e4",
+    "evidence/advisory-snapshot/RUSTSEC-2024-0436.json": "2b5df10b2add631c815c7be5c40c8c973dad4f803ef142f0e3de46f7e95f731e",
+    "evidence/advisory-snapshot/RUSTSEC-2025-0056.json": "971741e9449ba5186ba168bbdc4770ea0073d69a860f05365c15f1d96789e32e",
+    "evidence/advisory-snapshot/RUSTSEC-2025-0134.json": "b43142b68e328d1509f5d42f09c5cf92f3327f28e1104796829997dae41f1511",
+    "evidence/advisory-snapshot/RUSTSEC-2025-0141.json": "3407c7223d4bf78487d0329a75762a4402c949e8e998605e8511b505e58fc78b",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0097.json": "9a37f78b19ebefa8814d7681a74c9feb8f032f12e4e0c3b64e3ccbe5885ec4bc",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0118.json": "fd13c4665be6059a757380a08cf12198dc709fb0843a1c19b14c5df988725047",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0119.json": "f6defab6e58ddb74397baec0b7d2a2428f6257f3a4938b182d525e3b315f978e",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0186.json": "542622a79742939258ed0e530ff241c1dd857cf9efda7714b1cfd068b4bf2842",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0190.json": "e51d52cb0d1deb267a9d0c04f7d877bebc9bbd63b733b892fc950953eb3667d9",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0194.json": "c44a41e73567bcf42930e03cbebf8cad20daf15d66ba2ff9e28c3d10d780cd2e",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0195.json": "10af8049dd1be42df54762ec291c31c1abc7108daa5c154acac13050d9eef99f",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0204.json": "22242f52c6a8eccf23bd0f26c13845b9c4ca59fb5133f24086ecae8ed69cbcb0",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0205.json": "7f21264f4edfc87339b0d7c0a0c15955620d07f3b96c72595990e35d9a5bb9b0",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0249.json": "412b1980a253cc2f9f4a9095b51337d221992d2e3dc89adeb064452818d737b3",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0258.json": "c58b92591279ddda3f99c3e610408a61b59719a30646b5c0f045d04f53c3ceda",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0285.json": "71f53663a10100c6a886dc80ab4fc951f70659c6a7134fc4f692173d655c9904",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0298.json": "dd0b4673a924ce1366a306eea608fa1f266ee4f4035a9a6bd28a4f1bb6f5454c",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0306.json": "4639b1c230363ee4db48d32884ab99783e02a0d9e0d9d7997c4ac19912bb5f18",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0338.json": "56efa7c95cd09db066b903501bb6b3c46aee1426fb7c8fd6aabc7c765584434a",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0339.json": "df127db56c8a55be35e4a6a5319b8802727685730e0d66c581291d4c16ede896",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0340.json": "66fa9994889102a01b93eb8e912affd7cd13e5702717bac7814bf3d8131bb590",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0341.json": "312eefe4245623041bf191da2f7ba42ea51b1dc9c88d31c31f0d12c923e8b25b",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0342.json": "03a5f6e4ad02a349eeddab15896cecf42f2e9767a0416642dc3f8f565213eb46",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0346.json": "67670224748e49a302e3d5344453679466c2c0b1dd808e325bff8af7558f8b82",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0348.json": "3d9113bde1bbffbc77e980b05de869b5c4dab06f3413cb285685060a3753c5b6",
+    "evidence/advisory-snapshot/RUSTSEC-2026-0349.json": "07815dcd55d1367f034bf9dca0e1c9b2604fb4a9437c281b8a9c70707fefbb40"
+  },
+  "advisorySnapshotDate": "2026-10-16",
+  "libraryVersionsChanged": false,
+  "libraryAdvisoriesPatched": false,
+  "scope": "Existing Windows/Chrome solver configuration and the identified advisory set. No independent auditor, browser Run, clean-machine acceptance, Google policy approval or universal exploit-resistance proof is claimed."
+}
