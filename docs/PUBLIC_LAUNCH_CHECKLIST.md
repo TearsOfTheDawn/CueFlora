@@ -1,4 +1,6 @@
-# Public launch: remaining steps
+# Historical Chrome Store launch checklist
+
+**Superseded on 2026-10-17:** the publisher abandoned Chrome Web Store distribution. The steps below are retained as historical evidence, not current instructions or release prerequisites. Follow [GitHub-only distribution](GITHUB_DISTRIBUTION.md) and [current release status](FINAL_RELEASE_STATUS.md). Do not submit or publish the Store draft.
 
 The intended first Store release is Public. A private testing release is optional and is not part of this route. This checklist does not mean the software has launched or passed Google review.
 

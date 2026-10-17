@@ -1,5 +1,7 @@
 # CueFlora private preview: install and remove
 
+**Current release route:** GitHub only; Chrome Store publication is abandoned. This page still describes existing private-preview packages, not a newly rebuilt public release. See [GitHub-only distribution](GITHUB_DISTRIBUTION.md) for the matching unpacked extension/helper route. Historical Store ZIPs must not be substituted for a keyed unpacked extension.
+
 This guide is only for development-identity private previews. Public-identity candidates must use their own generated `START_HERE.md` and matching `Chrome-acceptance` folder; do not mix identities/helpers or treat an older package as updated by source changes. Public release remains gated by the current candidate's reports and [launch checklist](PUBLIC_LAUNCH_CHECKLIST.md).
 
 Windows x64 / Google Chrome only. This is unsigned development software, not a published Chrome Web Store release. Installation/testing is optional; existing Substrata can remain installed unchanged.

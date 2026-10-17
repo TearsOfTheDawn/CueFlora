@@ -1,5 +1,7 @@
 # CueFlora 0.1.11 release preparation
 
+**Distribution update, 2026-10-17:** Chrome Store launch instructions in this historical preparation record are superseded by [GitHub-only distribution](GITHUB_DISTRIBUTION.md). Existing packages/approvals remain unchanged. Store-oriented automation has not thereby become a GitHub release path; use [current status](FINAL_RELEASE_STATUS.md) for the finite remaining work. No Store submission is planned.
+
 This source prepares Windows x64 / Chrome candidates. It does not publish, install into the live environment, provision AI services or certify semantic subtitle accuracy. Substrata and previous packages remain separate.
 
 The final sweep adds the exact ICU 77.1 original licence/data notice to normal packaging, not merely an investigation folder. The collector verifies original notice/tree hashes, the Deno Cargo crate checksum, the ICU data SHA-256/Git blob and V8's pinned dependency before shipping its terms. Sources/evidence enter the matching source bundle. Eight added regressions cover altered/missing inputs, false lineage, offline refusal and the production ledger's notice-origin contract. Earlier 0.1.10 artifacts remain immutable. See `FINAL_RELEASE_STATUS.md` for the finite checklist and actual release-access/third-party blockers; no new feature or mandatory prelaunch test is introduced.

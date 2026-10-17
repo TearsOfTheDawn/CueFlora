@@ -8,6 +8,8 @@ CueFlora combines available YouTube captions, optional AI transcription and opti
 
 ## Pre-release status
 
+**Distribution decision: GitHub only. Chrome Web Store publication is abandoned.** See [the GitHub distribution route](docs/GITHUB_DISTRIBUTION.md). Store drafts and old packages are historical; no Store account action, listing screenshot or Google review is required for this route. This decision does not establish permission for YouTube audio acquisition.
+
 Use the [final bounded release checklist](docs/FINAL_RELEASE_STATUS.md) for current status. Older handoffs are historical, not an expanding list of new requirements.
 
 Source/privacy/help publication is separate from a software release. There is **no public installer or Chrome Store extension available yet**. Existing private previews remain preserved; they are not public downloads or redistribution approval. You can inspect the source and documented builds, but the ordinary-user installation path awaits the remaining release gates.
@@ -24,13 +26,13 @@ The polished preview preserves caption/AI choices, completion and failed-save dr
 
 See [installation/removal instructions](docs/INSTALLATION.md) and [implementation handoff](docs/IMPLEMENTATION_HANDOFF.md).
 
-## Public installation after launch
+## GitHub installation after launch
 
-Install the Chrome Store extension → download and run the matching Windows Setup → connect your existing AI services → choose languages → press Run. No Python, administrator access, PATH edits or persistent companion are required. Transcription needs a compatible `/audio/transcriptions` service; translation needs `/chat/completions` with structured JSON output. A website subscription or ChatGPT login is not necessarily API access. Service pricing/availability and output accuracy are outside CueFlora's control. Captions-only use can skip AI setup when the video provides suitable tracks.
+Download the matching extension/helper package from GitHub Releases → extract it to a permanent folder → open `chrome://extensions`, enable Developer mode and choose **Load unpacked** → run the matching Windows Setup → connect your existing AI services → choose languages → press Run. The helper bundles Python and audio tools; no separate Python installation, administrator access, PATH edits or persistent companion are required. Transcription needs a compatible `/audio/transcriptions` service; translation needs `/chat/completions` with structured JSON output. A website subscription or ChatGPT login is not necessarily API access. Captions-only use can skip AI setup when suitable tracks exist.
 
-The Store item and public installer downloads are not live yet. The Store draft identity/public key and prelaunch help locations are established; final artifacts and external release reviews remain separate. GitHub Releases will host matching binaries/sources, GitHub Pages privacy/install information, and GitHub Issues support. Do not use a keyless submission ZIP as an unpacked preview expecting it to match the development helper.
+Public installer downloads are not live yet. GitHub Releases is the intended home for matching binaries, notices and sources; GitHub Pages provides privacy/install information, and GitHub Issues provides support. Use the keyed unpacked extension matching its helper, not a keyless Store-submission ZIP. A public key fixes the extension ID without requiring a Store installation. Development previews remain separate.
 
-The intended first Store release is **public**, not a private testing release. Use the latest fully verified ZIP in the existing Store item when preparing the final submission rather than creating another item or uploading every intermediate build. Live installation/Run testing is deferred until after launch at the publisher's choice, not reported as passed. Genuine Store screenshots and the remaining licence, security/policy, download and Google review gates still apply. See [the public-launch checklist](docs/PUBLIC_LAUNCH_CHECKLIST.md).
+On ordinary Windows/Chrome installations this is a manual Developer-mode route, not a one-click Store installation. Keep the extracted folder; extension updates require replacing its files and reloading the extension, while helper updates use Setup. Existing Store-oriented readiness/installer automation still needs a channel-specific migration before it can claim a complete GitHub release. Do not bypass existing safeguards or describe documentation changes as a rebuilt package. See [the launch checklist](docs/PUBLIC_LAUNCH_CHECKLIST.md).
 
 Source 0.1.12 includes the original V8 submodule notices, full hash-locked Rust source delivery, labelled upstream-declaration/source-attribution records, explicit installer third-party terms and frozen solver configuration isolation. It retains the ICU correction, urllib3 patch, audited build tooling and per-file inventories. Subtitle processing and production audio-tool bytes do not change. The fresh candidate's verification and exact-bound assessment establish what was rebuilt and reviewed; earlier packages remain immutable. See [third-party review](docs/THIRD_PARTY_REVIEW.md). This is not an absolute security guarantee or Google approval.
 
@@ -44,7 +46,7 @@ The previous 0.1.2 milestone introduced [Windows-protected remembered keys](docs
 
 The preview is unsigned, not a public release. Stable development Chrome ID: `klnnagigpdlgchlablabnafceoldfalm`. It is separate from Substrata's extension, registration, settings, files and evidence. No settings or credentials are imported. No live installation or browser automation was performed during implementation.
 
-Clean-machine and actual Chrome/native Run are deferred until after launch; GUI/scanner acceptance, signing, Store publication, redistribution clearance and macOS/Linux/Firefox certification remain unverified or separate future work. The keyless store-upload ZIP is a candidate, not approval to publish; the matching installer is bound to the supplied Store identity. ChatGPT sign-in and AI-service/model provisioning are not implemented.
+Clean-machine and actual Chrome/native Run are deferred, not passed. Signing and macOS/Linux/Firefox certification remain separate work. Store publication is no longer planned. The unresolved audio-acquisition permission question remains distinct from GitHub hosting; no universal legal or safety clearance is claimed. Historical keyless ZIPs and Store-bound installers are not silently converted into GitHub packages. ChatGPT sign-in and AI-service/model provisioning are not implemented.
 
 ## Development
 
