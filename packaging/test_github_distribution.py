@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import platform
 import sys
 import tempfile
 import unittest
@@ -110,7 +111,7 @@ class GitHubDistributionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory).resolve(); payload=root/'payload'; payload.mkdir()
             (payload/'cueflora-host.exe').write_bytes(b'synthetic-not-executable')
-            metadata={'schema':1,'prototype':True,'product':'cueflora','platform':'Windows','architecture':'AMD64',
+            metadata={'schema':1,'prototype':True,'product':'cueflora','platform':'Windows','architecture':platform.machine(),
                 'hostVersion':'7.8.9','transportPolicy':'https-remote','sourceInventorySha256':'a'*64,'publicEvidence':None,
                 'files':{'cueflora-host.exe':digest(payload/'cueflora-host.exe')}}
             manifest=payload/'runtime-manifest.json'; manifest.write_text(json.dumps(metadata))
