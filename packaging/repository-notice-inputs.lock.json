@@ -3247,6 +3247,123 @@
       },
       "repositoryInference": null,
       "licenceApplicabilityProven": false
+    },
+    {
+      "name": "libffi-sys",
+      "version": "4.1.0",
+      "status": "notices-found",
+      "repository": "https://github.com/libffi-rs/libffi-rs",
+      "repositoryInference": null,
+      "vcs": {
+        "git": {
+          "sha1": "7b1471ad430dd899046280f79066fc2d9b0fac90"
+        },
+        "path_in_vcs": "libffi-sys-rs"
+      },
+      "noticeSources": {
+        "LICENSE-APACHE": {
+          "file": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2.txt",
+          "url": "https://raw.githubusercontent.com/libffi-rs/libffi-rs/7b1471ad430dd899046280f79066fc2d9b0fac90/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "gitBlobSha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1",
+          "bytes": 10847
+        },
+        "LICENSE-MIT": {
+          "file": "b766d21b534e9303428c16644ef624e264668525fdcd4c2490865ed023dba842.txt",
+          "url": "https://raw.githubusercontent.com/libffi-rs/libffi-rs/7b1471ad430dd899046280f79066fc2d9b0fac90/LICENSE-MIT",
+          "sha256": "b766d21b534e9303428c16644ef624e264668525fdcd4c2490865ed023dba842",
+          "gitBlobSha": "6673f4d233d2c5321cc2869622c1fdc5d74355be",
+          "bytes": 1056
+        }
+      },
+      "notices": {
+        "240a497627a6ec3a1350291e.txt": {
+          "sourceEntry": "LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "repository": "https://github.com/libffi-rs/libffi-rs",
+          "commit": "7b1471ad430dd899046280f79066fc2d9b0fac90",
+          "packageLevel": false,
+          "scope": "Exact original monorepo notice linked to crate VCS; applicability and binary inclusion are separate review questions"
+        },
+        "67dc423a2cc5279520fb8221.txt": {
+          "sourceEntry": "LICENSE-MIT",
+          "sha256": "b766d21b534e9303428c16644ef624e264668525fdcd4c2490865ed023dba842",
+          "repository": "https://github.com/libffi-rs/libffi-rs",
+          "commit": "7b1471ad430dd899046280f79066fc2d9b0fac90",
+          "packageLevel": false,
+          "scope": "Exact original monorepo notice linked to crate VCS; applicability and binary inclusion are separate review questions"
+        }
+      },
+      "reason": null,
+      "licenceApplicabilityProven": false
+    },
+    {
+      "name": "objc2-foundation",
+      "version": "0.3.2",
+      "status": "notices-found",
+      "repository": "https://github.com/madsmtm/objc2",
+      "repositoryInference": null,
+      "vcs": {
+        "git": {
+          "sha1": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b"
+        },
+        "path_in_vcs": "framework-crates/objc2-foundation"
+      },
+      "noticeSources": {
+        "LICENSE.md": {
+          "file": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54.txt",
+          "url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+          "gitBlobSha": "540ae4c81adb5f64a9f61e222b688880da24300e",
+          "bytes": 1339
+        }
+      },
+      "notices": {
+        "2574d6a256701ba3ed2d44b2.txt": {
+          "sourceEntry": "LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+          "repository": "https://github.com/madsmtm/objc2",
+          "commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+          "packageLevel": false,
+          "scope": "Exact original monorepo notice linked to crate VCS; applicability and binary inclusion are separate review questions"
+        }
+      },
+      "reason": null,
+      "licenceApplicabilityProven": false
+    },
+    {
+      "name": "opentelemetry-proto",
+      "version": "0.32.0",
+      "status": "notices-found",
+      "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+      "repositoryInference": null,
+      "vcs": {
+        "git": {
+          "sha1": "ec289cb3c6f8260951699c51df968560943c1451"
+        },
+        "path_in_vcs": "opentelemetry-proto"
+      },
+      "noticeSources": {
+        "LICENSE": {
+          "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "url": "https://raw.githubusercontent.com/open-telemetry/opentelemetry-rust/ec289cb3c6f8260951699c51df968560943c1451/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "bytes": 11357
+        }
+      },
+      "notices": {
+        "18ef2b83454e81330a3aa871.txt": {
+          "sourceEntry": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "repository": "https://github.com/open-telemetry/opentelemetry-rust",
+          "commit": "ec289cb3c6f8260951699c51df968560943c1451",
+          "packageLevel": false,
+          "scope": "Exact original monorepo notice linked to crate VCS; applicability and binary inclusion are separate review questions"
+        }
+      },
+      "reason": null,
+      "licenceApplicabilityProven": false
     }
   ],
   "errors": [],

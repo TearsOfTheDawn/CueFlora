@@ -9,7 +9,7 @@ import subprocess
 import sys
 import threading
 from pathlib import Path
-from .runtime_tools import packaged_tool, download_runtime_options
+from .runtime_tools import packaged_tool, download_runtime_options, download_process_environment
 
 # We need a lock-free way to send progress while stdout is used for
 # native-messaging frames.  _real_stdout is captured before any redirect.
@@ -175,6 +175,7 @@ def download_audio(video_id, tmp_dir, job_id=None, capture=None):
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            env=download_process_environment(),
         )
     except FileNotFoundError as e:
         raise RuntimeError(

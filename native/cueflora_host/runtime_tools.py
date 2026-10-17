@@ -43,6 +43,21 @@ def resolve_deno():
     return candidate
 
 
+def download_process_environment():
+    """Packaged solvers must not inherit a different permission authority.
+
+    Deno's permission broker replaces command-line permission decisions. A
+    browser inheriting a global broker configuration must not silently retune
+    the private solver. Developer (unfrozen) executions retain their own policy.
+    Tool-path overrides, proxies and certificates are otherwise unchanged.
+    """
+    environment = dict(os.environ)
+    if getattr(sys, 'frozen', False):
+        environment = {key: value for key, value in environment.items()
+                       if key.upper() != 'DENO_PERMISSION_BROKER_PATH'}
+    return environment
+
+
 def download_runtime_options():
     # Frozen releases ignore unrelated user configuration/plugins and never
     # fetch EJS components. The solver is included inside the pinned yt-dlp EXE.

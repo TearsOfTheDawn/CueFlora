@@ -1,6 +1,8 @@
-# CueFlora 0.1.9 release preparation
+# CueFlora 0.1.10 release preparation
 
 This source prepares Windows x64 / Chrome candidates. It does not publish, install into the live environment, provision AI services or certify semantic subtitle accuracy. Substrata and previous packages remain separate.
+
+Version 0.1.10 integrates three previously isolated, exact-source monorepo notice sets into normal preparation: libffi-sys, objc2-foundation and opentelemetry-proto. The updated hash-bound catalogue replays 71 recovered package origins and 81 original files. It also excludes inherited `DENO_PERMISSION_BROKER_PATH` from packaged downloader subprocesses: that setting replaces Deno's permission decisions and must not silently retune CueFlora's private solver. A synthetic missing-pipe test reproduced the ambient configuration failure; no secret was read or permission bypass exploited. Tool-path overrides, proxy/certificate settings and unfrozen developer behavior remain unchanged. Audio-tool versions, inference and subtitle processing do not change. The existing 0.1.9 artifacts remain immutable. Only a fresh candidate's completed readiness/handoff establishes 0.1.10 verification; the remaining native/security/policy and public-hosting gates are not approved by this version bump.
 
 ## Build from public source
 

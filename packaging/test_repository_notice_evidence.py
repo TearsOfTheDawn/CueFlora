@@ -135,3 +135,30 @@ class RepositoryNoticeTests(unittest.TestCase):
             changed=folder/'changed.json'; changed.write_text(json.dumps(data))
             with self.assertRaises(ValueError): obtain_inputs(folder,changed,online=True)
             network.assert_not_called()
+
+
+class FollowupNoticePinsTests(unittest.TestCase):
+    def test_original_monorepo_notices_are_build_inputs_without_approval(self):
+        from release_inputs import ROOT,digest
+        from repository_notice_evidence import raw_notice_pins
+        inventory_path=ROOT/'packaging/repository-notice-inputs.lock.json'
+        inventory=json.loads(inventory_path.read_text(encoding='utf-8'))
+        policy=json.loads((ROOT/'packaging/deno-cargo-policy.json').read_text(encoding='utf-8'))
+        self.assertEqual(digest(inventory_path),policy['repositoryNoticeInputSha256'])
+        expected={
+            ('libffi-sys','4.1.0'):('7b1471ad430dd899046280f79066fc2d9b0fac90',{'LICENSE-APACHE','LICENSE-MIT'}),
+            ('objc2-foundation','0.3.2'):('7b1abfd750a2cacaea71d6a56ecfb83cb7de560b',{'LICENSE.md'}),
+            ('opentelemetry-proto','0.32.0'):('ec289cb3c6f8260951699c51df968560943c1451',{'LICENSE'})}
+        selected={(row['name'],row['version']):row for row in inventory['packages']
+            if (row['name'],row['version']) in expected}
+        self.assertEqual(set(selected),set(expected))
+        for key,(commit,names) in expected.items():
+            with self.subTest(package=key):
+                row=selected[key]
+                self.assertEqual(row['vcs']['git']['sha1'],commit)
+                self.assertEqual(set(raw_notice_pins(row)),names)
+                self.assertEqual(row['status'],'notices-found')
+                self.assertFalse(row['licenceApplicabilityProven'])
+                self.assertNotIn('sourceArchive',row)
+        for field in ('redistributionApproved','licenceApplicabilityProven','binaryDependencyClosureComplete'):
+            self.assertFalse(inventory[field])
