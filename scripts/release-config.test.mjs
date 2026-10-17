@@ -39,6 +39,14 @@ test('preview has stable key, candidates have none and unknown profiles fail', (
   assert.throws(()=>buildProfile('public'));
 });
 test('publication cannot be enabled using identities or authorization flags', () => assert.throws(()=>refusePublication(valid)));
+test('GitHub profile retains its explicit stable release key and rejects channel mismatches', async()=>{
+  const {readFileSync}=await import('node:fs');
+  const configuration=JSON.parse(readFileSync(new URL('../packaging/github-identity.json',import.meta.url),'utf8'));
+  assert.equal(buildProfile('github'),'github');
+  assert.deepEqual(chromeIdentity('github',{chromeId:'a'.repeat(32)},configuration),{key:configuration.chromePublicKey});
+  assert.throws(()=>chromeIdentity('github',{}, {...configuration,distribution:'chrome-store'}));
+  assert.throws(()=>chromeIdentity('github',{}, {...configuration,chromePublicKey:undefined}));
+});
 test('acceptance uses the assigned Store key, rejects mismatches and remains distinct from a keyless upload',()=>{
   const bytes=generateKeyPairSync('rsa',{modulusLength:1024}).publicKey.export({type:'spki',format:'der'});
   const key=bytes.toString('base64');

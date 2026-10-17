@@ -43,6 +43,7 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
     if output.exists():
         raise ValueError('Preparation output must be fresh')
     output.mkdir(parents=True)
+    github = bool(public_config and json.loads(public_config.read_text()).get('distribution') == 'github')
     for name in ['build-user.npmrc','build-global.npmrc']:
         (output/name).write_text('update-notifier=false\naudit=false\nfund=false\nregistry=https://registry.npmjs.org/\n')
     os.environ['NPM_CONFIG_USERCONFIG'] = str(output/'build-user.npmrc')
@@ -50,7 +51,9 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
     os.environ['npm_config_update_notifier'] = 'false'
     report = {'schema':1,'engineeringPassed':False,'publicReleaseReady':False,'redistributionApproved':False,
         'published':False,'liveInstallation':False,'browserAutomation':False,'inference':False,
-        'offline':offline,'releaseBlockers':list(BLOCKERS),'checks':[]}
+        'offline':offline,'releaseBlockers':(['Fresh candidate-bound licence/security review and explicit publication decisions required',
+            'Exact release assets must be hosted and anonymously hash-verified before download pages are activated',
+            'Clean-Windows/real-Chrome acceptance deferred, not passed; unsigned; other platforms not certified'] if github else list(BLOCKERS)),'checks':[]}
     report_file = output/'readiness.json'
     def persist(): report_file.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     def run(name, command, cwd=ROOT, env=None):
@@ -95,9 +98,11 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         report['sourceInventorySha256'] = source_identity(inputs)
         report['sourceFilesReportSha256'] = digest(output/'source-files.json')
         report['inputLockSha256'] = digest(ROOT/'packaging/inputs-windows.lock.json')
-        profiles = ['acceptance','store-candidate'] if public_config else ['preview','store-candidate']
+        profiles = ['github'] if github else (['acceptance','store-candidate'] if public_config else ['preview','store-candidate'])
+        selected_extension = output / ('Chrome-' + profiles[0])
         report['effectiveConfiguration'] = {'version':json.loads((ROOT/'package.json').read_text())['version'],
-            'profiles':profiles,'platform':'Windows-x64','chromeDevelopmentId':json.loads((ROOT/'preview-identity.json').read_text())['chromeId'],
+            'profiles':profiles,'distribution':'github' if github else ('chrome-store' if public_config else 'preview'),
+            'platform':'Windows-x64','chromeDevelopmentId':json.loads((ROOT/'preview-identity.json').read_text())['chromeId'],
             'publicIdentity':json.loads(public_config.read_text())['extensionIds']['chrome'] if public_config else None,'nodeVersion':subprocess.check_output(['node','--version'],text=True).strip(),
             'nodeSha256':digest(Path(shutil.which('node'))),'npmVersion':subprocess.check_output(['cmd.exe','/d','/c','npm','--version'],text=True).strip()}
         run('npm-cache',['node','scripts/cache-npm.mjs',cache/'npm',*(['--offline'] if offline else [])])
@@ -194,7 +199,7 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         run('tool-dependency-audit',[python,'packaging/audit_bundled_tools.py','--cache',cache,'--output',output/'tool-dependency-audit','--downloader-build',downloader_build])
         report['evidenceLockSha256']=digest(ROOT/'packaging/evidence-windows.lock.json')
         from dependency_ledger import write as write_ledger, require_file_attribution
-        measured_ledger=write_ledger(runtime,output/('Chrome-acceptance' if public_config else 'Chrome-preview'),source_evidence,source_evidence['supplemental'],output/'release-ledger',output/'licence-evidence/supplemental/source-notices',
+        measured_ledger=write_ledger(runtime,selected_extension,source_evidence,source_evidence['supplemental'],output/'release-ledger',output/'licence-evidence/supplemental/source-notices',
             setup,output/'setup-1/work/CueFlora Setup/Analysis-00.toc')
         require_file_attribution(measured_ledger)
         run('capabilities',[python,'packaging/verify_capabilities.py','--runtime',runtime,'--output',output/'capability-verification'])
@@ -207,9 +212,10 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
             run('original-preservation',[python,'packaging/verify_isolation.py','--report',output/'isolation.json'],env=isolated)
         else:
             report['originalPreservation'] = {'status':'not-applicable','reason':'Independent source checkout contains no private source-copy baseline; no original project is accessed.'}
-        run('assembly',[python,'packaging/assemble_preview.py','--setup',setup,'--runtime',runtime,'--extension',output/('Chrome-acceptance' if public_config else 'Chrome-preview'),
-            '--store-extension',output/'Chrome-store-candidate','--release-ledger',output/'release-ledger','--output',output/'delivery'])
-        archive = output/('delivery/CueFlora-Windows-x64-Chrome-public-candidate.zip' if public_config else 'delivery/CueFlora-Windows-x64-Chrome-preview.zip')
+        store_arguments = [] if github else ['--store-extension', output/'Chrome-store-candidate']
+        run('assembly',[python,'packaging/assemble_preview.py','--setup',setup,'--runtime',runtime,'--extension',selected_extension,
+            *store_arguments,'--release-ledger',output/'release-ledger','--output',output/'delivery'])
+        archive = output/'delivery'/('CueFlora-Windows-x64-Chrome.zip' if github else ('CueFlora-Windows-x64-Chrome-public-candidate.zip' if public_config else 'CueFlora-Windows-x64-Chrome-preview.zip'))
         run('independent-archive',[python,'packaging/verify_archive.py',archive])
         run('source-export',[python,'packaging/source_export.py','--output',output/'source-export'])
         run('source-bundle',[python,'packaging/bundle_sources.py','--audio',runtime/'corresponding-source/audio',
@@ -227,9 +233,9 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         report['artifacts'] = json.loads((output/'delivery/artifact-report.json').read_text())
         report['artifactBindings'] = {'sourceInventorySha256':report['sourceInventorySha256'],
             'runtimeInventorySha256':digest(runtime/'runtime-manifest.json'),
-            'setupSha256':digest(setup),'extensionSha256':digest(output/'delivery/CueFlora Setup/CueFlora-Chrome-store-upload.zip')}
+            'setupSha256':digest(setup),'extensionSha256':digest(output/'delivery/CueFlora Setup'/report['artifacts']['extensionArchive'])}
         from approval_evidence import pending
-        (output/'external-approvals.json').write_text(json.dumps(pending(report['artifactBindings']),indent=2)+'\n',encoding='utf-8')
+        (output/'external-approvals.json').write_text(json.dumps(pending(report['artifactBindings'], 'github' if github else 'chrome-store'),indent=2)+'\n',encoding='utf-8')
         from redistribution_assessment import template as redistribution_template
         final_ledger=json.loads((output/'release-ledger/dependency-ledger.json').read_text())
         (output/'licence-assessment.template.json').write_text(json.dumps(redistribution_template(final_ledger,report['artifactBindings']),indent=2)+'\n',encoding='utf-8')
@@ -244,7 +250,7 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         persist()
         from release_assets import assemble as release_assets
         release_assets(output,output/'release-assets')
-        print('Preparation passed. PUBLIC RELEASE REMAINS BLOCKED.',flush=True)
+        print('Engineering preparation passed. Publication requires its separate recorded decisions.',flush=True)
         return 0
     except Exception as error:
         report['failure'] = str(error); persist(); print(str(error),file=sys.stderr,flush=True)

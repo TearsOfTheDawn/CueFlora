@@ -1,0 +1,48 @@
+name: Publish reviewed CueFlora 0.1.13 once
+on:
+  push:
+    branches: ['codex/github-publish-0.1.13']
+    paths: ['release/github-publication.json']
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.repository == 'TearsOfTheDawn/CueFlora' && github.ref == 'refs/heads/codex/github-publish-0.1.13'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Read explicit artifact-bound publisher review
+        id: review
+        run: |
+          python packaging/github_publication.py --review release/github-publication.json --metadata
+          python -c "import json; v=json.load(open('release/github-publication.json')); assert v['version']=='0.1.13' and v['repository']=='TearsOfTheDawn/CueFlora', 'Only the explicitly authorised release is allowed'"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.review.outputs.source_commit }}
+          path: release-source
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: cueflora-github-candidate
+          run-id: ${{ steps.review.outputs.candidate_run_id }}
+          github-token: ${{ github.token }}
+          path: reviewed-candidate
+      - name: Publish only the exact reviewed 0.1.13 files and verified download page
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python release-source/packaging/github_publication.py --candidate reviewed-candidate --review release/github-publication.json --output artifacts/publication-receipt.json --execute --confirm-version 0.1.13
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: cueflora-0.1.13-publication-receipt
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+      # No wildcard branch, dispatch input, future-version publication or token
+      # during the build. Existing release/tag conflicts fail without overwrite.

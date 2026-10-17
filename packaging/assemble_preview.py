@@ -22,6 +22,28 @@ def extension_identity(key):
     return ''.join(chr(97+int(character,16)) for character in hexadecimal)
 
 
+def keyed_archive(extension, archive_path, identity):
+    """Retain the exact keyed build; independently verify every archive member."""
+    extension = extension.resolve()
+    manifest = json.loads((extension/'manifest.json').read_text(encoding='utf-8'))
+    if not isinstance(manifest.get('key'), str) or extension_identity(manifest['key']) != identity:
+        raise ValueError('GitHub extension needs the exact installer public-key identity')
+    expected = {}
+    with zipfile.ZipFile(archive_path, 'x', zipfile.ZIP_DEFLATED) as archive:
+        for file in sorted(extension.rglob('*')):
+            if file.is_symlink() or file.resolve() != file:
+                raise ValueError('Linked extension entries rejected')
+            if file.is_file():
+                name = file.relative_to(extension).as_posix()
+                expected[name] = digest(file)
+                archive.write(file, name)
+    with zipfile.ZipFile(archive_path) as archive:
+        actual = {name:hashlib.sha256(archive.read(name)).hexdigest() for name in archive.namelist()}
+        if archive.testzip() is not None or len(archive.namelist()) != len(expected) or actual != expected:
+            raise ValueError('Keyed extension archive differs from the build')
+    return archive_path
+
+
 def assemble(setup, runtime, extension, output, store_extension=None, release_ledger=None):
     output = output.resolve()
     if output.exists():
@@ -32,6 +54,11 @@ def assemble(setup, runtime, extension, output, store_extension=None, release_le
     identity = json.loads((ROOT / 'preview-identity.json').read_text(encoding='utf-8'))
     manifest = json.loads((extension / 'manifest.json').read_text(encoding='utf-8'))
     public = release.get('mode') == 'public'
+    github = release.get('distribution') == 'github'
+    if github and (not public or store_extension is not None or 'key' not in manifest):
+        raise ValueError('GitHub requires its keyed extension and no Store build')
+    if github and manifest.get('version') != metadata.get('hostVersion'):
+        raise ValueError('GitHub extension/runtime versions disagree')
     if public:
         if metadata.get('transportPolicy') != 'https-remote': raise ValueError('Public runtime must enforce HTTPS')
         if 'key' in manifest and extension_identity(manifest['key']) != release['extensionIds']['chrome']:
@@ -42,32 +69,35 @@ def assemble(setup, runtime, extension, output, store_extension=None, release_le
     contents.mkdir(parents=True)
     shutil.copy2(setup,contents / 'CueFlora Setup.exe')
     if not public: shutil.copytree(extension,contents / 'Chrome-preview')
-    elif 'key' in manifest: shutil.copytree(extension,contents/'Chrome-acceptance')
+    elif 'key' in manifest: shutil.copytree(extension,contents/('Chrome-extension' if github else 'Chrome-acceptance'))
     (contents/'START_HERE.md').write_text(installation_guide(release, metadata['hostVersion'],
         acceptance=public and 'key' in manifest), encoding='utf-8')
     # A future store upload must not carry the unpacked preview identity. The
     # store-assigned identity will require a separately bound future installer.
-    store_extension = store_extension or extension
-    store_manifest = json.loads((store_extension / 'manifest.json').read_text(encoding='utf-8'))
-    if store_extension != extension and 'key' in store_manifest:
-        raise ValueError('Store build must omit the development identity')
-    store_manifest = {key:value for key,value in store_manifest.items() if key != 'key'}
-    store_archive = contents / 'CueFlora-Chrome-store-upload.zip'
-    with zipfile.ZipFile(store_archive,'w',zipfile.ZIP_DEFLATED) as archive:
-        for file in sorted(store_extension.rglob('*')):
-            if file.is_file():
-                name = file.relative_to(store_extension).as_posix()
-                if name == 'manifest.json':
-                    archive.writestr(name,json.dumps(store_manifest,indent=2)+'\n')
-                else:
-                    archive.write(file,name)
-    with zipfile.ZipFile(store_archive) as archive:
-        if archive.testzip() is not None or 'key' in json.loads(archive.read('manifest.json')):
-            raise ValueError('Store-upload candidate invalid')
-        expected = {p.relative_to(store_extension).as_posix():digest(p) for p in store_extension.rglob('*') if p.is_file() and p.name != 'manifest.json'}
-        actual = {name:hashlib.sha256(archive.read(name)).hexdigest() for name in archive.namelist() if name != 'manifest.json'}
-        if actual != expected:
-            raise ValueError('Store-upload content mismatch')
+    if github:
+        keyed_archive(extension, contents/'CueFlora-Chrome-extension.zip', release['extensionIds']['chrome'])
+    else:
+        store_extension = store_extension or extension
+        store_manifest = json.loads((store_extension / 'manifest.json').read_text(encoding='utf-8'))
+        if store_extension != extension and 'key' in store_manifest:
+            raise ValueError('Store build must omit the development identity')
+        store_manifest = {key:value for key,value in store_manifest.items() if key != 'key'}
+        store_archive = contents / 'CueFlora-Chrome-store-upload.zip'
+        with zipfile.ZipFile(store_archive,'w',zipfile.ZIP_DEFLATED) as archive:
+            for file in sorted(store_extension.rglob('*')):
+                if file.is_file():
+                    name = file.relative_to(store_extension).as_posix()
+                    if name == 'manifest.json':
+                        archive.writestr(name,json.dumps(store_manifest,indent=2)+'\n')
+                    else:
+                        archive.write(file,name)
+        with zipfile.ZipFile(store_archive) as archive:
+            if archive.testzip() is not None or 'key' in json.loads(archive.read('manifest.json')):
+                raise ValueError('Store-upload candidate invalid')
+            expected = {p.relative_to(store_extension).as_posix():digest(p) for p in store_extension.rglob('*') if p.is_file() and p.name != 'manifest.json'}
+            actual = {name:hashlib.sha256(archive.read(name)).hexdigest() for name in archive.namelist() if name != 'manifest.json'}
+            if actual != expected:
+                raise ValueError('Store-upload content mismatch')
     documentation = [ROOT/'LICENSE.md',ROOT/'docs/INSTALLATION.md',ROOT/'docs/DISTRIBUTION.md',
         ROOT/'docs/REDISTRIBUTION_CHECKLIST.md',ROOT/'docs/RELEASE_COMPLETION.md'] if public else [ROOT / 'LICENSE.md',ROOT / 'docs/INSTALLATION.md',ROOT / 'docs/DISTRIBUTION.md',
                    ROOT / 'docs/REDISTRIBUTION_CHECKLIST.md', ROOT / 'docs/IMPLEMENTATION_HANDOFF.md', ROOT / 'docs/PRIVATE_PREVIEW_POLISH_HANDOFF.md',
@@ -76,16 +106,19 @@ def assemble(setup, runtime, extension, output, store_extension=None, release_le
                    ROOT / 'packaging/release.template.json',runtime / 'runtime-manifest.json',
                    setup.parent.parent / 'bundle/release.json']
     if public: documentation += [runtime/'runtime-manifest.json',setup.parent.parent/'bundle/release.json']
+    if github:
+        documentation = [ROOT/'LICENSE.md', ROOT/'docs/GITHUB_DISTRIBUTION.md', runtime/'runtime-manifest.json', setup.parent.parent/'bundle/release.json']
+        (contents/'INSTALLATION.md').write_text(installation_guide(release,metadata['hostVersion'],acceptance=True),encoding='utf-8')
     for source in documentation:
         shutil.copy2(source,contents / source.name)
     shutil.copytree(runtime / 'licenses',contents / 'notices/runtime')
-    shutil.copytree(ROOT / 'docs/store', contents / 'store-materials')
+    if not github: shutil.copytree(ROOT / 'docs/store', contents / 'store-materials')
     if release_ledger:
         shutil.copytree(release_ledger,contents/'release-ledger')
     for name in (['SECURE_CREDENTIALS.md','STORE_POLICY_ASSESSMENT.md'] if public else ['SECURE_CREDENTIALS.md','SECURITY_HARDENING_HANDOFF.md','FFMPEG_REPLACEMENT_PROPOSAL.md','STORE_POLICY_ASSESSMENT.md']):
         source=ROOT/'docs'/name
         if source.is_file(): shutil.copy2(source,contents/name)
-    shutil.copy2(ROOT/'docs/PUBLIC_CANDIDATE.md',contents/'PUBLIC_CANDIDATE.md')
+    if not github: shutil.copy2(ROOT/'docs/PUBLIC_CANDIDATE.md',contents/'PUBLIC_CANDIDATE.md')
     if (runtime/'corresponding-source').is_dir(): shutil.copytree(runtime/'corresponding-source',contents/'corresponding-source')
     shutil.copy2(ROOT/'packaging/evidence-windows.lock.json',contents/'evidence-windows.lock.json')
     bundle = setup.parent.parent / 'bundle'
@@ -124,14 +157,16 @@ def assemble(setup, runtime, extension, output, store_extension=None, release_le
     (contents / 'dependency-inventory.json').write_text(json.dumps(inventory,indent=2)+'\n',encoding='utf-8')
     hashes = {p.relative_to(contents).as_posix():digest(p) for p in sorted(contents.rglob('*')) if p.is_file()}
     (contents / 'SHA256SUMS.json').write_text(json.dumps(hashes,indent=2)+'\n',encoding='utf-8')
-    archive = Path(shutil.make_archive(str(output / ('CueFlora-Windows-x64-Chrome-public-candidate' if public else 'CueFlora-Windows-x64-Chrome-preview')),'zip',output,contents.name))
+    archive_name = 'CueFlora-Windows-x64-Chrome' if github else ('CueFlora-Windows-x64-Chrome-public-candidate' if public else 'CueFlora-Windows-x64-Chrome-preview')
+    archive = Path(shutil.make_archive(str(output / archive_name),'zip',output,contents.name))
     report = {'product':'CueFlora','previewOnly':not public,'developmentChromeId':None if public else identity['chromeId'],
         'setupSha256':digest(contents / 'CueFlora Setup.exe'), 'setupBytes':setup.stat().st_size,
         'archive':archive.name,'sha256':digest(archive),'archiveBytes':archive.stat().st_size,
         'archiveVerification':verify_archive(archive),'storeCandidateHasDevelopmentKey':False,
         'publicReleaseAuthorized':release['publicReleaseAuthorized'],'redistributionApproved':release['redistributionApproved'],
         'realBrowserAcceptance':False,'externalAcceptanceDeclarations':release.get('evidence') if public else None,
-        'published':False,'unsigned':True}
+        'published':False,'unsigned':True,'distribution':release.get('distribution','chrome-store' if public else 'preview'),
+        'extensionArchive':'CueFlora-Chrome-extension.zip' if github else 'CueFlora-Chrome-store-upload.zip'}
     (output / 'artifact-report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     return report
 

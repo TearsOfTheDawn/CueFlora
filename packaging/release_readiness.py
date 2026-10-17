@@ -14,12 +14,14 @@ HELPER_GATES = ('engineering','sourceExport','redistributionEvidence',
 
 
 def assess(engineering, source, ledger, configuration=None, approvals=None, evidence_root=None, preparation_root=None):
+    github = isinstance(configuration,dict) and configuration.get('distribution') == 'github'
     gates = {'engineering':engineering.get('engineeringPassed') is True,
         'sourceExport':source.get('passed') is True and source.get('issues') == [],
         'redistributionEvidence':ledger.get('correspondingSourceComplete') is True and ledger.get('remainingObligations') == [],
         'publicIdentityAndAcceptance':False,'chromeStoreApproval':False,'publicationAuthorized':False,
         'redistributionAuthorized':False,'securityAndPolicy':False,'publicMaterials':False}
     issues = []
+    if github: gates.pop('chromeStoreApproval')
     decisions = {}
     dependency_assessment=None
     if configuration is not None:
@@ -31,9 +33,9 @@ def assess(engineering, source, ledger, configuration=None, approvals=None, evid
                 bindings = engineering['artifactBindings']
                 if bindings['sourceInventorySha256'] != source['sourceInventorySha256'] or bindings['sourceInventorySha256'] != configuration['sourceInventorySha256'] or bindings['runtimeInventorySha256'] != configuration['runtimeInventorySha256']:
                     raise ValueError('Readiness reports/configuration refer to different source or runtime')
-                decisions = verified_decisions(approvals,evidence_root,bindings)
+                decisions = verified_decisions(approvals,evidence_root,bindings,'github' if github else 'chrome-store')
                 gates['publicIdentityAndAcceptance'] = all(decisions[name] in ('passed','waived') for name in ('cleanWindows','chromeRun'))
-                gates['chromeStoreApproval'] = decisions['storeApproval'] == 'passed'
+                if not github: gates['chromeStoreApproval'] = decisions['storeApproval'] == 'passed'
                 gates['publicationAuthorized'] = decisions['publication'] == 'passed'
                 gates['redistributionAuthorized'] = decisions['licences'] == 'passed'
                 if not gates['redistributionEvidence'] and decisions['licences']=='passed' and preparation_root is not None:
@@ -45,8 +47,8 @@ def assess(engineering, source, ledger, configuration=None, approvals=None, evid
                         gates['redistributionEvidence']=True
                     except (ValueError,TypeError,KeyError,OSError):
                         issues.append('Dependency assessment is missing, incomplete or does not match actual candidate evidence')
-                gates['securityAndPolicy'] = all(decisions[name] == 'passed' for name in ('downloadPolicy','nativeSecurity'))
-                gates['publicMaterials'] = all(decisions[name] == 'passed' for name in ('screenshots','publicLocations'))
+                gates['securityAndPolicy'] = decisions['nativeSecurity'] == 'passed' and decisions['downloadPolicy'] in (('passed','reviewed') if github else ('passed',))
+                gates['publicMaterials'] = all(decisions[name] == 'passed' for name in (('publicLocations',) if github else ('screenshots','publicLocations')))
             except (ValueError,TypeError,KeyError,OSError): issues.append('External evidence is missing, malformed or does not match candidate artifacts')
     return {'schema':1,'gates':gates,'publicReleaseReady':all(gates.values()),'published':False,
         'helperDownloadReady':all(gates[name] for name in HELPER_GATES),
@@ -54,7 +56,9 @@ def assess(engineering, source, ledger, configuration=None, approvals=None, evid
         'unsignedAccepted':True,'remaining':[name for name,passed in gates.items() if not passed],
         'decisions':decisions,'waived':[name for name,status in decisions.items() if status == 'waived'],'issues':issues,
         'dependencyAssessment':dependency_assessment,
-        'interpretation':'Recorded evidence and explicit publisher declarations; not store approval or a guarantee of safety.'}
+        'distribution':'github' if github else 'chrome-store',
+        'downloadPermissionEstablished':False if decisions.get('downloadPolicy') == 'reviewed' else None,
+        'interpretation':'Recorded engineering and publisher decisions, not YouTube permission, Store approval, legal advice or a guarantee of safety.'}
 
 
 if __name__ == '__main__':

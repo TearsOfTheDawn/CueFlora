@@ -1,6 +1,6 @@
 [project]
 name = "cueflora-host"
-version = "0.1.12"
+version = "0.1.13"
 description = "Native messaging host for cueflora – downloads YouTube audio via yt-dlp and transcribes via Whisper API"
 requires-python = ">=3.10"
 dependencies = ["httpx"]

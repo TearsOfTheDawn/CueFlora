@@ -1,0 +1,19 @@
+{
+  "schema": 2,
+  "mode": "public",
+  "distribution": "github",
+  "product": "cueflora",
+  "owner": "TearsOfTheDawn",
+  "repositoryUrl": "https://github.com/TearsOfTheDawn/CueFlora",
+  "extensionIds": {"chrome": "akcolbcdfnjcahhhodnpablekjagfadf"},
+  "chromePublicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApWZpCU8RyTcjhhSgxt/yR7NawHepaBhQV61ikF0/XQSNqZMhJdNdw+ZXpDyegrvirm/gT7bMcCLzN20hd4D/GVlwYkj1vCKIAZYNb0zjH9aHVlKJwOwJc5F3accOHPK7349S0GrsZab4kkvJluNnVhJ66Ov8r70e1AyRihfeg+hFQQbnkmrapgs980DvV8j9tESAEIdAlUPAmgp6QPQsDUiwmXZKnjicD83C0LC2aCEif63m0QSJFdiAG9xZQeb/mpKlcy7H7d6VEXkZVuyp/aPMmPCfMWm3eY27ZdKzD8jwHojDNs8n9kMvB0sRaW+ufwNA74gGLKAvKAYU664P8QIDAQAB",
+  "privacyUrl": "https://tearsofthedawn.github.io/CueFlora/privacy.html",
+  "downloadUrl": "https://tearsofthedawn.github.io/CueFlora/download.html",
+  "supportUrl": "https://github.com/TearsOfTheDawn/CueFlora/issues",
+  "runtimeInventorySha256": null,
+  "sourceInventorySha256": null,
+  "signing": "unsigned",
+  "publicReleaseAuthorized": false,
+  "redistributionApproved": false,
+  "note": "GitHub-only candidate identity. Public key retained for stable unpacked loading, not Store installation. Builders fill exact source/runtime bindings. Publication authority and assessments remain separate."
+}

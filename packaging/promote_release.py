@@ -21,20 +21,26 @@ def promotion(preparation,configuration,approvals,evidence_root):
     repository=configuration.get('repositoryUrl')
     if not isinstance(repository,str) or not re.fullmatch(r'https://github\.com/[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+',repository):
         raise ValueError('Explicit real repository required')
+    github = configuration.get('distribution') == 'github'
+    extension_name = 'CueFlora-Chrome-extension.zip' if github else 'CueFlora-Chrome-store-upload.zip'
     artifacts={preparation/'delivery/CueFlora Setup/CueFlora Setup.exe':engineering['artifactBindings']['setupSha256'],
-        preparation/'delivery/CueFlora Setup/CueFlora-Chrome-store-upload.zip':engineering['artifactBindings']['extensionSha256']}
+        preparation/'delivery/CueFlora Setup'/extension_name:engineering['artifactBindings']['extensionSha256']}
     for path,checksum in artifacts.items():
         if path.is_symlink() or digest(path)!=checksum: raise ValueError('Candidate bytes changed after review')
     source_bundle=json.loads((preparation/'source-bundle/source-bundle-report.json').read_text())
     remote_assets={'CueFlora-'+version+'-Setup.exe':engineering['artifactBindings']['setupSha256'],
-        'CueFlora-Chrome-store-upload.zip':engineering['artifactBindings']['extensionSha256'],
+        extension_name:engineering['artifactBindings']['extensionSha256'],
         'CueFlora-source.zip':source['archiveSha256'],'CueFlora-third-party-sources.zip':source_bundle['archiveSha256']}
+    if github:
+        package='CueFlora-'+version+'-Windows-x64.zip'
+        remote_assets[package]=engineering['artifacts']['sha256']
+        remote_assets['CueFlora-notices.zip']=digest(preparation/'release-assets/CueFlora-notices.zip')
     for path,checksum in ((preparation/'source-export/CueFlora-source.zip',source['archiveSha256']),
         (preparation/'source-bundle/CueFlora-third-party-sources.zip',source_bundle['archiveSha256'])):
         if path.is_symlink() or digest(path)!=checksum: raise ValueError('Reviewed source archive changed')
     return {'version':version,'repository':repository.removeprefix('https://github.com/'),'artifacts':engineering['artifactBindings'],'remoteAssetHashes':remote_assets,
-        'gates':result,'command':['gh','release','edit','v'+version,'--repo',repository.removeprefix('https://github.com/'),'--prerelease=false','--draft=false'],
-        'storeAction':'Publisher manually publishes the approved staged Store item, with matching identity/version/package. No browser automation.',
+        'gates':result,'command':['gh','release','edit','v'+version,'--repo',repository.removeprefix('https://github.com/'),'--prerelease=false','--draft=false',*(['--latest=true'] if github else [])],
+        'storeAction':'Not applicable: GitHub-only distribution.' if github else 'Publisher manually publishes the approved staged Store item, with matching identity/version/package. No browser automation.',
         'credentialsRead':False,'published':False}
 
 

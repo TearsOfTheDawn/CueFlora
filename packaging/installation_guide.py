@@ -12,6 +12,10 @@ def render(release, version, acceptance=False):
         raise ValueError('Exact package version required for installation guide')
     if not isinstance(acceptance, bool) or (acceptance and mode != 'public'):
         raise ValueError('Acceptance extension is only valid for a public-identity candidate')
+    if release.get('distribution') == 'github':
+        if mode != 'public' or not acceptance:
+            raise ValueError('GitHub package must include its keyed unpacked extension')
+        return github_guide(identity, version)
     label = 'private preview' if mode == 'private' else 'Store-bound candidate'
     lines = [f'# CueFlora {version} - Start here', '',
         f'Unsigned Windows x64 / Chrome {label}. This is an unreleased package, not Store approval or permission to redistribute.', '',
@@ -36,3 +40,34 @@ def render(release, version, acceptance=False):
         'Read Third-party terms in Setup before confirming installation. CLI install/repair additionally requires `--accept-third-party-terms`; `terms` prints them without changing installation. Original component licences are retained. Keep the accompanying `CueFlora-third-party-sources.zip` available when sharing the binaries.', '',
         'Real-browser, clean-machine and visual acceptance remain separate from automated tests. Publication requires the outstanding licence, policy, screenshot and Store/publication gates.', '']
     return '\n'.join(lines)
+
+
+def github_guide(identity, version):
+    return f'''# CueFlora {version} - Start here
+
+Windows x64 / Google Chrome. Unsigned installer. Chrome ID: `{identity}`.
+
+## Install
+
+1. Extract the complete Windows package to a permanent folder, not a temporary download preview.
+2. Open `chrome://extensions`, enable Developer mode, click Load unpacked and select `Chrome-extension` (the folder containing `manifest.json`). Keep this folder after installation.
+3. Run `CueFlora Setup.exe`, explicitly select Chrome, choose Install / Upgrade, read Third-party terms and confirm. No administrator access, separate Python installation or PATH changes are required.
+4. Open CueFlora settings and check the helper connection. Connect your existing transcription and translation APIs independently: service address, optional API key and exact model name. Save explicitly. No service/model is supplied or started by CueFlora.
+5. Choose languages, open a YouTube video, select the flower button and press Run. Only Run starts AI work. Available native captions may be used without AI or the helper.
+
+Transcription needs a compatible `/audio/transcriptions` service; translation needs `/chat/completions` with structured JSON Schema output. A website subscription or ChatGPT login is not necessarily API access. Model-list checks use metadata only. Remote services require HTTPS; local loopback HTTP remains supported.
+
+## Update without losing settings
+
+Close the CueFlora settings tab and finish any active Run. Replace the files in your existing `Chrome-extension` folder with the new matching extension files, keeping the same manifest key/Chrome ID. Click Reload for CueFlora at `chrome://extensions`, then reload YouTube tabs. Do not remove the extension to update it. Run the new matching Setup for helper upgrades. Browser-managed or disabled Developer mode may prevent manual installation.
+
+Different CueFlora identities do not share settings. Disable any older CueFlora identity first; do not run both CueFlora identities together. Setup refuses to take over a different identity. To replace an older preview, use its own Setup to uninstall its helper, keep the old package for recovery, then install the new one. Do not change or uninstall Substrata.
+
+## Repair or remove
+
+Use CueFlora Setup from the Start Menu for Repair, Roll back or Uninstall. Uninstall unregisters owned entries and moves runtime files into a recoverable removed folder; settings, evidence and maintenance copies remain. Remove the extension separately if desired. CLI install/repair requires `--apply --accept-third-party-terms`; installation also requires `--browser chrome`.
+
+The helper runs on demand, not as a persistent service. Remembered API keys use Windows user-scoped protection, not protection against malware running as the same user. Hosted AI may cost money and model output may be inaccurate.
+
+Do not disable antivirus or automatically bypass a warning. Verify the release and checksums. Automated tests do not establish real-browser or clean-machine acceptance. Keep the original notices and accompanying third-party sources when sharing binaries. Process only content you are entitled to use and comply with applicable terms and law.
+'''

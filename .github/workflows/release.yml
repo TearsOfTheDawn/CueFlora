@@ -1,4 +1,4 @@
-name: GitHub unpacked preview build only (no publication)
+name: GitHub keyed extension build only (no publication)
 on:
   workflow_dispatch:
 permissions:
@@ -22,7 +22,8 @@ jobs:
       - run: node --test scripts/release-config.test.mjs
       - run: npm run zip:chrome
         env:
-          CUEFLORA_BUILD_PROFILE: preview
+          CUEFLORA_BUILD_PROFILE: github
+          CUEFLORA_PUBLIC_CONFIG: packaging/github-identity.json
       - run: python3 packaging/source_export.py --output artifacts/source-export
       - run: sha256sum .output/*chrome.zip artifacts/source-export/CueFlora-source.zip
       - uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
@@ -31,11 +32,11 @@ jobs:
           subject-path: .output/*chrome.zip
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: github-unpacked-preview-and-source-not-a-full-release
+          name: github-keyed-extension-and-source-not-a-full-release
           path: |
             .output/*chrome.zip
             artifacts/source-export/*
           if-no-files-found: error
           retention-days: 7
-      # Development-key unpacked extension only; use its matching helper.
+      # Release-key unpacked extension only; use its matching helper.
       # No Store submission or installer/release publication. Origin is not safety approval.

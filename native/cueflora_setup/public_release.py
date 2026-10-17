@@ -58,10 +58,14 @@ def validate_identity(value, require_binding=True):
     validate_release(value)
     allowed = {'schema','mode','product','owner','extensionIds','privacyUrl','downloadUrl','supportUrl',
         'runtimeInventorySha256','sourceInventorySha256','signing','chromePublicKey',
-        'publicReleaseAuthorized','redistributionApproved','note','repositoryUrl'}
+        'publicReleaseAuthorized','redistributionApproved','note','repositoryUrl','distribution'}
     if set(value) - allowed or value.get('schema') != 2 or value.get('mode') != 'public' or value.get('product') != 'cueflora' or set(value['extensionIds']) != {'chrome'}:
         raise ValueError('Schema 2 public Windows/Chrome identity required; no secrets or approvals')
     if value['extensionIds']['chrome'] == DEVELOPMENT_ID: raise ValueError('Development identity is not a public identity')
+    if value.get('distribution', 'chrome-store') not in ('chrome-store', 'github'):
+        raise ValueError('Unknown public distribution channel')
+    if value.get('distribution') == 'github' and (not value.get('chromePublicKey') or not value.get('repositoryUrl')):
+        raise ValueError('GitHub installation needs a stable public key and repository')
     for field in ('privacyUrl','downloadUrl','supportUrl'): public_url(value.get(field))
     if value.get('repositoryUrl') is not None:
         public_url(value['repositoryUrl'])

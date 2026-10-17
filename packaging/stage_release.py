@@ -31,6 +31,9 @@ def plan(preparation, configuration, approvals, evidence_root, target_commit):
     source=json.loads((root/'source-export/source-audit.json').read_text())
     ledger=json.loads((root/'release-ledger/dependency-ledger.json').read_text())
     readiness=assess(engineering,source,ledger,configuration,approvals,evidence_root,root)
+    github = configuration.get('distribution') == 'github'
+    if github and not readiness['publicReleaseReady']:
+        raise ValueError('GitHub publication gates unresolved: '+', '.join(readiness['remaining']))
     if not readiness['helperDownloadReady']:
         raise ValueError('Helper redistribution gates unresolved: '+', '.join(readiness['helperRemaining']))
     bindings=validate_bindings(engineering['artifactBindings'])
@@ -52,6 +55,12 @@ def plan(preparation, configuration, approvals, evidence_root, target_commit):
         'CueFlora-third-party-sources.zip':('CueFlora-third-party-sources.zip',sources['archiveSha256']),
         'CueFlora-CONSOLIDATED-NOTICES.txt':('release-ledger/CONSOLIDATED_NOTICES.txt',None),
         'CueFlora-dependency-ledger.json':('release-ledger/dependency-ledger.json',None)}
+    if github:
+        files.pop('CueFlora-Chrome-store-upload.zip')
+        files['CueFlora-Chrome-extension.zip'] = ('CueFlora-Chrome-extension.zip',bindings['extensionSha256'])
+        package='CueFlora-'+version+'-Windows-x64.zip'
+        files[package] = (package,engineering['artifacts']['sha256'])
+        files['CueFlora-notices.zip'] = ('CueFlora-notices.zip',None)
     assets=[]
     for public_name,(name,expected) in files.items():
         actual=manifest['files'].get(name)
@@ -62,7 +71,7 @@ def plan(preparation, configuration, approvals, evidence_root, target_commit):
     return {'schema':1,'version':version,'tag':'v'+version,
         'repository':repository.removeprefix('https://github.com/'),'targetCommit':target_commit,
         'artifacts':bindings,'assets':assets,'gates':readiness,
-        'published':False,'storeSubmitted':False,'stableRelease':False,
+        'published':False,'storeSubmitted':False,'stableRelease':False,'distribution':'github' if github else 'chrome-store',
         'interpretation':'Reviewed helper prerelease only. Store approval/screenshots are separate; required redistribution, security and authorization gates are not waived.'}
 
 
@@ -117,14 +126,23 @@ def execute(staging, confirmed_version=None):
     with tempfile.TemporaryDirectory(prefix='cueflora-review-staging-') as directory:
         temporary=Path(directory)
         notes=temporary/'RELEASE_NOTES.md'
-        notes.write_text('CueFlora '+staging['version']+' Windows x64 / Chrome helper review prerelease.\n\n'
+        notes.write_text(('CueFlora '+staging['version']+' — Windows x64 / Chrome, distributed through GitHub.\n\n'
+            'Download the complete Windows ZIP, extract it to a permanent folder and read START_HERE.md. '
+            'Enable Developer mode at chrome://extensions and Load unpacked from Chrome-extension, then run the matching Setup. '
+            'No separate Python installation, administrator access or PATH changes are needed. '
+            'Connect existing compatible transcription/chat-completions services; AI services and models are not supplied. '
+            'The installer is unsigned. Do not disable security software. Original notices and corresponding sources accompany the binaries. '
+            'Generated subtitles can be inaccurate and hosted AI can cost money. Process only content you are entitled to use, in accordance with applicable terms and law. '
+            'Automated checks are not clean-machine or real-browser acceptance.\n') if staging.get('distribution') == 'github' else
+            'CueFlora '+staging['version']+' Windows x64 / Chrome helper review prerelease.\n\n'
             'The installer is unsigned. The Chrome Store item is separate and may not yet be available. '
             'AI services are not included: compatible transcription/chat-completions APIs must be supplied by the user. '
             'Automated checks are not clean-machine or real-browser acceptance.\n\n'
             'Corresponding sources and third-party notices accompany this installer. '
             'Do not disable security software. Checksums do not guarantee software safety.\n',encoding='utf-8')
-        checksums=temporary/'CueFlora-SHA256SUMS.txt'
+        checksums=temporary/('SHA256SUMS.txt' if staging.get('distribution') == 'github' else 'CueFlora-SHA256SUMS.txt')
         checksums.write_text(''.join(item['sha256']+'  '+item['name']+'\n' for item in staging['assets']),encoding='utf-8')
+        checksum_asset={'name':checksums.name,'sha256':digest(checksums),'bytes':checksums.stat().st_size}
         # gh's PATH#LABEL changes a display label, not the asset filename.
         # Stage real flat filenames so documented download URLs are correct.
         uploads=[]
@@ -154,6 +172,7 @@ def execute(staging, confirmed_version=None):
         if result.returncode:
             raise RuntimeError('Prerelease publication response failed; inspect the remote state before retrying')
     return {**staging,'published':True,'url':'https://github.com/'+repository+'/releases/tag/'+tag,
+        'checksumAsset':checksum_asset,
         'anonymousDownloadVerification':'Not performed by this command; verify public download bytes before updating the website.'}
 
 

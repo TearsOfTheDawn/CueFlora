@@ -38,6 +38,9 @@ def markdown(text):
 
 
 def build(output, configuration=None, artifact_report=None, version=None, prelaunch=False):
+    if isinstance(configuration,dict) and configuration.get('distribution') == 'github':
+        from github_materials import build as github_materials
+        return github_materials(output,configuration,artifact_report,version,prelaunch)
     if not isinstance(prelaunch, bool): raise ValueError('Prelaunch mode must be explicit boolean')
     if prelaunch and (configuration is None or artifact_report is not None):
         raise ValueError('Prelaunch pages need real identity and no installer artifact report')

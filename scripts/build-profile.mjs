@@ -3,7 +3,7 @@ import { createHash, createPublicKey } from 'node:crypto';
 import { supplementalNotices } from './npm-notices.mjs';
 
 export function buildProfile(value = 'preview') {
-  if (!['preview', 'store-candidate', 'acceptance'].includes(value)) throw Error('Unknown CueFlora build profile');
+  if (!['preview', 'store-candidate', 'acceptance', 'github'].includes(value)) throw Error('Unknown CueFlora build profile');
   return value;
 }
 export function chromeIdentity(profile, preview, configuration) {
@@ -11,7 +11,8 @@ export function chromeIdentity(profile, preview, configuration) {
   if (profile === 'preview') return { key: preview.publicKey };
   if (profile === 'store-candidate') return {};
   const key = configuration?.chromePublicKey;
-  if (typeof key !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(key)) throw Error('Acceptance build needs the real Store public key');
+  if (profile === 'github' && configuration?.distribution !== 'github') throw Error('GitHub build needs an explicit GitHub configuration');
+  if (typeof key !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(key)) throw Error('Keyed build needs the release Chrome public key');
   const bytes = Buffer.from(key,'base64');
   if (bytes.length < 64 || bytes.length > 16384 || bytes.toString('base64') !== key) throw Error('Invalid Store public key');
   try { createPublicKey({key:bytes,format:'der',type:'spki'}); } catch { throw Error('Store key must be a valid DER public key, not arbitrary base64'); }

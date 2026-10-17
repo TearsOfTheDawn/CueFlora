@@ -14,7 +14,7 @@ if (process.env.CUEFLORA_PUBLIC_CONFIG) {
   publicLinks = validatedLinks(configuration);
   if (!publicLinks) throw Error('Real public HTTPS domain locations required');
 }
-if (profile === 'acceptance' && !configuration) throw Error('Acceptance requires an assigned Store identity');
+if (['acceptance', 'github'].includes(profile) && !configuration) throw Error('Keyed build requires the release Chrome identity');
 
 export default defineConfig({
   vite: () => ({ plugins: [bundledModulesPlugin()], define: { __CUEFLORA_STORE_CANDIDATE__: JSON.stringify(profile !== 'preview'), __CUEFLORA_PUBLIC_LINKS__:JSON.stringify(publicLinks) } }),
