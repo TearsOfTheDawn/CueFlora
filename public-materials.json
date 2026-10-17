@@ -1,21 +1,22 @@
 {
   "schema": 1,
   "rendered": true,
-  "published": false,
+  "published": true,
+  "distribution": "github",
+  "version": "0.1.13",
   "repositoryUrl": "https://github.com/TearsOfTheDawn/CueFlora",
-  "version": "0.1.12",
-  "storeIdentity": "akcolbcdfnjcahhhodnpablekjagfadf",
-  "installerSha256": null,
+  "releaseUrl": "https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.1.13",
+  "extensionId": "akcolbcdfnjcahhhodnpablekjagfadf",
+  "installerSha256": "04b0a9ba5c9129ac0cd287480b67e0a855e43091518567763ab40232940550a5",
   "files": {
-    ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "download.html": "ed81da7c76c7cbf17e34c096569df3caf1bc12dd2f8ae3644a6398a03dfd8a6d",
-    "index.html": "aff09275f04ae3a576abf98f1768cdb0bfa209d917226263fbf047cd53190153",
-    "privacy.html": "3069454f67ac5197b5e277b128b9870642ee89971cfcf27f7f40871fdc8be3aa",
-    "style.css": "50db9f01e7bc4747fb1d62a3d984c6d461c9d120b6d12641a9965c687a3582c2",
-    "support.html": "b595ed2d985200c69c385e9ae941290a68e7ca4b411324f029e4bd59c17f50de"
+    "index.html": "a50e71b4f00bf8938ec3ff1a24f29dfa47fd7ffe86b6b3c7ba75b4449de097d5",
+    "download.html": "769653f368d5401af7406efb81a9dc570f854b8766e1dd812628b351de3f01d2",
+    "privacy.html": "3046020441d88cd1860428ebc277b86c0ade953b1805dfe561c11412816bfd53",
+    "support.html": "b92d78f465a81521dfd3f80361492135edc3e8a6d8be724d7019ed1e94bd1e11",
+    "style.css": "92a7771d65a9c47d9a73ae317937259656c402db13f4ef1e8754621a3cad3283",
+    ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "visualAcceptance": false,
-  "releaseStatus": "policy-hold-source-and-help-only",
-  "policyAssessmentComplete": true,
-  "sourceInventorySha256": "b4a56ef1ae2295accc37ab6aa3f84da4a4cc4a388455443db6f7f2243a03f955"
+  "releaseStatus": "Published stable GitHub release; anonymous asset hash verification passed in the one-time publication job.",
+  "publicationWorkflow": "https://github.com/TearsOfTheDawn/CueFlora/actions/runs/39069013160"
 }
