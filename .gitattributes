@@ -12,4 +12,5 @@
 *.ico binary
 # Preserve exact upstream licence bytes/hashes, including original whitespace.
 packaging/notices/* -text
+packaging/source-metadata/ICU-* -text
 packaging/notices/yt-dlp-2026.08.19-THIRD_PARTY_LICENSES.txt -whitespace

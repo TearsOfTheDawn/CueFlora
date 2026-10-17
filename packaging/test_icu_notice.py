@@ -23,6 +23,7 @@ class IcuNoticeTests(unittest.TestCase):
         notice = local_evidence(self.pin)
         self.assertEqual(len(notice), 26487)
         self.assertEqual(blob_sha(notice), self.pin['noticeGitBlobSha1'])
+        self.assertIn('packaging/source-metadata/ICU-* -text', (ROOT/'.gitattributes').read_text())
 
     def test_icu_notice_origin_is_accepted_by_the_production_runtime_ledger(self):
         name = 'licenses/deno-v8-source-notices/' + self.pin['noticeFile']
