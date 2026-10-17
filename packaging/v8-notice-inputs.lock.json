@@ -19,6 +19,20 @@
       "root": "v8-ac1e23989121713ca642f6650b34deff7b686896"
     }
   ],
-  "scope": "Missing original core/source-tree notice evidence. Crate VCS reports dirty; a source-version/commit match is not a complete binary-source or third-party closure proof.",
+  "icu": {
+    "commit": "ee5f27adc28bd3f15b2c293f726d14d2e336cbd5",
+    "version": "77.1",
+    "crateVersion": "0.77.0",
+    "crateSha256": "a9efff8990a82c1ae664292507e1a5c6749ddd2312898cdf9cd7cb1fd4bc64c6",
+    "dataSha256": "1cf67874b5a87a8363a86fb3f81e3cbbed54d389062dab8fb52308d5cf8c8612",
+    "dataGitBlobSha1": "d1a12cb93065157498a11ff5f4b9a6501ee22506",
+    "noticeFile": "ICU-77.1-LICENSE.txt",
+    "noticeSha256": "451167c55c0fa447cc2d5632714f5e3c567fe4f1e1badefab2c1333852198aca",
+    "noticeGitBlobSha1": "0b9efcd9092f977797c2572de717ca2edac50bc2",
+    "treeFile": "ICU-ee5f27ad-common-tree.json",
+    "treeSha256": "a8d1bd6899af77d4db96af76645e3c402d6f773150cd1f2831428c593300c8cc",
+    "sourceUrl": "https://chromium.googlesource.com/chromium/deps/icu/+/ee5f27adc28bd3f15b2c293f726d14d2e336cbd5/LICENSE"
+  },
+  "scope": "Original core/source-tree and exact ICU data notices. Crate VCS reports dirty; source-version/commit/data matches are not complete binary-source or third-party closure proof.",
   "redistributionApproved": false
 }

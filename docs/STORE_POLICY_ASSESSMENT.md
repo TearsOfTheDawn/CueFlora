@@ -1,5 +1,7 @@
 # Store policy assessment — unresolved questions
 
+Current boundary, 2026-10-17: the [final checklist](FINAL_RELEASE_STATUS.md) supersedes the old general list at the end. Actual publisher/Store identity and privacy/help hosting are supplied; prelaunch functional testing is deferred; paid signing and an independent auditor's signature are not mandatory new project requirements. This scoped engineering review does not establish Google's decision or resolve actual third-party rights. The download/challenge questions below remain genuine and must not be hidden or marked passed solely to finish a checklist.
+
 Reconsidered 2026-10-13 for 0.1.3. This is engineering evidence, not legal advice or Chrome Store compliance/approval. No external reviewer was contacted and no architecture was redesigned. See `RELEASE_CANDIDATE_SECURITY_AUDIT.md` for the scoped security changes.
 
 Implemented in 0.1.2: user-scoped Windows key protection; no remembered-key plaintext fallback; settings-only credential operations; store-candidate remote HTTPS enforcement at both boundaries; exact loopback exceptions and no provider redirects. Independent review and genuine browser acceptance remain unperformed. [Current Chrome policies](https://developer.chrome.com/docs/webstore/program-policies/policies)

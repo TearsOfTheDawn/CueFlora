@@ -39,12 +39,15 @@ class V8NoticeTests(unittest.TestCase):
 
     def evidence_fixture(self,folder):
         (folder/'notices').mkdir(); (folder/'notices/core.txt').write_bytes(b'synthetic original notice')
+        icu=self.lock['icu']; (folder/'notices'/icu['noticeFile']).write_bytes((ROOT/'packaging/source-metadata'/icu['noticeFile']).read_bytes())
         deno=folder/'deno.exe'; deno.write_bytes(b'synthetic binary')
         digest=lambda data:hashlib.sha256(data).hexdigest()
         report={'coreNoticesRestored':True,'denoSha256':digest(deno.read_bytes()),
             'lockSha256':digest((ROOT/'packaging/v8-notice-inputs.lock.json').read_bytes()),'sourceInputs':self.lock['files'],
             'redistributionApproved':False,'binaryDependencyClosureComplete':False,
-            'noticeFiles':{'core.txt':digest(b'synthetic original notice')},'notices':{'core.txt':{'sha256':digest(b'synthetic original notice')}}}
+            'icuEvidence':{'pins':icu,'dataLineageVerified':True,'originalNoticeRestored':True},
+            'noticeFiles':{'core.txt':digest(b'synthetic original notice'),icu['noticeFile']:icu['noticeSha256']},
+            'notices':{'core.txt':{'sha256':digest(b'synthetic original notice')},icu['noticeFile']:{'sha256':icu['noticeSha256']}}}
         (folder/'v8-notice-evidence.json').write_text(json.dumps(report))
         return deno,report
 
@@ -66,3 +69,11 @@ class V8NoticeTests(unittest.TestCase):
             (folder/'v8-notice-evidence.json').write_text(json.dumps(report))
             (folder/'notices/extra.txt').write_bytes(b'extra')
             with self.assertRaises(ValueError): validate_evidence(folder,deno)
+
+    def test_icu_lineage_and_notice_cannot_be_omitted_or_claimed_for_other_bytes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp); deno,report=self.evidence_fixture(folder)
+            for evidence in (None,'bad',{}, {**report['icuEvidence'],'dataLineageVerified':False},
+                    {**report['icuEvidence'],'pins':{}}):
+                (folder/'v8-notice-evidence.json').write_text(json.dumps({**report,'icuEvidence':evidence}))
+                with self.assertRaisesRegex(ValueError,'ICU'): validate_evidence(folder,deno)

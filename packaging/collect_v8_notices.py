@@ -12,6 +12,7 @@ from urllib.parse import urlsplit
 from urllib.request import urlopen
 import zipfile
 from release_inputs import ROOT,digest
+from icu_notice import validate as validate_icu, collect as collect_icu, notice_origin as icu_notice_origin
 
 
 def validate(lock):
@@ -19,6 +20,7 @@ def validate(lock):
         raise ValueError('Exact Deno/V8 notice lock required')
     for field in ('bindingCommit','v8Commit'):
         if not re.fullmatch('[0-9a-f]{40}',str(lock.get(field,''))): raise ValueError('Exact V8 commits required')
+    validate_icu(lock.get('icu'))
     names=set()
     for item in lock['files']:
         if not isinstance(item,dict): raise ValueError('Malformed V8 notice source')
@@ -76,8 +78,10 @@ def collect(inputs,cache,output,online=False):
         package=tomllib.loads(archive.extractfile('v8-150.4.0/Cargo.toml').read().decode())
     with zipfile.ZipFile(cache/lock['files'][1]['file']) as archive:
         source_header=archive.read(lock['files'][1]['root']+'/include/v8-version.h')
+        v8_deps=archive.read(lock['files'][1]['root']+'/DEPS')
     version=subprocess.check_output([str(inputs/'deno.exe'),'--version'],text=True,timeout=15)
     if match_versions(lock,cargo,vcs,crate_header,source_header,version)!=crate_hash: raise ValueError('Cargo and crate checksum mismatch')
+    icu_notice,icu_crate,icu_evidence=collect_icu(lock['icu'],cargo,cache,v8_deps,online)
     if output.exists(): raise ValueError('Fresh V8 notice output required')
     output.mkdir(parents=True); notices={}
     for item in lock['files']:
@@ -91,12 +95,18 @@ def collect(inputs,cache,output,online=False):
                 target.parent.mkdir(exist_ok=True); target.write_bytes(content)
                 notices[target.name]={'sourceArchive':item['file'],'sourceEntry':entry.filename,'sha256':digest(target),
                     'scope':'Exact source notice; tree includes tests/tools, not proof that all described code is shipped'}
+    target=output/'notices'/lock['icu']['noticeFile']
+    target.write_bytes(icu_notice)
+    notices[target.name]=icu_notice_origin(lock['icu'])
     sources=output/'sources'; sources.mkdir()
     for item in lock['files']: shutil.copy2(cache/item['file'],sources/item['file'])
     shutil.copy2(ROOT/'packaging/v8-notice-inputs.lock.json',sources/'v8-notice-inputs.lock.json')
+    shutil.copy2(icu_crate,sources/icu_crate.name)
+    for field in ('noticeFile','treeFile'):
+        shutil.copy2(ROOT/'packaging/source-metadata'/lock['icu'][field],sources/lock['icu'][field])
     report={'schema':1,'denoSha256':expected['deno.exe'],'denoVersionOutput':version,'bindingCrateSha256':crate_hash,'crateVcs':vcs,
         'versionHeaderSha256':hashlib.sha256(crate_header).hexdigest(),'lockSha256':digest(ROOT/'packaging/v8-notice-inputs.lock.json'),
-        'sourceInputs':lock['files'],'notices':notices,'noticeFiles':{path.name:digest(path) for path in (output/'notices').iterdir()},
+        'sourceInputs':lock['files'],'icuEvidence':icu_evidence,'notices':notices,'noticeFiles':{path.name:digest(path) for path in (output/'notices').iterdir()},
         'crateLicenceExclusionObserved':'LICENSE*' in package['package'].get('exclude',[]),
         'coreNoticesRestored':True,'redistributionApproved':False,'binaryDependencyClosureComplete':False,
         'remaining':['V8 transitive submodule notices at exact pointers','Deno shipped Rust dependency notice coverage',
@@ -112,6 +122,9 @@ def validate_evidence(folder,deno):
     lock=validate(json.loads((ROOT/'packaging/v8-notice-inputs.lock.json').read_text()))
     if report.get('coreNoticesRestored') is not True or report.get('denoSha256')!=digest(deno) or report.get('lockSha256')!=digest(ROOT/'packaging/v8-notice-inputs.lock.json') or report.get('sourceInputs')!=lock['files'] or report.get('redistributionApproved') is not False or report.get('binaryDependencyClosureComplete') is not False:
         raise ValueError('Deno/V8 notice evidence binding mismatch')
+    icu=report.get('icuEvidence',{})
+    if not isinstance(icu,dict) or icu.get('pins')!=lock['icu'] or icu.get('dataLineageVerified') is not True or icu.get('originalNoticeRestored') is not True or report.get('noticeFiles',{}).get(lock['icu']['noticeFile'])!=lock['icu']['noticeSha256']:
+        raise ValueError('ICU notice/lineage evidence binding mismatch')
     paths=list((folder/'notices').rglob('*'))
     if any(path.is_symlink() for path in paths) or {path.name:digest(path) for path in paths if path.is_file()}!=report.get('noticeFiles'):
         raise ValueError('Changed V8 notice evidence')

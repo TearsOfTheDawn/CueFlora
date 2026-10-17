@@ -1,5 +1,7 @@
 # Public-release blockers — audited 2026-10-12
 
+**Historical only.** The [final bounded checklist](FINAL_RELEASE_STATUS.md) supersedes this version-specific table. Publisher/Store identities and live prelaunch pages are supplied; public candidate construction exists; clean-machine/live testing is explicitly deferred, and signing is optional. Do not reopen those as missing information or interpret the old permanent-false/unimplemented-binding statements below as current code behavior.
+
 This is a historical preparation record. Its unresolved-origin and unimplemented-public-binding statements describe earlier milestones, not current implementation claims. Current source uses documented source-built audio, protected credentials and real-identity candidate construction. Follow [release preparation](RELEASE_COMPLETION.md), [dependency security review](DEPENDENCY_SECURITY_REVIEW.md) and the fresh candidate's ledger/gates for remaining obligations. Nothing here or in a passing build grants redistribution or Store approval.
 
 0.1.3 update: the candidate now has signature-verified source-built FFmpeg/ffprobe 9.0.2 and pinned Opus/compiler evidence, instead of adopting the older unexplained bytes. Sources and actual LGPL output are captured; compiler/runtime and other dependency obligations still require review. Public installer mode and clean-source preparation exist but remain gated. The table below records the historical preserved-binary audit; see PUBLIC_CANDIDATE.md and the new measured handoff for current artifacts. No policy/store acceptance is implied.

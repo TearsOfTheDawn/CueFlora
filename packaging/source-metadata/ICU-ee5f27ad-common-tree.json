@@ -1,0 +1,18 @@
+)]}'
+{
+  "id": "64d829947046326985eb0b234cda0fb4699c5892",
+  "entries": [
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "b180ee3c2281d04f1fb5d928ff0c2c73e9996445",
+      "name": "icudtb.dat"
+    },
+    {
+      "mode": 33188,
+      "type": "blob",
+      "id": "d1a12cb93065157498a11ff5f4b9a6501ee22506",
+      "name": "icudtl.dat"
+    }
+  ]
+}
