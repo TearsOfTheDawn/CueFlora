@@ -6,6 +6,7 @@ import platform
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 from approval_evidence import GITHUB_GATES, pending, verified_decisions
@@ -107,7 +108,10 @@ class GitHubDistributionTests(unittest.TestCase):
                 broken['gates']['downloadPolicy']['reportSha256']=digest(path)
                 with self.subTest(field=field),self.assertRaises(ValueError): verified_decisions(broken,root,self.bindings(),'github')
 
-    def test_github_installer_lifecycle_preserves_identity_and_channel(self):
+    @patch('cueflora_setup.engine.platform.machine',return_value='AMD64')
+    def test_github_installer_lifecycle_preserves_identity_and_channel(self, simulated_windows_machine):
+        # This fixture explicitly simulates Windows x64 on every CI host;
+        # production architecture rejection stays enabled and unchanged.
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory).resolve(); payload=root/'payload'; payload.mkdir()
             (payload/'cueflora-host.exe').write_bytes(b'synthetic-not-executable')
