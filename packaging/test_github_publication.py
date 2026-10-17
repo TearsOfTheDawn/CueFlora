@@ -92,10 +92,14 @@ class GitHubPublicationTests(unittest.TestCase):
                 with self.subTest(name=name),self.assertRaises(ValueError): ordinary(root,name)
 
     def test_read_only_build_workflow_is_explicitly_version_bounded(self):
+        curl=json.loads((ROOT/'packaging/curl-native-inputs.lock.json').read_text())
+        self.assertTrue(curl['binary']['url'].endswith('/libcurl-impersonate-v2.0.0.x86_64-win32.tar.gz'))
+        self.assertEqual(curl['binary']['sha256'],'88e5b641a13b9a991857996947837c6f058cc3b0c9142ded0fc17b82008e98b2')
         workflow=(ROOT/'.github/workflows/github-candidate.yml').read_text()
         self.assertIn('codex/github-build-0.1.13',workflow)
         self.assertIn("$version -ne '0.1.13'",workflow)
         self.assertIn('--public-config packaging/github-identity.json',workflow)
+        self.assertIn('git archive --format=tar',workflow)
         for forbidden in ('contents: write','--execute','secrets.','--allow-prototype'):
             self.assertNotIn(forbidden,workflow)
 

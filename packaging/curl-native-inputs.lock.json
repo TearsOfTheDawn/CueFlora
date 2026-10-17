@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "binary": {
     "file": "curl-impersonate-v2.0.0.x86_64-win32.tar.gz",
-    "url": "https://github.com/lexiforest/curl-impersonate/releases/download/v2.0.0/curl-impersonate-v2.0.0.x86_64-win32.tar.gz",
+    "url": "https://github.com/lexiforest/curl-impersonate/releases/download/v2.0.0/libcurl-impersonate-v2.0.0.x86_64-win32.tar.gz",
     "sha256": "88e5b641a13b9a991857996947837c6f058cc3b0c9142ded0fc17b82008e98b2",
     "member": "lib/libcurl-impersonate.dll",
     "memberSha256": "ec8ead0e422fe4ae62a99233a63f6007adc727caba97ff1f87385c00cafe200f"

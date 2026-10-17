@@ -27,6 +27,8 @@ On 2026-10-17 the publisher selected GitHub-only distribution and explicitly aut
 
 ## Technology Stack
 
+The 0.1.13 clean-runner workflow restores `git archive HEAD` bytes before source hashing so checkout line-ending conversion cannot invalidate the exact release-tree binding. The curl binary-origin URL now names the official **libcurl** asset; its existing archive/DLL hashes and all shipped tool versions are unchanged. An initial clean-runner attempt exposed the wrong command-line-archive URL and correctly stopped rather than accepting its different hash.
+
 | Layer | Technology | Notes |
 |---|---|---|
 | Extension framework | [WXT](https://wxt.dev/) 0.21.4 / Vite 8.3.4 | Manifest V3, Chrome and Firefox regression builds; no automatic browser launcher |

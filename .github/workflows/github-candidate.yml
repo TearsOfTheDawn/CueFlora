@@ -14,6 +14,15 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - name: Restore exact committed source bytes before hashing
+        shell: pwsh
+        run: |
+          $sourceArchive = Join-Path $env:RUNNER_TEMP 'cueflora-0.1.13-source.tar'
+          git archive --format=tar --output=$sourceArchive HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Exact source archive failed' }
+          tar -xf $sourceArchive
+          if ($LASTEXITCODE -ne 0) { throw 'Exact source restoration failed' }
+          # Retain committed licence/source bytes, not checkout EOL conversion.
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.13.15'
