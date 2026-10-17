@@ -42,10 +42,21 @@ jobs:
         run: python packaging/bootstrap_offline.py --cache artifacts/inputs --output artifacts/build-python --official
       - name: Cache exact npm inputs
         run: node scripts/cache-npm.mjs artifacts/inputs/npm
+      - name: Install root verification dependencies from the exact offline cache
+        run: npm ci --offline --cache artifacts/inputs/npm --no-audit --no-fund
       - name: Full offline GitHub build and regression verification
         run: artifacts/build-python/venv/Scripts/python.exe packaging/prepare_windows.py --output artifacts/candidate --cache artifacts/inputs --evidence-cache artifacts/evidence --audio-cache artifacts/audio-inputs --public-config packaging/github-identity.json
       - name: Prepare measured candidate review handoff
         run: artifacts/build-python/venv/Scripts/python.exe packaging/github_candidate.py --preparation artifacts/candidate --output artifacts/github-candidate
+      - name: Show bounded diagnostic context on failure
+        if: failure()
+        shell: pwsh
+        run: |
+          if (Test-Path artifacts/candidate) {
+            Get-ChildItem artifacts/candidate -Recurse -File -Filter *.log |
+              Sort-Object LastWriteTime -Descending | Select-Object -First 3 |
+              ForEach-Object { Write-Output $_.Name; Get-Content -LiteralPath $_.FullName -Tail 100 }
+          }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: cueflora-github-candidate

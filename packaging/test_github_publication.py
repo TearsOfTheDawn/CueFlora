@@ -100,6 +100,8 @@ class GitHubPublicationTests(unittest.TestCase):
         self.assertIn("$version -ne '0.1.13'",workflow)
         self.assertIn('--public-config packaging/github-identity.json',workflow)
         self.assertIn('git archive --format=tar',workflow)
+        self.assertIn('npm ci --offline --cache artifacts/inputs/npm --no-audit --no-fund',workflow)
+        self.assertLess(workflow.index('npm ci --offline'),workflow.index('packaging/prepare_windows.py'))
         for forbidden in ('contents: write','--execute','secrets.','--allow-prototype'):
             self.assertNotIn(forbidden,workflow)
 
