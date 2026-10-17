@@ -3,16 +3,16 @@
   "rendered": true,
   "published": false,
   "repositoryUrl": "https://github.com/TearsOfTheDawn/CueFlora",
-  "version": "0.1.4",
+  "version": "0.1.9",
   "storeIdentity": "akcolbcdfnjcahhhodnpablekjagfadf",
   "installerSha256": null,
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "download.html": "179706f9b231fac7b797bb19c3bf4079afeb65489da7055e5a251f7efeb64091",
-    "index.html": "c852ec4e92faa5e61a77eb02243378f2decac9d799e86bf0c327ed2a8bb0a989",
-    "privacy.html": "82f0787ad9d05d71942c26edcb9eb90ecd0da5cfd20550a4082f91e867014dde",
+    "download.html": "1a57b9fe2169444f28682deb4e0fdc488921a4f6ce61638d17193c4b9fe9d415",
+    "index.html": "1953d258eb2debbb8571611ed6fc7914080c381086de02f0c917caf1ada7a8d8",
+    "privacy.html": "3069454f67ac5197b5e277b128b9870642ee89971cfcf27f7f40871fdc8be3aa",
     "style.css": "50db9f01e7bc4747fb1d62a3d984c6d461c9d120b6d12641a9965c687a3582c2",
-    "support.html": "aa7955d44dd72656ab7235667e74ee6bfa73e87133a48c1c54132b810e00800e"
+    "support.html": "7f727dc66fc7638f75a59181816487964a2b18707ffa675c4e5ff8a096c8d0c5"
   },
   "visualAcceptance": false,
   "releaseStatus": "prelaunch-source-and-help-only"
