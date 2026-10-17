@@ -1,5 +1,6 @@
 """Buildless GitHub Pages kit from real publisher values; no hosting or browser."""
 import argparse
+from datetime import date
 import html
 import json
 from pathlib import Path
@@ -11,6 +12,13 @@ from release_inputs import ROOT, digest
 
 sys.path.insert(0,str(ROOT/'native'))
 from cueflora_setup.public_release import validate_identity
+
+
+def privacy_revision(text):
+    matches=re.findall(r'Policy revision: (\d{4}-\d{2}-\d{2})(?=\.)',text)
+    if len(matches)!=1:
+        raise ValueError('One explicit privacy policy revision is required')
+    return date.fromisoformat(matches[0]).isoformat()
 
 
 def markdown(text):
@@ -85,11 +93,13 @@ Licence and policy review, final installer binding and Store approval are separa
         else:
             download+='\nVersion: '+version+'. Chrome ID: '+configuration['extensionIds']['chrome']+'.\n\nInstaller SHA-256: '+artifact_report['setupSha256']+'.\n\n'
         download=download.rstrip()+'\n\n'+'\n'.join('- ['+name+']('+url+')' for name,url in links.items())
+        privacy=(ROOT/'docs/public/privacy.md').read_text()
+        revision=privacy_revision(privacy)
         pages={'index':('# CueFlora\n\nAI Subtitles & Translation for YouTube. Use your own compatible AI services, or available YouTube captions.\n\n'+
             'Install the extension, install its on-demand helper, connect your services, choose languages, then press Run. No AI runs automatically on navigation.\n\n'+
             '[Install and download](download.html)\n\nTranslation and recognition depend on your selected services; output can contain errors. Windows x64 / Chrome is the supported release.\n\n'+
             'Based on Substrata by jmviz under MIT; bundled dependencies retain their own licences.'),
-            'download':download,'privacy':(ROOT/'docs/public/privacy.md').read_text(),
+            'download':download,'privacy':privacy,
             'support':(ROOT/'docs/public/support.md').read_text()}
         if prelaunch:
             pages['index']='# CueFlora\n\nAI Subtitles & Translation for YouTube.\n\n'+\
@@ -104,7 +114,7 @@ Licence and policy review, final installer binding and Store approval are separa
         for name,content in pages.items():
             page='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CueFlora — '+labels.get(name,name.title())+'</title><link rel="stylesheet" href="style.css"></head><body><main>'
             notice='<p role="status">Pre-release: source and help only. Installer and Store item are not released.</p>' if prelaunch else ''
-            page+=navigation+notice+markdown(content)+'<footer>Publisher: '+html.escape(configuration['owner'])+'. <a href="'+html.escape(configuration['supportUrl'],quote=True)+'">Contact/support</a>. Privacy policy revision 2026-10-15. No publisher analytics on these static pages.</footer></main></body></html>'
+            page+=navigation+notice+markdown(content)+'<footer>Publisher: '+html.escape(configuration['owner'])+'. <a href="'+html.escape(configuration['supportUrl'],quote=True)+'">Contact/support</a>. Privacy policy revision '+revision+'. No publisher analytics on these static pages.</footer></main></body></html>'
             (output/(name+'.html')).write_text(page,encoding='utf-8')
         (output/'style.css').write_text('body{margin:0;background:#faf8fd;color:#24202e;font:18px/1.6 system-ui,sans-serif}main{max-width:850px;margin:auto;padding:32px 24px}nav{display:flex;flex-wrap:wrap;gap:20px;border-bottom:1px solid #ddd;padding-bottom:16px}a{color:#5d36a8}a:focus-visible{outline:3px solid #e6b337;outline-offset:3px}footer{border-top:1px solid #ddd;margin-top:40px;padding-top:20px;font-size:14px}p,li{overflow-wrap:anywhere}h1{font-size:36px;line-height:1.2}',encoding='utf-8')
         (output/'.nojekyll').write_text('',encoding='utf-8')

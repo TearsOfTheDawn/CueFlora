@@ -9,6 +9,9 @@ sys.path.insert(0,str(ROOT/'native'))
 from cueflora_setup.public_release import validate_public
 from approval_evidence import verified_decisions
 
+HELPER_GATES = ('engineering','sourceExport','redistributionEvidence',
+    'redistributionAuthorized','securityAndPolicy','publicationAuthorized')
+
 
 def assess(engineering, source, ledger, configuration=None, approvals=None, evidence_root=None, preparation_root=None):
     gates = {'engineering':engineering.get('engineeringPassed') is True,
@@ -46,6 +49,8 @@ def assess(engineering, source, ledger, configuration=None, approvals=None, evid
                 gates['publicMaterials'] = all(decisions[name] == 'passed' for name in ('screenshots','publicLocations'))
             except (ValueError,TypeError,KeyError,OSError): issues.append('External evidence is missing, malformed or does not match candidate artifacts')
     return {'schema':1,'gates':gates,'publicReleaseReady':all(gates.values()),'published':False,
+        'helperDownloadReady':all(gates[name] for name in HELPER_GATES),
+        'helperRemaining':[name for name in HELPER_GATES if not gates[name]],
         'unsignedAccepted':True,'remaining':[name for name,passed in gates.items() if not passed],
         'decisions':decisions,'waived':[name for name,status in decisions.items() if status == 'waived'],'issues':issues,
         'dependencyAssessment':dependency_assessment,

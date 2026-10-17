@@ -1,6 +1,6 @@
 # Privacy policy draft and dashboard worksheet
 
-NOT READY TO PUBLISH: responsible party, contact, policy URL and date must be supplied by the publisher after release blockers are resolved.
+Publisher identity, public policy and GitHub Issues contact have been supplied. The authoritative public-page source is `docs/public/privacy.md`, revised 2026-10-17 with an explicit Limited Use commitment. This worksheet remains a code-to-dashboard recommendation, not checked certifications or Chrome Store approval. Other release blockers remain separate.
 
 Purpose: user-requested subtitle display, transcription and translation on YouTube. CueFlora source has no publisher analytics/advertising endpoint. That does not mean no user data is processed.
 

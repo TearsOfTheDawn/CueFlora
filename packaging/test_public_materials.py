@@ -4,10 +4,29 @@ import tempfile
 import unittest
 from html.parser import HTMLParser
 from release_inputs import digest
-from public_materials import build,markdown
+from public_materials import build,markdown,privacy_revision
 
 
 class PublicMaterialsTests(unittest.TestCase):
+    def test_privacy_revision_rejects_missing_duplicate_and_invalid_dates(self):
+        self.assertEqual(privacy_revision('Policy revision: 2026-10-17.'),'2026-10-17')
+        for text in ('','Policy revision: 2026-02-30.',
+                'Policy revision: 2026-10-17. Policy revision: 2026-10-17.'):
+            with self.subTest(text=text),self.assertRaises(ValueError):
+                privacy_revision(text)
+
+    def test_privacy_commitment_and_footer_agree_without_claiming_store_approval(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory)/'pages'
+            build(output,self.configuration(),prelaunch=True)
+            privacy=(output/'privacy.html').read_text()
+            self.assertIn('Limited Use requirements',privacy)
+            self.assertIn('not a claim that Google has approved',privacy)
+            self.assertIn('does not sell user data',privacy)
+            revision=privacy_revision((Path(__file__).resolve().parents[1]/'docs/public/privacy.md').read_text())
+            for name in ('index','download','privacy','support'):
+                self.assertIn('Privacy policy revision '+revision,(output/(name+'.html')).read_text())
+
     def configuration(self):
         return {'schema':2,'mode':'public','product':'cueflora','owner':'Synthetic <publisher> only','repositoryUrl':'https://github.com/fixture-owner/fixture-project',
             'extensionIds':{'chrome':'a'*32},'privacyUrl':'https://fixture-owner.github.io/fixture-project/privacy.html',

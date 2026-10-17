@@ -74,5 +74,23 @@ class ApprovalTests(unittest.TestCase):
                 with self.subTest(path=report),self.assertRaises(ValueError): verified_decisions(bad,root,self.bindings())
             bad=copy.deepcopy(records); bad['gates']['publication']['status']='approved'
             with self.assertRaises(ValueError): verified_decisions(bad,root,self.bindings())
+
+    def test_helper_hosting_does_not_require_store_approval_or_screenshot_assumptions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); records=self.records(root)
+            for name in ('screenshots','publicLocations','storeApproval','cleanWindows','chromeRun'):
+                records['gates'][name]={'status':'pending','reviewedBy':None,'reason':None,'report':None,'reportSha256':None}
+            arguments=({'engineeringPassed':True,'artifactBindings':self.bindings()},
+                {'passed':True,'issues':[],'sourceInventorySha256':'a'*64},
+                {'correspondingSourceComplete':True,'remainingObligations':[]},self.configuration())
+            result=assess(*arguments,records,root)
+            self.assertTrue(result['helperDownloadReady'])
+            self.assertFalse(result['publicReleaseReady'])
+            self.assertEqual(result['decisions']['screenshots'],'pending')
+            for gate in ('licences','nativeSecurity','downloadPolicy','publication'):
+                bad=copy.deepcopy(records)
+                bad['gates'][gate]={'status':'pending','reviewedBy':None,'reason':None,'report':None,'reportSha256':None}
+                with self.subTest(gate=gate):
+                    self.assertFalse(assess(*arguments,bad,root)['helperDownloadReady'])
             bad=copy.deepcopy(records); bad['apiKey']='synthetic'
             with self.assertRaises(ValueError): verified_decisions(bad,root,self.bindings())

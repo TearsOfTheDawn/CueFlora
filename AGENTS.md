@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-16
+> **Last updated:** 2026-10-17
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -28,7 +28,7 @@ The source copy includes current uncommitted improvements, without Substrata Git
 | Extension framework | [WXT](https://wxt.dev/) 0.21.4 / Vite 8.3.4 | Manifest V3, Chrome and Firefox regression builds; no automatic browser launcher |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest 4.1.12 + jsdom, Python unittest | 293 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 135 packaging tests; 8 Node profile/release tests; full candidate results remain authoritative in readiness |
+| Testing | Vitest 4.1.12 + jsdom, Python unittest | 293 TypeScript tests; 95 native/setup tests (93 pass, 2 Windows symlink-privilege skips); 144 packaging tests; 8 Node profile/release tests; frozen 0.1.9 preparation had 135 packaging tests; fresh logs remain authoritative |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -406,6 +406,10 @@ The controlled experiment under `artifacts/audio-rebuild-control-9.0.2-001` pass
 `redistribution_assessment.py` verifies a later recorded licence-review assessment against the exact canonical dependency ledger, all candidate hashes, every known review-required issue and actual candidate-relative evidence-file hashes. Review judgments are not waivers; missing mandatory FFmpeg/source notices or unassigned files remain blockers. Evidence/reviewer declarations are not authenticated legal opinions. Preparation emits a pending template only; no assessment or approval is generated from test success. `release_readiness.py` and guarded promotion can consume a complete verified review instead of permanently hardcoding review-required ambiguity as impossible to clear. Tests cover missing/changed references, old ledgers/bytes, incomplete/duplicate findings, absent scope evidence and attempts to waive or review away mandatory missing sources.
 
 `dependency_ledger.py` retains complete notice/source evidence once in `rows`; each file's component `ledgerRow` is a zero-based reference into that list, with its ID/version/licence summary. This avoids quadratic report growth when thousands of files share a notice set, without deleting original evidence or granting approval. Hash mismatches fail, repeated component IDs retain distinct row references, and unknown files remain unresolved. `release_assets.py` includes and hashes the pending licence-assessment template when present; older candidates without that template remain compatible.
+
+`release_readiness.py` also reports separate `helperDownloadReady`/`helperRemaining` gates. Reviewed helper prerelease hosting requires source/engineering integrity, dependency evidence, redistribution/security-policy decisions and publication authorization, not prior Store approval or an assumed screenshot. `stage_release.py` plans by default; exact-version execution uses authenticated GitHub CLI, verifies all local inventory hashes and the public commit's complete source/blob/mode tree, uploads six mandatory assets/checksums as a draft, downloads/verifies them, atomically creates the exact source tag and activates only a prerelease. Existing tags/releases, ambiguous authorization failures and changed/missing notice/source bytes are refused. Failures can leave an unpublished draft/tag; no automatic takeover/deletion or Store submission is implemented. Anonymous public downloads remain a separate verification step. Existing `promote_release.py` still requires all final-release gates.
+
+The 2026-10-17 privacy source includes an explicit Limited Use data-handling commitment, without claiming Store approval or provider retention guarantees. `public_materials.privacy_revision` requires one valid policy date and supplies every generated footer from it. `docs/RELEASE_EXECUTION.md` records current staging limits and concrete unresolved licence/security/policy items. The publisher declined prelaunch testing/screenshot work: no image, live test or private dashboard state is invented. These later release-engineering/docs changes do not rewrite or silently rebuild the frozen 0.1.9 candidate.
 
 ### Prerequisites
 

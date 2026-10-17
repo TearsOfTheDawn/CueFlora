@@ -1,12 +1,18 @@
 # CueFlora privacy policy
 
-Publisher/contact details appear in the page footer. Policy revision: 2026-10-15. This policy describes the Windows x64 / Chrome edition; publishing this policy is not a public software release.
+Publisher/contact details appear in the page footer. Policy revision: 2026-10-17. This policy describes the Windows x64 / Chrome edition; publishing this policy is not a public software release.
 
 CueFlora reads current-video/caption metadata, video ID, title and bounded description for subtitles. On explicit Run, the on-demand helper downloads temporary audio and sends prepared chunks/language/model parameters to your chosen transcription service. Source cues, languages, neighbouring context, title and bounded description go to your chosen translation service. User-triggered model checks send metadata requests and optional credentials; they do not perform inference.
 
 Provider configuration, language/appearance preferences, setup progress and bounded subtitle caches are stored locally. Successfully remembered keys use Windows user-scoped encryption; saved plaintext is never returned to settings/player responses. Unsuccessful legacy migration leaves the original until protection and persistence are verified, with a visible warning. Protection does not defend against malware running as the same Windows user.
 
 Data goes to YouTube and services you deliberately configure, not a CueFlora inference server. Their privacy, retention and API fees apply independently. Public builds require remote HTTPS and reject provider redirects. There is no added advertising, analytics, cookie import, persistent companion or automatic AI generation during navigation.
+
+## Limited Use commitment
+
+CueFlora's handling of user data follows the Chrome Web Store User Data Policy, including its Limited Use requirements. Data is used only for the disclosed subtitle features and transferred only as needed to provide those features. CueFlora does not sell user data, use or transfer it for advertising, or use it to determine creditworthiness or lending eligibility.
+
+The publisher does not receive routine audio, subtitles, API keys or browsing records and does not operate a service for reviewing them. If you voluntarily share specific redacted information for support, it is used only for that support request; sharing a public issue is not permission to inspect other data. No human review of private local evidence is enabled by CueFlora. Your chosen AI services have their own policies; CueFlora makes no promise about their retention or model training. This data-use commitment is not a claim that Google has approved the extension or its native downloader.
 
 Temporary processing files are removed with their processing directory. Local preferences/caches/protected keys remain until changed/removed or extension storage is cleared. Helper removal preserves settings/evidence and quarantines its owned runtime; removing the extension clears its storage according to Chrome behavior.
 
