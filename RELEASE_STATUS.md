@@ -1,9 +1,9 @@
-# CueFlora release status
+# CueFlora 0.1.13 — published on GitHub
 
-Updated 2026-10-17: the publisher abandoned Chrome Web Store distribution in favour of GitHub only. No Store submission, screenshot, developer account action or Google approval is part of the intended route.
+[Download the complete Windows package](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-0.1.13-Windows-x64.zip) · [Release and all sources/notices](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.1.13) · [Installation guide](https://tearsofthedawn.github.io/CueFlora/download.html)
 
-See [the current GitHub route](docs/GITHUB_DISTRIBUTION.md) and [finite release status](docs/FINAL_RELEASE_STATUS.md). This commit changes documentation and build-only CI; it does not rebuild or publish an installer, migrate Store-specific activation/readiness checks, or establish YouTube permission. Existing 0.1.12 packages and their exact-bound assessments remain immutable historical evidence under `release/0.1.12/`.
+Windows x64 / Google Chrome. Extract permanently, Load unpacked from `CueFlora Setup/Chrome-extension` at `chrome://extensions`, run the matching Setup, connect existing compatible AI services and press Run. No Chrome Store action, separate Python installation, administrator access or PATH edit is required.
 
-The intended installation is a matching keyed unpacked Chrome extension plus Windows helper from GitHub Releases. Ordinary Windows/Chrome users must manually enable Developer mode and load that folder. Keep the extension folder and update manually. Do not substitute a keyless Store ZIP or assume binary hosting exists before actual assets are uploaded.
+The complete clean-runner preparation and one-time publication succeeded. Public installer/extension/source/notices/checksum downloads and live Pages hashes were verified. The installer is unsigned. Clean-Windows and real-browser acceptance remain deferred, not passed. Earlier packages and Substrata are preserved. Future releases are not automatically published.
 
-Application/subtitle processing and Substrata remain unchanged. This documentation/workflow transition passed 293 TypeScript tests, 105 native tests (two environment skips), 165 packaging tests, 8 Node tests, both browser builds, typecheck, Python compilation and whitespace validation. This is not live-browser, legal or clean-machine acceptance. No binary release was created.
+[Exact release manifest](release/0.1.13/RELEASE_MANIFEST.json) records source/artifact identities and verification jobs. Historical Store instructions are superseded, not current release tasks.

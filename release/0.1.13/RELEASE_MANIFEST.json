@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "version": "0.1.13",
+  "distribution": "github",
+  "published": true,
+  "releaseUrl": "https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.1.13",
+  "downloadPage": "https://tearsofthedawn.github.io/CueFlora/download.html",
+  "platform": "Windows-x64",
+  "browser": "Chrome",
+  "extensionId": "akcolbcdfnjcahhhodnpablekjagfadf",
+  "buildInputCommit": "9d018e6e2ff4c1877bed327df5b0d88f9881c346",
+  "releaseSourceCommit": "eb59e4a8aca2c05233014780df8b216cf5feb90b",
+  "artifacts": {
+    "sourceInventorySha256": "8a40b3034fdb6fb0974a976aa6a94a063af6b7b0e734fb01d4f83b2ebfc6a96d",
+    "runtimeInventorySha256": "7bea65f05b12618e0ae71aa4a8e57c3c149c084b8145bad6daca8bbc49077ad3",
+    "setupSha256": "04b0a9ba5c9129ac0cd287480b67e0a855e43091518567763ab40232940550a5",
+    "extensionSha256": "d5902eb4946364aa6f5f3ef8be79332586baeeaad0dd709518e14d7e1c6d7a58"
+  },
+  "publicFiles": [
+    {
+      "name": "CueFlora-0.1.13-Setup.exe",
+      "bytes": 137609975,
+      "sha256": "04b0a9ba5c9129ac0cd287480b67e0a855e43091518567763ab40232940550a5"
+    },
+    {
+      "name": "CueFlora-0.1.13-Windows-x64.zip",
+      "bytes": 185796991,
+      "sha256": "52352fb6689c5a099ce5950a55ea773ebd56d901c2966eaece4188ff77982047"
+    },
+    {
+      "name": "CueFlora-Chrome-extension.zip",
+      "bytes": 219579,
+      "sha256": "d5902eb4946364aa6f5f3ef8be79332586baeeaad0dd709518e14d7e1c6d7a58"
+    },
+    {
+      "name": "CueFlora-CONSOLIDATED-NOTICES.txt",
+      "bytes": 10906676,
+      "sha256": "57cc831f50848fff933a571567c41375510eff88f149105ad045be34ce271048"
+    },
+    {
+      "name": "CueFlora-dependency-ledger.json",
+      "bytes": 7992295,
+      "sha256": "351005070622b5732cb15b9bd880f7fcc92353d47a0d1777faf0d043e07a93f0"
+    },
+    {
+      "name": "CueFlora-notices.zip",
+      "bytes": 5068499,
+      "sha256": "39e20566077bb94ae7706069ab5729314216145ede99529106925ed8b4d9a557"
+    },
+    {
+      "name": "CueFlora-source.zip",
+      "bytes": 972382,
+      "sha256": "42c21af6b96957970af3398fb282eaa3f766d74950ba8d6bc6ebc0d6b41916a7"
+    },
+    {
+      "name": "CueFlora-third-party-sources.zip",
+      "bytes": 523484115,
+      "sha256": "0eaabb3ce18e4ec409a819dd89f423f55d71485a38fa2ab0b3770e69f825f9ba"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 756,
+      "sha256": "834c003e0464fe9c03ef7632293975f16086eb298e55fad3cb0dcd566da8bbc1"
+    }
+  ],
+  "candidateWorkflow": "https://github.com/TearsOfTheDawn/CueFlora/actions/runs/39067290782",
+  "publicationWorkflow": "https://github.com/TearsOfTheDawn/CueFlora/actions/runs/39069013160",
+  "pagesWorkflow": "https://github.com/TearsOfTheDawn/CueFlora/actions/runs/39069259990",
+  "pagesCommit": "4d5e231a567ea7ea21474fc2389913488642e808",
+  "pagesLiveHashes": {
+    "index.html": "a50e71b4f00bf8938ec3ff1a24f29dfa47fd7ffe86b6b3c7ba75b4449de097d5",
+    "download.html": "769653f368d5401af7406efb81a9dc570f854b8766e1dd812628b351de3f01d2",
+    "privacy.html": "3046020441d88cd1860428ebc277b86c0ade953b1805dfe561c11412816bfd53",
+    "support.html": "b92d78f465a81521dfd3f80361492135edc3e8a6d8be724d7019ed1e94bd1e11",
+    "style.css": "92a7771d65a9c47d9a73ae317937259656c402db13f4ef1e8754621a3cad3283"
+  },
+  "unsigned": true,
+  "liveBrowserAcceptance": false,
+  "cleanWindowsAcceptance": false,
+  "manualAcceptance": "Publisher expressly deferred; not passed.",
+  "futureAutomaticPublication": false
+}
