@@ -1,22 +1,20 @@
 {
   "schema": 1,
   "rendered": true,
-  "published": true,
+  "published": false,
   "distribution": "github",
   "version": "0.1.13",
   "repositoryUrl": "https://github.com/TearsOfTheDawn/CueFlora",
-  "releaseUrl": "https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.1.13",
   "extensionId": "akcolbcdfnjcahhhodnpablekjagfadf",
   "installerSha256": "04b0a9ba5c9129ac0cd287480b67e0a855e43091518567763ab40232940550a5",
   "files": {
-    "index.html": "a50e71b4f00bf8938ec3ff1a24f29dfa47fd7ffe86b6b3c7ba75b4449de097d5",
-    "download.html": "769653f368d5401af7406efb81a9dc570f854b8766e1dd812628b351de3f01d2",
-    "privacy.html": "3046020441d88cd1860428ebc277b86c0ade953b1805dfe561c11412816bfd53",
-    "support.html": "b92d78f465a81521dfd3f80361492135edc3e8a6d8be724d7019ed1e94bd1e11",
-    "style.css": "92a7771d65a9c47d9a73ae317937259656c402db13f4ef1e8754621a3cad3283",
-    ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "download.html": "73e8f5dfa5783f849a9b41d3c5d0ca986c68b7470011f3a7d0b5523afd939d39",
+    "index.html": "b264e1467501f7f715d813d125f7c7e21f1a5eb9583c0475d35b424cf327be4f",
+    "privacy.html": "fd971c077dd6d5815a1a184cd1639709e9043306e10da3dad4a8b9caeff8616d",
+    "style.css": "e48c2cddd456b5c993569bed3fdb0ace2e68c93aed136e737ec3dda71ba807bd",
+    "support.html": "639b1e0eb31cd09b9d9e50ad5bcad8f7f621423efcf6df6ed63ce0871e3964e1"
   },
   "visualAcceptance": false,
-  "releaseStatus": "Published stable GitHub release; anonymous asset hash verification passed in the one-time publication job.",
-  "publicationWorkflow": "https://github.com/TearsOfTheDawn/CueFlora/actions/runs/39069013160"
+  "releaseStatus": "candidate pages; verify actual assets before deployment"
 }
