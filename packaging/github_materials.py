@@ -24,14 +24,23 @@ def build(output, configuration, artifacts=None, version=None, prelaunch=False):
     if not re.fullmatch(r'\d+\.\d+\.\d+',version): raise ValueError('Exact release version required')
     repository=configuration['repositoryUrl']; assets=repository+'/releases/download/v'+version+'/'
     output.mkdir(parents=True)
+    package_name='CueFlora-'+version+'-Windows-x64.zip'
+    primary='[Download CueFlora for Windows — includes everything you need]('+assets+package_name+')'
     download='''# Install CueFlora
 
-Windows x64 / Google Chrome. Download and extract the complete Windows package to a permanent folder.
+Windows x64 / Google Chrome.
 
-- Open chrome://extensions, enable Developer mode, click Load unpacked and select Chrome-extension inside the extracted CueFlora Setup folder. Keep that folder.
-- Run the matching CueFlora Setup.exe, select Chrome, read Third-party terms and confirm Install.
-- Open CueFlora settings, check the helper, connect your existing AI services, Save and choose languages.
-- On YouTube, select the flower button and press Run. Available captions can be used without AI configuration.
+'''+primary+'''
+
+This is the only download you need: the complete Windows ZIP contains both the Chrome extension and Setup. Ignore the separate installer, extension ZIP and source-code files unless you specifically need them. Your AI services and models are separate.
+
+## Install in five steps
+
+1. Download the complete Windows ZIP above and extract it to a permanent folder.
+2. Open chrome://extensions, enable Developer mode, choose Load unpacked and select CueFlora Setup/Chrome-extension inside the extracted package. Keep this folder.
+3. In the extracted CueFlora Setup folder, run CueFlora Setup.exe, select Chrome, read Third-party terms and confirm Install.
+4. Open CueFlora settings, check the helper connection, connect your existing AI services, Save and choose languages.
+5. On YouTube, select the flower button and press Run. Available captions can be used without AI configuration.
 
 No administrator access, separate Python installation or PATH changes are required. The helper runs on demand. CueFlora does not install models or start services. Transcription needs a compatible /audio/transcriptions API; translation needs /chat/completions with structured JSON Schema output. Supply an API address, optional key and model for each. A ChatGPT or other website login is not necessarily API access.
 
@@ -44,27 +53,36 @@ For extension updates, keep the same folder and Chrome ID, replace its files and
     if prelaunch:
         download='# CueFlora release preparation\n\nNo public installer is offered by these preparation pages. Source, privacy and support are available. The intended route is a keyed unpacked Chrome extension and matching Windows helper from GitHub.\n\n[Source code]('+repository+')'
     else:
-        download+='\n\nVersion: '+version+'. Chrome ID: '+configuration['extensionIds']['chrome']+'.\n\n'
+        download+='\n\n## For developers and verification — optional\n\nYou do not need these separate files for normal installation. Original notices and corresponding third-party sources remain available here.\n\n'
+        download+='Version: '+version+'. Chrome ID: '+configuration['extensionIds']['chrome']+'.\n\n'
         download+='Windows package SHA-256: '+artifacts['sha256']+'.\n\nInstaller SHA-256: '+artifacts['setupSha256']+'.\n\n'
         download+='\n'.join('- ['+label+']('+assets+name+')' for label,name in (
-            ('Download complete Windows package','CueFlora-'+version+'-Windows-x64.zip'),
-            ('Helper installer only','CueFlora-'+version+'-Setup.exe'),
-            ('Unpacked extension ZIP','CueFlora-Chrome-extension.zip'),
+            ('Helper installer only — already included above','CueFlora-'+version+'-Setup.exe'),
+            ('Unpacked extension ZIP — already included above','CueFlora-Chrome-extension.zip'),
             ('Application source','CueFlora-source.zip'),('Third-party sources','CueFlora-third-party-sources.zip'),
-            ('Original notices','CueFlora-notices.zip'),('Checksums','SHA256SUMS.txt')))
+            ('Original notices','CueFlora-notices.zip'),('Consolidated notices','CueFlora-CONSOLIDATED-NOTICES.txt'),
+            ('Dependency ledger','CueFlora-dependency-ledger.json'),('Checksums','SHA256SUMS.txt')))
     privacy=(ROOT/'docs/public/privacy.md').read_text()
     revision=privacy_revision(privacy)
     pages={
         'index':'# CueFlora\n\nAI Subtitles & Translation for YouTube. Use available captions or your own compatible transcription and translation services. AI work starts only when you press Run.\n\nWindows x64 / Chrome, distributed through GitHub.\n\n[Install and download](download.html)\n\n[Read the source]('+repository+')\n\nBased on Substrata by jmviz under MIT; bundled components retain their original licences.',
         'download':download,'privacy':privacy,
         'support':'# CueFlora support\n\n[Report a problem on GitHub Issues]('+configuration['supportUrl']+')\n\nInclude app, Windows and Chrome versions, the failing step and redacted reason codes. Never post API keys, encrypted credential records, signed media URLs or private captures.\n\nUse the keyed extension and Setup from the same release. The helper check verifies connection/tool availability; model discovery checks metadata, not generation compatibility. Local services must already be running.\n\n[Installation, updates and removal](download.html)\n\nRemembered keys use your Windows account protection, not protection against malware running as you. Recognition and translation can be wrong.'}
+    if not prelaunch:
+        pages['index']=pages['index'].replace('[Install and download](download.html)',primary+'\n\nOne ZIP includes the Chrome extension and Setup.\n\n[Follow the five installation steps](download.html)')
     labels={'index':'Home','download':'Download','privacy':'Privacy','support':'Help'}
     nav='<nav>'+''.join('<a href="'+name+'.html">'+label+'</a> ' for name,label in labels.items())+'</nav>'
     for name,content in pages.items():
         notice='<p role="status">Preparation only: no installer is published by this page.</p>' if prelaunch else ''
-        page='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CueFlora — '+labels[name]+'</title><link rel="stylesheet" href="style.css"></head><body><main>'+nav+notice+markdown(content)+'<footer>Publisher: '+html.escape(configuration['owner'])+'. <a href="'+html.escape(configuration['supportUrl'],quote=True)+'">Support</a>. Privacy policy revision '+revision+'. No publisher analytics on these static pages.</footer></main></body></html>'
+        rendered=markdown(content)
+        if name in ('index','download') and not prelaunch:
+            target='href="'+html.escape(assets+package_name,quote=True)+'"'
+            rendered=rendered.replace('<a '+target,'<a class="primary-download" '+target,1)
+        page='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CueFlora — '+labels[name]+'</title><link rel="stylesheet" href="style.css"></head><body><main>'+nav+notice+rendered+'<footer>Publisher: '+html.escape(configuration['owner'])+'. <a href="'+html.escape(configuration['supportUrl'],quote=True)+'">Support</a>. Privacy policy revision '+revision+'. No publisher analytics on these static pages.</footer></main></body></html>'
         (output/(name+'.html')).write_text(page,encoding='utf-8')
     (output/'style.css').write_text('body{margin:0;background:#faf8fd;color:#24202e;font:18px/1.6 system-ui,sans-serif}main{max-width:850px;margin:auto;padding:32px 24px}nav{display:flex;flex-wrap:wrap;gap:20px;border-bottom:1px solid #ddd;padding-bottom:16px}a{color:#5d36a8}a:focus-visible{outline:3px solid #e6b337;outline-offset:3px}footer{border-top:1px solid #ddd;margin-top:40px;padding-top:20px;font-size:14px}p,li{overflow-wrap:anywhere}',encoding='utf-8')
+    with (output/'style.css').open('a',encoding='utf-8') as style:
+        style.write('.primary-download{display:inline-block;background:#5d36a8;color:#fff;padding:14px 20px;border-radius:8px;font-weight:700;text-decoration:none}.primary-download:hover{background:#47277f}ol{padding-left:28px}ol li{margin:16px 0}')
     (output/'.nojekyll').write_text('',encoding='utf-8')
     report={'schema':1,'rendered':True,'published':False,'distribution':'github','version':version,
         'repositoryUrl':repository,'extensionId':configuration['extensionIds']['chrome'],

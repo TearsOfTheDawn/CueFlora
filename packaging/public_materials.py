@@ -33,6 +33,8 @@ def markdown(text):
             blocks.append('<h'+str(level)+'>'+inline(lines[0].lstrip('# '))+'</h'+str(level)+'>')
         elif all(line.startswith('- ') for line in lines):
             blocks.append('<ul>'+''.join('<li>'+inline(line[2:])+'</li>' for line in lines)+'</ul>')
+        elif all(re.match(r'^\d+\. ',line) for line in lines):
+            blocks.append('<ol>'+''.join('<li>'+inline(re.sub(r'^\d+\. ','',line))+'</li>' for line in lines)+'</ol>')
         else: blocks.append('<p>'+inline(' '.join(lines))+'</p>')
     return '\n'.join(blocks)
 

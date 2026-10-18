@@ -8,16 +8,21 @@ Use available YouTube captions, or your own compatible AI services for transcrip
 
 ## Install from GitHub
 
-1. Open [Releases](https://github.com/TearsOfTheDawn/CueFlora/releases/latest) and download the complete **CueFlora-0.1.13-Windows-x64.zip**. Extract it to a permanent folder.
+### [Download CueFlora for Windows — includes everything you need](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-0.1.13-Windows-x64.zip)
+
+**This is the only download you need:** it contains both the Chrome extension and Setup. You do not need the separate installer, extension ZIP or source-code downloads listed under Assets.
+
+1. Download **CueFlora-0.1.13-Windows-x64.zip** above and extract it to a permanent folder.
 2. Open `chrome://extensions`, enable **Developer mode**, select **Load unpacked**, and choose `CueFlora Setup/Chrome-extension` from the extracted package. Keep this folder.
-3. Run the included **CueFlora Setup.exe**, select Chrome, read Third-party terms, and confirm **Install**.
-4. Open CueFlora settings: check the helper, connect your existing AI services, save, and choose languages. On YouTube, open the flower button and press **Run**.
+3. In the extracted `CueFlora Setup` folder, run **CueFlora Setup.exe**, select Chrome, read Third-party terms, and confirm **Install**.
+4. Open CueFlora settings: check the helper, connect your existing AI services, save, and choose languages.
+5. On YouTube, open the flower button and press **Run**.
 
 The installer bundles Python, yt-dlp, FFmpeg/ffprobe and Deno. It needs no administrator access, separate Python installation or PATH changes. The helper runs on demand; it is not a continuously running companion. Setup does not install the extension or AI services.
 
 Transcription requires a compatible `/audio/transcriptions` API; translation requires `/chat/completions` with structured JSON Schema output. Supply your API address, optional key and exact model name for each stage. Neither a provider nor a model is preselected. Local services must already be running. ChatGPT/other website subscriptions are not necessarily API access. Available captions can be used without AI configuration.
 
-Release links become usable only after the corresponding assets are published. The [download page](https://tearsofthedawn.github.io/CueFlora/download.html) provides the current hosted version and hashes. Chrome Web Store publication is not planned. This is Chrome's manual Developer-mode installation route.
+The [download page](https://tearsofthedawn.github.io/CueFlora/download.html) has the same installation steps, optional technical files and hashes. Chrome Web Store publication is not planned. This is Chrome's manual Developer-mode installation route.
 
 ## Updates and removal
 
@@ -33,7 +38,7 @@ The installer is unsigned. Do not disable antivirus or automatically bypass warn
 
 Automated tests are not clean-machine or actual Chrome/native Run acceptance; those checks remain deferred. Firefox/macOS/Linux are not certified. There is no automatic extension update, ChatGPT sign-in, model installation or AI-service provisioning.
 
-## Source and verification
+## For developers and verification — optional
 
 All application source, build scripts, pinned dependency inputs, inventories, notices and corresponding third-party sources are reviewable. Windows packaging runs offline after obtaining exact public, hash-locked inputs. Two fresh builds distinguish measured metadata differences from actual payload changes. Build provenance is not a guarantee that software is harmless.
 

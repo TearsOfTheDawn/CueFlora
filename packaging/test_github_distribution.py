@@ -143,12 +143,32 @@ class GitHubDistributionTests(unittest.TestCase):
             for name in ('CueFlora-7.8.9-Windows-x64.zip','CueFlora-Chrome-extension.zip','CueFlora-notices.zip','SHA256SUMS.txt'):
                 self.assertIn('/releases/download/v7.8.9/'+name,download)
             self.assertIn('Developer mode',download)
+            primary='/releases/download/v7.8.9/CueFlora-7.8.9-Windows-x64.zip'
+            self.assertEqual(download.count('href="https://github.com/TearsOfTheDawn/CueFlora'+primary+'"'),1)
+            self.assertEqual(download.count('class="primary-download"'),1)
+            self.assertLess(download.index('class="primary-download"'),download.index('<ol>'))
+            self.assertLess(download.index('</ol>'),download.index('For developers and verification'))
+            steps=download.split('<ol>',1)[1].split('</ol>',1)[0]
+            self.assertEqual(steps.count('<li>'),5)
+            for marker in ('permanent folder','CueFlora Setup/Chrome-extension','CueFlora Setup.exe','AI services','press Run'):
+                self.assertIn(marker,steps)
+            for name in ('CueFlora-7.8.9-Setup.exe','CueFlora-Chrome-extension.zip','CueFlora-source.zip',
+                    'CueFlora-third-party-sources.zip','CueFlora-notices.zip','CueFlora-CONSOLIDATED-NOTICES.txt',
+                    'CueFlora-dependency-ledger.json','SHA256SUMS.txt'):
+                self.assertIn(name,download.split('For developers and verification',1)[1])
+            home=(root/'pages/index.html').read_text()
+            self.assertIn(primary,home)
+            self.assertEqual(home.count('class="primary-download"'),1)
+            self.assertIn('five installation steps',home)
+            for name,checksum in report['files'].items():
+                self.assertEqual(digest(root/'pages'/name),checksum)
             self.assertNotIn('chromewebstore',download)
             self.assertNotIn('YouTube approval',download)
             for name in ('index','download','privacy','support'):
                 self.assertNotIn('<script',(root/'pages'/(name+'.html')).read_text())
             build(root/'prelaunch',self.configuration(),version='7.8.9',prelaunch=True)
             self.assertNotIn('/releases/download/',(root/'prelaunch/download.html').read_text())
+            self.assertNotIn('class="primary-download"',(root/'prelaunch/index.html').read_text())
             with self.assertRaises(ValueError): build(root/'bad',self.configuration(),{'setupSha256':'a'*64},version='7.8.9')
 
     def test_release_assets_ship_keyed_extension_full_package_and_original_notices(self):

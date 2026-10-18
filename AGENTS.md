@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-17
+> **Last updated:** 2026-10-18
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -326,6 +326,8 @@ Presentation capture additionally requires one translation per source cue and no
 ## Build & Development
 
 ### Windows/Chrome preview distribution
+
+The post-release installation guide leads with one complete Windows ZIP (extension plus Setup), five numbered steps and optional developer/verification files. `github_materials.py` generates the same primary download on Home/Download; `public_materials.markdown` renders escaped semantic ordered lists. These presentation-only changes do not rebuild or replace 0.1.13 assets, tags or their frozen source archive. README and the existing release's title/body may be updated separately from immutable payloads.
 
 Source version 0.1.12 is prepublication and adds exact V8 submodule notices, full Cargo source delivery, explicitly labelled upstream-declaration/source-attribution records, Setup terms acknowledgement and frozen solver configuration isolation. Assigned Store identity, audio/model settings and subtitle-processing source remain unchanged. Earlier packages remain immutable; only a fresh candidate's completed readiness/handoff and hash-bound dependency assessment establish rebuild/review completion. `docs/FINAL_RELEASE_STATUS.md` is the finite current checklist; `docs/THIRD_PARTY_REVIEW.md` records the new scoped review. Publisher/Store identity and live prelaunch locations are supplied. Clean-Windows/real-Chrome testing is explicitly deferred, not passed; signing is optional. Binary hosting and Store-account/policy/review boundaries remain explicit, without inventing a mandatory independent auditor or new features.
 

@@ -8,6 +8,15 @@ from public_materials import build,markdown,privacy_revision
 
 
 class PublicMaterialsTests(unittest.TestCase):
+    def test_numbered_instructions_use_semantic_lists_without_parsing_html(self):
+        content=markdown('## Install\n\n1. Extract <script>unsafe</script>.\n2. [Get files](https://example.com/files.zip)\n\nKeep this folder.')
+        self.assertIn('<ol><li>Extract &lt;script&gt;unsafe&lt;/script&gt;.</li>',content)
+        self.assertEqual(content.count('<li>'),2)
+        self.assertIn('<a href="https://example.com/files.zip"',content)
+        self.assertIn('</ol>\n<p>Keep this folder.</p>',content)
+        self.assertNotIn('<script>',content)
+        self.assertNotIn('<ol>',markdown('1. First\nNot an instruction'))
+
     def test_privacy_revision_rejects_missing_duplicate_and_invalid_dates(self):
         self.assertEqual(privacy_revision('Policy revision: 2026-10-17.'),'2026-10-17')
         for text in ('','Policy revision: 2026-02-30.',
