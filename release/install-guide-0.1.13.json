@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "repository": "TearsOfTheDawn/CueFlora",
+  "releaseId": 416055357,
+  "tag": "v0.1.13",
+  "name": "CueFlora 0.1.13 — Windows & Chrome",
+  "body": "## [Download this file — includes everything you need](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-0.1.13-Windows-x64.zip)\n\n**Only download `CueFlora-0.1.13-Windows-x64.zip`.** It includes both the Chrome extension and Setup. You do not need any of the other files under Assets for normal installation.\n\n### Install in five steps\n\n1. **Extract** the ZIP to a permanent folder.\n2. **Add the extension:** open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select `CueFlora Setup/Chrome-extension` inside the extracted folder. Keep this folder.\n3. **Install the helper:** run **CueFlora Setup.exe** in the extracted `CueFlora Setup` folder. Select **Chrome**, read Third-party terms and confirm **Install**.\n4. **Connect your AI services:** open CueFlora settings, check the helper connection, enter your existing service details, save, and choose languages.\n5. **Use it:** open a YouTube video, click the **flower button**, then **Run**.\n\nWindows x64 / Google Chrome. No separate Python installation, administrator access or PATH changes are needed. AI services/models are not included; compatible transcription and translation APIs are required for AI generation. Available YouTube captions can be used without AI configuration.\n\nThe installer is **unsigned**. Do not disable security software. Hosted AI can cost money, and subtitles can be inaccurate.\n\n[Installation help, updates and removal](https://tearsofthedawn.github.io/CueFlora/download.html) · [Report a problem](https://github.com/TearsOfTheDawn/CueFlora/issues)\n\n<details>\n<summary>For developers and verification — optional</summary>\n\nThe separate installer and extension ZIP below are already included in the recommended Windows ZIP. These links are optional:\n\n- [Helper installer only](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-0.1.13-Setup.exe)\n- [Chrome extension only](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-Chrome-extension.zip)\n- [Application source](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-source.zip)\n- [Corresponding third-party sources and build information](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-third-party-sources.zip)\n- [Original notices](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-notices.zip)\n- [Consolidated notices](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-CONSOLIDATED-NOTICES.txt)\n- [Dependency ledger](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-dependency-ledger.json)\n- [SHA-256 checksums](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/SHA256SUMS.txt)\n\nWindows ZIP SHA-256: `52352fb6689c5a099ce5950a55ea773ebd56d901c2966eaece4188ff77982047`.\n\nTranscription requires a compatible `/audio/transcriptions` API; translation requires `/chat/completions` with structured JSON Schema output. A website login or subscription is not necessarily API access. CueFlora does not install models or start AI services.\n\nOriginal third-party licences and corresponding sources accompany the binaries. Process only content you are entitled to use, in accordance with applicable terms and law. Automated checks are not clean-machine or real-browser acceptance. Checksums identify files; they do not guarantee safety.\n\n</details>\n",
+  "expected": {
+    "id": 416055357,
+    "tag_name": "v0.1.13",
+    "target_commitish": "eb59e4a8aca2c05233014780df8b216cf5feb90b",
+    "draft": false,
+    "prerelease": false,
+    "assets": [
+      {
+        "id": 651586162,
+        "name": "CueFlora-0.1.13-Setup.exe",
+        "size": 137609975,
+        "digest": "sha256:04b0a9ba5c9129ac0cd287480b67e0a855e43091518567763ab40232940550a5"
+      },
+      {
+        "id": 651586197,
+        "name": "CueFlora-0.1.13-Windows-x64.zip",
+        "size": 185796991,
+        "digest": "sha256:52352fb6689c5a099ce5950a55ea773ebd56d901c2966eaece4188ff77982047"
+      },
+      {
+        "id": 651586191,
+        "name": "CueFlora-Chrome-extension.zip",
+        "size": 219579,
+        "digest": "sha256:d5902eb4946364aa6f5f3ef8be79332586baeeaad0dd709518e14d7e1c6d7a58"
+      },
+      {
+        "id": 651586160,
+        "name": "CueFlora-CONSOLIDATED-NOTICES.txt",
+        "size": 10906676,
+        "digest": "sha256:57cc831f50848fff933a571567c41375510eff88f149105ad045be34ce271048"
+      },
+      {
+        "id": 651586161,
+        "name": "CueFlora-dependency-ledger.json",
+        "size": 7992295,
+        "digest": "sha256:351005070622b5732cb15b9bd880f7fcc92353d47a0d1777faf0d043e07a93f0"
+      },
+      {
+        "id": 651586203,
+        "name": "CueFlora-notices.zip",
+        "size": 5068499,
+        "digest": "sha256:39e20566077bb94ae7706069ab5729314216145ede99529106925ed8b4d9a557"
+      },
+      {
+        "id": 651586159,
+        "name": "CueFlora-source.zip",
+        "size": 972382,
+        "digest": "sha256:42c21af6b96957970af3398fb282eaa3f766d74950ba8d6bc6ebc0d6b41916a7"
+      },
+      {
+        "id": 651586158,
+        "name": "CueFlora-third-party-sources.zip",
+        "size": 523484115,
+        "digest": "sha256:0eaabb3ce18e4ec409a819dd89f423f55d71485a38fa2ab0b3770e69f825f9ba"
+      },
+      {
+        "id": 651586211,
+        "name": "SHA256SUMS.txt",
+        "size": 756,
+        "digest": "sha256:834c003e0464fe9c03ef7632293975f16086eb298e55fad3cb0dcd566da8bbc1"
+      }
+    ]
+  }
+}
