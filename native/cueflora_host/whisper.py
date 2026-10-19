@@ -1337,7 +1337,18 @@ def _split_into_chunks(audio_path, chunk_length_s, overlap_s, output_dir):
     return chunks
 
 
-def _post_transcription(upload_path, url, headers, params, mime, max_attempts, capture=None, upload_filename=None):
+class _ProgressUpload:
+    """Report multipart body consumption without changing its bytes or retry policy."""
+    def __init__(self,stream,complete):self.stream=stream;self.complete=complete;self.notified=False
+    def __getattr__(self,name):return getattr(self.stream,name)
+    def read(self,size=-1):
+        data=self.stream.read(size)
+        if not self.notified and self.stream.tell()>=os.fstat(self.stream.fileno()).st_size:
+            self.notified=True;self.complete()
+        return data
+
+
+def _post_transcription(upload_path, url, headers, params, mime, max_attempts, capture=None, upload_filename=None,on_progress=None):
     """Upload one file to the transcription endpoint with retry logic."""
     last_error = None
     upload = capture.preserve("upload", upload_path) if capture else None
@@ -1345,7 +1356,9 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
         started = time.monotonic()
         try:
             with open(upload_path, "rb") as f:
-                files = {"file": (upload_filename or os.path.basename(upload_path), f, mime)}
+                if on_progress:on_progress('upload','Uploading audio…')
+                upload_stream=_ProgressUpload(f,lambda:on_progress('transcribe','Waiting for transcription…')) if on_progress else f
+                files = {"file": (upload_filename or os.path.basename(upload_path), upload_stream, mime)}
                 with httpx.Client(timeout=300.0) as client:
                     resp = client.post(
                         url,
@@ -1533,6 +1546,7 @@ def _transcribe_one_chunk(
         mime,
         max_attempts,
         capture=capture,
+        on_progress=on_progress,
     )
     _dump_debug_json(
         f"chunk_{chunk_index:04d}_raw.json",
@@ -1724,7 +1738,7 @@ def transcribe(
             f"Uploading {file_mb:.1f} MB {ext} to {model}...",
         )
         result = _post_transcription(
-            upload_path, url, headers, params, mime, max_attempts, capture=capture
+            upload_path, url, headers, params, mime, max_attempts, capture=capture,on_progress=on_progress
         )
         _dump_debug_json(
             "single_raw.json",

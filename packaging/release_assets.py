@@ -26,6 +26,8 @@ def assemble(preparation,output):
         if source.is_symlink() or digest(source)!=checksum: raise ValueError('Candidate artifact differs from verified report')
     output.mkdir(parents=True)
     for name,(source,_) in files.items(): shutil.copy2(source,output/name)
+    update=preparation/('CueFlora-'+version+'-update.json')
+    if github and update.exists():shutil.copy2(update,output/update.name)
     if github:
         import zipfile
         notices_root = preparation/'delivery/CueFlora Setup/notices'

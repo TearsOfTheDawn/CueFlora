@@ -1,12 +1,16 @@
 # CueFlora privacy policy
 
-Publisher/contact details appear in the page footer. Policy revision: 2026-10-17. This policy describes the Windows x64 / Chrome edition; publishing this policy is not a public software release.
+Publisher/contact details appear in the page footer. Policy revision: 2026-10-19. This policy describes the Windows x64 / Chrome edition; publishing this policy is not a public software release.
 
 CueFlora reads current-video/caption metadata, video ID, title and bounded description for subtitles. On explicit Run, the on-demand helper downloads temporary audio and sends prepared chunks/language/model parameters to your chosen transcription service. Source cues, languages, neighbouring context, title and bounded description go to your chosen translation service. User-triggered model checks send metadata requests and optional credentials; they do not perform inference.
 
 Provider configuration, language/appearance preferences, setup progress and bounded subtitle caches are stored locally. Successfully remembered keys use Windows user-scoped encryption; saved plaintext is never returned to settings/player responses. Unsuccessful legacy migration leaves the original until protection and persistence are verified, with a visible warning. Protection does not defend against malware running as the same Windows user.
 
 Data goes to YouTube and services you deliberately configure, not a CueFlora inference server. Their privacy, retention and API fees apply independently. Public builds require remote HTTPS and reject provider redirects. There is no added advertising, analytics, cookie import, persistent companion or automatic AI generation during navigation.
+
+In the 0.2 candidate, optionally connecting ChatGPT opens OpenAI authentication in your system browser and a temporary local loopback callback. Access, refresh and ID tokens remain only in CueFlora's user-scoped Windows-protected native account store; the extension receives opaque account references and safe status, not tokens. Eligible translation text/context goes to OpenAI Responses using your chosen account/model with request storage disabled. Provider retention policies still apply. This route does not transcribe audio and never automatically falls back to a paid API. Disconnect attempts remote revocation, clears local tokens and reports if remote revocation was not confirmed. Account/client mappings remain for later reconnection.
+
+User-triggered update checks contact GitHub for stable CueFlora release metadata. A chosen Setup is downloaded from allowlisted GitHub asset hosts into an owned local staging directory and hash-verified. AI credentials are never attached. Installation and extension restart require explicit confirmation. There is no scheduled updater or automatic publication. Installation preserves settings/evidence; recoverable old runtime/extension versions and staged update files may remain on disk.
 
 ## Limited Use commitment
 

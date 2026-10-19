@@ -45,9 +45,10 @@ def pack(preparation, output):
     if assets['artifacts'] != readiness['artifactBindings']: raise ValueError('Candidate asset bindings differ')
     output.mkdir(parents=True)
     names=set(EXTRA)
+    if (preparation/'auth-native-notices/auth-notice-evidence.json').is_file():names.add('auth-native-notices/auth-notice-evidence.json')
     names.update('release-assets/'+name for name in assets['files'])
     names.add('release-assets/RELEASE_ASSETS.json')
-    for directory in ('public-pages','verification','capability-verification','credential-verification','installer-verification','lifecycle'):
+    for directory in ('public-pages','verification','capability-verification','credential-verification','auth-verification','installer-verification','lifecycle'):
         # Only top-level measured reports/logs: exclude restored runtimes,
         # synthetic installation records and any nested test payloads.
         names.update(path.relative_to(preparation).as_posix() for path in (preparation/directory).glob('*') if path.is_file() and path.suffix in ('.json','.log','.html','.css'))

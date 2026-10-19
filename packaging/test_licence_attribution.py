@@ -7,6 +7,22 @@ from npm_notices import supplemental_notices
 
 
 class AttributionTests(unittest.TestCase):
+    def test_only_exact_observed_distribution_metadata_is_attributed(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            runtime=Path(directory);known='_internal/cryptography-50.0.2.dist-info/sboms/sbom.json'
+            unknown='_internal/unknown-1.dist-info/METADATA';wrong='_internal/cryptography-49.dist-info/METADATA'
+            target=runtime/known;target.parent.mkdir(parents=True);target.write_bytes(b'metadata')
+            checksum=hashlib.sha256(b'metadata').hexdigest()
+            metadata={'hostVersion':'synthetic','python':'3.13.15','files':{known:checksum,unknown:'b'*64,wrong:'c'*64},
+                'dependencies':[{'name':'cryptography','version':'50.0.2'}],'buildEnvironmentDependencies':[]}
+            report={'rows':[]};augment(metadata,report,runtime);coverage=file_evidence(metadata['files'],report['rows'])
+            self.assertTrue(coverage[known]['components']);self.assertFalse(coverage[unknown]['components']);self.assertFalse(coverage[wrong]['components'])
+            row=next(row for row in report['rows'] if row['id']=='metadata:cryptography')
+            self.assertFalse(row['originVerified']);self.assertTrue(row['reviewRequired'])
+            target.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'metadata differs'):augment(metadata,{'rows':[]},runtime)
+
     def supplemental_fixture(self, runtime):
         notice,=supplemental_notices('wxt','0.21.4')
         name='licenses/upstream/'+notice['file']

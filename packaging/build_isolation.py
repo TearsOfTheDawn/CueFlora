@@ -22,6 +22,10 @@ def environment(original=None, interpreter=None):
 def native_inputs(analysis, lock=None, payload=None):
     lock = lock or json.loads((ROOT/'packaging/inputs-windows.lock.json').read_text())
     known = {item['sha256']:item['file'] for item in lock['interpreterFiles']}
+    wheels={item['file'] for item in lock.get('pythonWheels',[])}
+    for item in lock.get('wheelNativeFiles',[]):
+        if item['wheel'] not in wheels: raise ValueError('Unpinned native wheel origin')
+        known[item['sha256']]=item['wheel']+':'+item['file']
     rows = []
     def walk(value):
         if not isinstance(value, (list, tuple)): return
@@ -43,4 +47,14 @@ def native_inputs(analysis, lock=None, payload=None):
             for child in value: walk(child)
     walk(ast.literal_eval(Path(analysis).read_text(encoding='utf-8')))
     if not rows: raise ValueError('Native dependency analysis missing')
-    return rows
+    # Analysis traversal order is not deterministic. Keep every measured origin
+    # and hash, but serialize the inventory in a stable order for two-build checks.
+    return sorted(rows,key=lambda item:(item['name'],item['sha256']))
+
+
+def native_wheel_notice_dependencies(inputs,lock=None):
+    """Native extensions can be shipped without importing their Python package."""
+    lock=lock or json.loads((ROOT/'packaging/inputs-windows.lock.json').read_text())
+    shipped={item['sha256'] for item in inputs}
+    return {pin['wheel'].split('-')[0].lower().replace('_','-')
+        for pin in lock.get('wheelNativeFiles',[]) if pin['sha256'] in shipped}

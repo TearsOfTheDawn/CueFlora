@@ -3,10 +3,30 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
-from build_isolation import environment, native_inputs
+from build_isolation import environment, native_inputs, native_wheel_notice_dependencies
 
 
 class IsolationTests(unittest.TestCase):
+    def test_native_only_components_keep_notices_without_including_unused_wheels(self):
+        lock={'wheelNativeFiles':[{'wheel':'cffi-2.1.1-cp313.whl','sha256':'a'*64},
+            {'wheel':'unused-1.0.whl','sha256':'b'*64}]}
+        self.assertEqual(native_wheel_notice_dependencies([{'sha256':'a'*64}],lock),{'cffi'})
+        self.assertEqual(native_wheel_notice_dependencies([{'sha256':'c'*64}],lock),set())
+
+    def test_inventory_order_is_stable_without_ignoring_changed_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); source=root/'native.dll'; source.write_bytes(b'locked')
+            checksum=hashlib.sha256(b'locked').hexdigest()
+            lock={'interpreterFiles':[{'file':'native.dll','sha256':checksum}]}
+            entries=[(name,str(source),'BINARY') for name in ('z.dll','a.dll')]
+            analysis=root/'Analysis.toc'; analysis.write_text(repr(entries))
+            first=native_inputs(analysis,lock)
+            analysis.write_text(repr(list(reversed(entries))))
+            self.assertEqual(first,native_inputs(analysis,lock))
+            self.assertEqual([item['name'] for item in first],['a.dll','z.dll'])
+            source.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'Unpinned'): native_inputs(analysis,lock)
+
     def test_embedded_shared_runtime_requires_exact_root_and_inventory_hash(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); payload = root/'payload'; payload.mkdir()

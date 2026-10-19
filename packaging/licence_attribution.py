@@ -20,6 +20,7 @@ def augment(metadata, report, runtime):
     own.extend(name for name in files if name=='licenses/interpreter-component-notices.json')
     own.extend(name for name in files if name=='licenses/cargo-notice-inventory.json')
     own.extend(name for name in files if name=='licenses/repository-notice-inventory.json')
+    own.extend(name for name in files if name=='licenses/auth-native-notice-evidence.json')
     add('cueflora:source-and-generated-evidence','own-source-or-generated-metadata',metadata['hostVersion'],'MIT; upstream Substrata notice retained',own,verified=True)
     notices = metadata.get('noticeOrigins',{})
     for name,item in notices.items():
@@ -95,6 +96,18 @@ def augment(metadata, report, runtime):
             add('repository-source-notice:'+notice,'exact source/ancestor notice; applicability unproven',entry['commit'],
                 'see original source terms; no automatic inheritance',[name],[name],verified=True)
     if '_internal/base_library.zip' in files:
+        auth=metadata.get('authNativeNoticeEvidence')
+        if auth:
+            report_path=runtime/'licenses/auth-native-notice-evidence.json'
+            if digest(report_path)!=auth['reportSha256']:raise ValueError('Authentication notice report binding mismatch')
+            auth_report=json.loads(report_path.read_text())
+            for component in auth_report['components']:
+                notices=['licenses/auth-native/'+name for name in component['notices']]
+                source='corresponding-source/auth-native/'+component['file']
+                if files.get(source)!=component['sha256'] or any(files.get('licenses/auth-native/'+name)!=item['sha256'] for name,item in component['notices'].items()):raise ValueError('Authentication original source/notice shipment mismatch')
+                add('auth-native-notices:'+component['name'],component['scope'],component['version'],
+                    'see exact original source notices; choose permitted permissive alternative where dual licensed',
+                    [source,*notices],notices,obligation='exact-source-notice-review',verified=True)
         path = runtime/'_internal/base_library.zip'
         if digest(path) != files['_internal/base_library.zip']: raise ValueError('Changed standard-library container')
         with zipfile.ZipFile(path) as archive:
@@ -107,6 +120,22 @@ def augment(metadata, report, runtime):
     if certifi and names:
         notices = [name for name in files if name.startswith('licenses/certifi/')]
         add('data:certifi','shipped-source-form-certificate-data',certifi['version'],'MPL-2.0',names,notices,'retain-notice-and-source-form',verified=True)
+    # PyInstaller also carries distribution metadata/SBOMs. Assign only exact
+    # Analysis-observed name/version directories, not arbitrary dist-info trees.
+    # This is measured attribution, not proof of every original wheel member.
+    for dependency in metadata.get('dependencies',[]):
+        component=dependency['name'];version=dependency['version']
+        prefix='_internal/'+component.replace('-','_')+'-'+version+'.dist-info/'
+        names=[name for name in files if name.lower().startswith(prefix.lower())]
+        if not names:continue
+        if any(digest(runtime/name)!=files[name] for name in names):raise ValueError('Distribution metadata differs from its shipment inventory')
+        owner=next((row for row in rows if row['id'].lower()=='python:'+component.lower()),{})
+        notices=[name for name in files if name.lower().startswith('licenses/'+component.lower()+'/')]
+        add('metadata:'+component,'measured installed distribution metadata, generated pip records and upstream SBOMs',
+            version,owner.get('licence','see exact dependency notices'),names,notices,obligation='metadata-attribution-review')
+        rows[-1].update({'sourceEvidence':owner.get('sourceEvidence',[]),
+            'sourceCoverage':owner.get('sourceCoverage','not-established'),
+            'attributionEvidence':'Exact observed distribution name/version and measured payload hashes; original wheel-member linkage is not asserted'})
     # Older packages copied build-only notices. Attribute their notice bytes,
     # not a claim the corresponding build-tool code was embedded in the host.
     for dependency in metadata.get('buildEnvironmentDependencies',[]):
@@ -124,6 +153,10 @@ def completeness(report):
     if not audio or not audio.get('sourceSignatureVerified') or not any(name.endswith('ffmpeg-9.0.2.tar.xz') for name in audio.get('correspondingSourcePaths',[])) or not any(name.endswith('opus-1.6.1.tar.gz') for name in audio.get('correspondingSourcePaths',[])):
         issues.append({'component':'FFmpeg/Opus','reason':'matching-source-or-recipe-missing'})
     # Native/tool payload matching is not a full bundled-code dependency manifest.
+    if any(row['id']=='native:_rust.pyd' for row in report['rows']):
+        if report.get('authNativeNoticeEvidence'):
+            issues.append({'component':'Authentication native dependencies','reason':'exact wheel SBOM/Cargo source and original notices supplied; permissive licence selection and transitive-scope review required'})
+        else:issues.append({'component':'Authentication native notices','reason':'exact native dependency original notices and source evidence missing'})
     downloader=report.get('sourceBuiltDownloader')
     if downloader:
         if downloader.get('passed') is not True or not downloader.get('sourceFiles') or not downloader.get('nativeLibraries'):

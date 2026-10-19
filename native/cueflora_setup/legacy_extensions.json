@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "releases": [
+    {
+      "version": "0.1.13",
+      "chromeId": "akcolbcdfnjcahhhodnpablekjagfadf",
+      "publishedArchiveSha256": "52352fb6689c5a099ce5950a55ea773ebd56d901c2966eaece4188ff77982047",
+      "files": {
+        "background.js": "4180e0b612d6d12c24639fa0c5387fed496eb2b7f7b1f04bb1a102ef03c3e8ff",
+        "cueflora-bundled-dependencies-0448865d882e.json": "2920fbe01833aa5bea74d6fa73853567c2db4c524bccb51adbd5e780f75e4f37",
+        "cueflora-bundled-dependencies-bb06783fccd7.json": "bc8e686177a11ea3d24f877dbaf4831bf0d7811a97d9acdac577f0b1c583e8a5",
+        "cueflora-bundled-dependencies-d11c373ecabf.json": "0ea1ced37c7f7549224945c2544d1bcc2f58c57bb0585f34543217a9ad26a5fb",
+        "cueflora-bundled-dependencies-e0f0f58dbe23.json": "deb497385fcf3e37157390ef932297f7b1e7f0a7caa178c358a41b8ac1552697",
+        "cueflora-third-party-notices-0448865d882e.txt": "2d71c5659297fceae73584ecca4900927a9eb894566b4e6ca7a04b92218115f7",
+        "cueflora-third-party-notices-bb06783fccd7.txt": "2d71c5659297fceae73584ecca4900927a9eb894566b4e6ca7a04b92218115f7",
+        "cueflora-third-party-notices-d11c373ecabf.txt": "4839f148fe89f962dbd9bac5ef26036670f93b3e12c9415d3c9313c94ffe6d97",
+        "cueflora-third-party-notices-e0f0f58dbe23.txt": "d3ad011a443f4903d4a2d84359a8f374f3dbda6d3b5fc391449be54063285b22",
+        "manifest.json": "65e3a7e04272831c8aa15cf634d0ed0eeb62683e0622ef93fde0023d33a0074e",
+        "options.html": "116d6426cdda450ff4240bd88c5eca7ecfc6ef74c100ad38dd2e52143a1143d8",
+        "assets/options-CCzazc1z.css": "015210b87af6cf1f21ee4649b8b15e70447710d648968cab153fae127a8aa1e2",
+        "chunks/options-aXGrjqCs.js": "23923f963653ae3ccd2cd6dbe9412a826ae28c96d725c08a4264c1aa29bde451",
+        "content-scripts/bridge.js": "cf0b4d598b8575429fa1039ac3305ebba2ef9c747b943c08815fe73ac266e0a3",
+        "content-scripts/youtube.css": "99f044e4ee25218d0569cfdc8b6205ca7a729a212d4f895cf53195e07601b2cc",
+        "content-scripts/youtube.js": "f6a0a538b9763860d78a5e7265ce3a824c05ccdf9a82e999e0e322d08d7ea7be",
+        "icon/128.png": "6db1f5ca0d7dfbe46b9a18a254ef651fdd5dcf9c638e9afdf2e725f4412f19d6",
+        "icon/16.png": "1e6a0a671c5ad74ef28e594910178c4719341465124ec3007b9b34b4fa7e7e92",
+        "icon/256.png": "1dc5bf68f2aa3ff926b802bc5db3239a5dbdddc377c7daef2888c981918dcfbe",
+        "icon/32.png": "5956a8418f57f0a7decb25e862de5a01ac510530f5f69d735b8b268e285e49a5",
+        "icon/48.png": "eed75cc0d067fc24c68aa5b740cbc1e36781b5b04851f153120527afaa515210",
+        "icon/flower.ico": "10fef8e229960dab61495fe75e9f7226b147e2ec9002266887b79a80fc960af0",
+        "icon/flower.svg": "2b0f1817b6f5c6a953907f0f9f8fbc699691bb773b11801e79936a68eb7663de"
+      }
+    }
+  ]
+}

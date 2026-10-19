@@ -13,10 +13,13 @@ import os
 import struct
 import sys
 import tempfile
+import queue
+import threading
 from importlib.metadata import PackageNotFoundError, version
 
 MAX_MESSAGE_BYTES = 8 * 1024 * 1024
 MAX_RESPONSE_BYTES = 1024 * 1024
+_write_lock = threading.RLock()
 
 from .download import download_audio
 from .translate import TranslationError, translate
@@ -73,9 +76,10 @@ def send_message(obj):
         encoded = json.dumps({"jobId": obj.get("jobId"),
             "error": "Native result exceeds the browser's 1 MiB response limit",
             "requestCount": obj.get("requestCount", 0)}).encode("utf-8")
-    sys.stdout.buffer.write(struct.pack("<I", len(encoded)))
-    sys.stdout.buffer.write(encoded)
-    sys.stdout.buffer.flush()
+    with _write_lock:
+        sys.stdout.buffer.write(struct.pack("<I", len(encoded)))
+        sys.stdout.buffer.write(encoded)
+        sys.stdout.buffer.flush()
 
 
 def handle_transcribe(msg):
@@ -123,7 +127,7 @@ def handle_transcribe(msg):
                     "message": "Starting download...",
                 }
             )
-            audio_path = download_audio(video_id, tmp_dir, job_id=job_id, capture=capture)
+            audio_path = download_audio(video_id, tmp_dir, job_id=job_id, capture=capture, **({'cancel':msg['_cancel']} if '_cancel' in msg else {}))
 
             def on_progress(stage, message, percent=None, raw=None):
                 msg = {
@@ -170,6 +174,21 @@ def handle_translate(msg):
     cues = msg.get("cues")
     system_prompt = msg.get("systemPrompt")
     translate_config = msg.get("translateConfig")
+    if isinstance(translate_config,dict) and translate_config.get('backend') == 'chatgpt':
+        if not cues or not system_prompt or not translate_config.get('model') or not translate_config.get('accountRef'):
+            return {'jobId':job_id,'error':'Choose a ChatGPT account and model in settings.','errorKind':'protocol','requestCount':0}
+        try:
+            from .chatgpt_translate import translate as subscription_translate
+            capture = RunCapture.open('resume',msg.get('captureId'),job_id)
+            result = subscription_translate(cues,system_prompt,translate_config['accountRef'],translate_config['model'],
+                on_progress=lambda stage,message:send_message({'type':'progress','jobId':job_id,'stage':stage,'message':message}),
+                capture=capture,source_indexes=msg.get('sourceIndexes'))
+            if capture: result['evidence']=capture.diagnostics()
+            return {'jobId':job_id,**result}
+        except TranslationError as error:
+            return {'jobId':job_id,'error':str(error),'errorKind':error.kind,'requestCount':1}
+        except Exception:
+            return {'jobId':job_id,'error':'ChatGPT account is unavailable. Sign in again; no paid API fallback was used.','errorKind':'auth','requestCount':0}
 
     if not cues:
         return {"jobId": job_id, "error": "Missing cues", "errorKind": "protocol", "requestCount": 0}
@@ -236,8 +255,32 @@ def handle_translate(msg):
 
 
 def main():
+    run_lease = None
+    incoming = queue.Queue(maxsize=4)
+    closed = threading.Event()
+    tasks = {}
+    def read_input():
+        try:
+            while True:
+                item = read_message()
+                if item is None: break
+                if item.get('type') == 'TASK_CANCEL':
+                    event=tasks.get(item.get('taskId'))
+                    if event: event.set()
+                    continue
+                if item.get('type') == 'TASK_START':
+                    event=threading.Event(); tasks[item.get('taskId')]=event; item['_cancel']=event
+                elif item.get('type') == 'TRANSCRIBE_NATIVE': item['_cancel']=closed
+                incoming.put(item)
+        except Exception:
+            pass  # Framing failure closes this connection; never expose raw payloads.
+        finally:
+            closed.set()
+            for event in tuple(tasks.values()): event.set()
+            incoming.put(None)
+    threading.Thread(target=read_input,daemon=True).start()
     while True:
-        msg = read_message()
+        msg = incoming.get()
         if msg is None:
             break
 
@@ -258,7 +301,71 @@ def main():
                     except (OSError, ValueError):
                         host_version = 'unknown-bundle-version'
             send_message({"status": "PONG", "version": host_version, "tools": _tool_health(),
-                          "capabilities": {"credentialProtection": 'windows-dpapi-v1' if os.name == 'nt' else None}})
+                          "capabilities": {"credentialProtection": 'windows-dpapi-v1' if os.name == 'nt' else None,
+                            'chatgpt':'chatgpt-translation-v1' if os.name == 'nt' else None,
+                            'runLeases':'run-leases-v1' if os.name == 'nt' else None,
+                            'updates':'paired-updates-v1' if os.name == 'nt' else None}})
+
+        elif msg_type == 'RUN_LEASE':
+            try:
+                from .activity import RunLease
+                if run_lease is not None:raise RuntimeError('Lease already acquired')
+                run_lease=RunLease();run_lease.__enter__()
+                send_message({'requestId':msg.get('requestId'),'leased':True})
+            except Exception:
+                send_message({'requestId':msg.get('requestId'),'error':'CueFlora is installing or activity tracking is unavailable. Retry after Setup finishes.'})
+
+        elif msg_type == 'TASK_START':
+            task_id=msg.get('taskId'); operation=msg.get('operation')
+            if not isinstance(task_id,str) or not __import__('re').fullmatch(r'[a-f0-9-]{36}',task_id):
+                send_message({'taskId':task_id,'type':'task','status':'error','reason':'invalid-request'}); continue
+            send_message({'type':'task','taskId':task_id,'status':'started'})
+            try:
+                if operation == 'chatgpt-login':
+                    from .chatgpt_auth import login
+                    result=login(msg['_cancel'],lambda stage:send_message({'type':'task','taskId':task_id,'status':'progress','stage':stage}),msg.get('accountRef'))
+                elif operation in ('chatgpt-models','chatgpt-disconnect'):
+                    from .chatgpt_auth import models,disconnect
+                    result=models(msg.get('accountRef')) if operation=='chatgpt-models' else disconnect(msg.get('accountRef'))
+                elif operation in ('update-check','update-download'):
+                    from .updates import Updates
+                    updater=Updates()
+                    if operation=='update-check':result=updater.check()
+                    else:result=updater.download(msg.get('selectionRef'),msg['_cancel'],lambda percent:send_message({'type':'task','taskId':task_id,'status':'progress','stage':'downloading','percent':percent}))
+                else:raise ValueError('Unsupported task')
+                send_message({'type':'task','taskId':task_id,'status':'complete','result':result})
+            except Exception:
+                send_message({'type':'task','taskId':task_id,'status':'error','reason':'cancelled' if msg['_cancel'].is_set() else 'authentication-failed' if str(operation).startswith('chatgpt-') else 'download-failed'})
+            finally: tasks.pop(task_id,None)
+
+        elif msg_type in ('CHATGPT_STATUS','CHATGPT_MODELS','CHATGPT_MODELS_CACHED','CHATGPT_DISCONNECT','CHATGPT_ACK_USAGE'):
+            try:
+                from .account_store import AccountStore
+                from .chatgpt_auth import models, disconnect,acknowledge_usage,cached_models
+                if msg_type == 'CHATGPT_STATUS': result={'accounts':AccountStore().public_status()}
+                elif msg_type == 'CHATGPT_MODELS': result=models(msg.get('accountRef'))
+                elif msg_type=='CHATGPT_MODELS_CACHED':result=cached_models(msg.get('accountRef'))
+                elif msg_type=='CHATGPT_ACK_USAGE':result=acknowledge_usage(msg.get('accountRef'))
+                else: result=disconnect(msg.get('accountRef'))
+                send_message({'requestId':msg.get('requestId'),**result})
+            except Exception:
+                send_message({'requestId':msg.get('requestId'),'error':'ChatGPT account operation failed. Upgrade/Repair or reconnect. No paid API fallback was used.'})
+
+        elif msg_type in ('UPDATES_INSTALL','UPDATES_STATUS'):
+            try:
+                from .updates import Updates
+                if msg_type=='UPDATES_INSTALL':
+                    from .activity import activity_gate,root_directory
+                    with activity_gate(root_directory(),install=True):result=Updates().launch(msg.get('selectionRef'))
+                else:
+                    from cueflora_setup.engine import Setup
+                    state=Setup().state()
+                    result={'installedVersion':(state or {}).get('hostVersion'),
+                        'extensionVersion':((state or {}).get('extension') or {}).get('version'),
+                        'managed':bool((state or {}).get('extension'))}
+                send_message({'requestId':msg.get('requestId'),**result})
+            except Exception:
+                send_message({'requestId':msg.get('requestId'),'error':'Update installation is unavailable. Finish all Runs, download again if verification failed, or use the matching complete package and Setup.'})
 
         elif msg_type == 'CREDENTIAL_PROTECT':
             from .credentials import handle_protect
@@ -269,11 +376,21 @@ def main():
             send_message(check_provider(msg))
 
         elif msg_type == "TRANSCRIBE_NATIVE":
-            result = handle_transcribe(msg)
+            if getattr(sys,'frozen',False) and os.name=='nt':
+                from .activity import RunLease
+                try:
+                    with RunLease():result=handle_transcribe(msg)
+                except Exception:result={'jobId':msg.get('jobId'),'error':'CueFlora installation is in progress. Retry afterward.'}
+            else:result = handle_transcribe(msg)
             send_message(result)
 
         elif msg_type == "TRANSLATE_NATIVE":
-            result = handle_translate(msg)
+            if getattr(sys,'frozen',False) and os.name=='nt':
+                from .activity import RunLease
+                try:
+                    with RunLease():result=handle_translate(msg)
+                except Exception:result={'jobId':msg.get('jobId'),'error':'CueFlora installation is in progress. Retry afterward.','requestCount':0,'errorKind':'protocol'}
+            else:result = handle_translate(msg)
             send_message(result)
 
         elif msg_type == "CAPTURE_PRESENTATION":
@@ -290,6 +407,8 @@ def main():
 
         else:
             send_message({"error": f"Unknown message type: {msg_type}"})
+
+    if run_lease is not None:run_lease.__exit__(None,None,None)
 
 
 if __name__ == "__main__":

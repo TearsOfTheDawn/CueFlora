@@ -2,6 +2,7 @@ import { preferences as preferenceStorage } from '../../utils/preferenceClient';
 import './style.css';
 import { state } from '../../utils/state';
 import { invalidateNavigation } from '../../utils/navigation';
+import { documentCheck } from '../../utils/runIdentity';
 import { log } from '../../utils/log';
 import { STORAGE_PREFIX } from '../../utils/constants';
 import { cancelWorkflow, resetWorkflow } from '../../utils/workflow';
@@ -15,6 +16,10 @@ export default defineContentScript({
     runAt: 'document_idle',
 
     main() {
+        browser.runtime.onMessage.addListener(message => {
+            const response=documentCheck(message);
+            if(response!==undefined)return Promise.resolve(response);
+        });
         console.log('[cueflora] Content script loaded (Isolated World).');
 
         let initGeneration = 0;
@@ -180,6 +185,8 @@ export default defineContentScript({
         }
 
         document.addEventListener('yt-navigate-finish', () => {
+            const oldJob=state.workflow.jobId;
+            if(oldJob)void browser.runtime.sendMessage({type:'PROVIDERS_RELEASE',jobId:oldJob}).catch(()=>{});
             invalidateNavigation();
             log('Navigation detected, resetting state');
             cancelWorkflow('YouTube navigation invalidated the active job.');

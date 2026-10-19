@@ -58,7 +58,7 @@ def validate_identity(value, require_binding=True):
     validate_release(value)
     allowed = {'schema','mode','product','owner','extensionIds','privacyUrl','downloadUrl','supportUrl',
         'runtimeInventorySha256','sourceInventorySha256','signing','chromePublicKey',
-        'publicReleaseAuthorized','redistributionApproved','note','repositoryUrl','distribution'}
+        'publicReleaseAuthorized','redistributionApproved','note','repositoryUrl','distribution','extensionInventorySha256'}
     if set(value) - allowed or value.get('schema') != 2 or value.get('mode') != 'public' or value.get('product') != 'cueflora' or set(value['extensionIds']) != {'chrome'}:
         raise ValueError('Schema 2 public Windows/Chrome identity required; no secrets or approvals')
     if value['extensionIds']['chrome'] == DEVELOPMENT_ID: raise ValueError('Development identity is not a public identity')
@@ -77,6 +77,7 @@ def validate_identity(value, require_binding=True):
         checksum = value.get(field)
         if checksum is None and not require_binding: continue
         if not isinstance(checksum,str) or not re.fullmatch('[0-9a-f]{64}',checksum): raise ValueError('Exact source/runtime inventory binding required')
+    if 'extensionInventorySha256' in value and not re.fullmatch('[0-9a-f]{64}',str(value['extensionInventorySha256'])):raise ValueError('Exact extension inventory binding required')
     key = value.get('chromePublicKey')
     if key is not None:
         try:
