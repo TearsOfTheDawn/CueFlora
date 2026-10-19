@@ -1,0 +1,50 @@
+# Changelog
+
+User-facing changes for published CueFlora releases, newest first. Unpublished development builds are not listed as public releases.
+
+## [0.2.0](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.0) — 2026-10-19
+
+### New features
+
+- Clearer AI setup: separate transcription and translation sections, plain-language field guidance and simpler saved-key controls.
+- Optional **Continue with ChatGPT** for translation using eligible ChatGPT-plan models. This does not cover audio transcription or automatically switch to a paid API.
+- One Setup download containing the matching Chrome extension, helper and audio tools.
+- User-triggered in-app updates for later compatible releases, with verified downloads, explicit installation confirmation and an extension restart action. No silent installation or background updater.
+
+### Fixes and improvements
+
+- More reliable video/document checks when navigating between YouTube videos, while continuing to reject stale Runs and results.
+- Audio-download progress and clearer processing stages, with cancellation and stalled-download timeouts.
+- Stage-specific OpenRouter model discovery, bounded partial model lists and manual model entry when discovery is unavailable.
+- Paired extension/helper repair, upgrade and rollback safeguards, plus recoverable adoption of a recognized existing extension folder.
+
+### Upgrading from 0.1.13
+
+**After Setup finishes, you must click CueFlora's Reload button at `chrome://extensions`, then reload your YouTube tabs. Otherwise Chrome can continue running the old extension.**
+
+1. Finish all subtitle Runs and download **CueFlora-0.2.0-Setup.exe** from this release.
+2. In Setup, select Chrome and click **Optional: select existing CueFlora extension folder…**. For this first upgrade, select the folder Chrome currently loads, containing `manifest.json`.
+3. Choose **Install / Upgrade**, confirm adoption and the installation prompts, and wait for **Install complete**.
+4. At `chrome://extensions`, enable Developer mode if needed and click CueFlora's circular-arrow **Reload** button. Reopen CueFlora settings and reload YouTube tabs. Both extension and helper should report **0.2.0**.
+
+Keep the existing extension identity; do not remove/reinstall the extension or delete its folder. Settings, keys and evidence are preserved. Modified or foreign extension folders are refused rather than overwritten. This first upgrade is manual; the new in-app update flow is for later compatible releases.
+
+### Known limitations
+
+- Windows x64 / Google Chrome only. New installations still require Chrome's initial **Load unpacked** step.
+- The installer is unsigned. Do not disable security software or automatically bypass warnings.
+- Genuine ChatGPT login/plan eligibility, live in-app Chrome updating and clean-Windows acceptance remain unverified by automated checks.
+- AI services/models are not installed or supplied. API services may charge, ChatGPT-plan limits apply to that optional route, and generated subtitles can be inaccurate. Only explicit **Run** starts subtitle generation.
+
+## [0.1.13](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.1.13) — 2026-10-17
+
+### Initial public GitHub release
+
+- Windows x64 / Chrome package with the unpacked extension, on-demand native helper and bundled audio tools.
+- User-supplied transcription and translation services, available YouTube captions, explicit Run and subtitle appearance controls.
+- Windows-protected remembered API keys, provider-neutral setup and per-user helper installation/maintenance.
+- Original third-party notices, corresponding sources, dependency evidence and checksums supplied with the release.
+
+### Installation and limitations
+
+This release used the complete Windows ZIP, manual **Load unpacked**, and separate confirmation of helper installation. It did not include ChatGPT sign-in or the 0.2.0 in-app update flow. Its unsigned-installer warning and deferred clean-machine/real-browser acceptance are retained in the historical release notes. Use the 0.2.0 instructions above when upgrading it.

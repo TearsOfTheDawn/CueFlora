@@ -2,6 +2,8 @@
 
 AI Subtitles & Translation for YouTube — Windows x64 / Google Chrome.
 
+[Changelog — features, fixes and upgrade instructions](CHANGELOG.md)
+
 ![Five-petal CueFlora flower](public/icon/flower.svg)
 
 Use available YouTube captions, or your own compatible AI services for transcription and translation. The flower button opens subtitle controls and appearance settings. AI generation starts only when you press **Run**.

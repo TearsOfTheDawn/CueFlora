@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-18
+> **Last updated:** 2026-10-20
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -691,6 +691,8 @@ python -m cueflora_host.test_whisper path/to/audio.m4a --base-url YOUR_API_BASE 
 ---
 
 ## Updating This Document
+
+`CHANGELOG.md` is the user-facing history of public releases. Before each new release, add its dated entry with new features, fixes, upgrade instructions and known limitations, then copy that entry into its GitHub release notes. Keep required Chrome Reload/bootstrap steps prominent; do not invent historical changes or manual acceptance. Changelog/release-note edits do not replace immutable release assets or authorise another release.
 
 CueFlora's current release preparation is described by `docs/RELEASE_COMPLETION.md` plus the fresh preparation directory's `readiness.json` and `IMPLEMENTATION_HANDOFF.md`; earlier security/implementation/polish handoffs remain historical evidence. Substrata historical handoffs were not imported as CueFlora acceptance evidence. Original preservation is recorded by `verify_isolation.py`; private captures were not copied. Automated success is not live browser, GUI, clean-machine, semantic or public-distribution acceptance. Computer Use and browser automation remain prohibited.
 
