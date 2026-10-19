@@ -2,6 +2,8 @@
 
 AI Subtitles & Translation for YouTube — Windows x64 / Google Chrome.
 
+Development source: **0.2.0 candidate**, not published. It adds clearer setup, optional ChatGPT-plan translation and paired Setup/in-app update engineering. See [0.2 implementation and acceptance boundaries](docs/CUEFLORA_020_IMPLEMENTATION.md). The public 0.1.13 release and its instructions below remain unchanged; this source update does not authorise a new release.
+
 ![Five-petal CueFlora flower](public/icon/flower.svg)
 
 Use available YouTube captions, or your own compatible AI services for transcription and translation. The flower button opens subtitle controls and appearance settings. AI generation starts only when you press **Run**.

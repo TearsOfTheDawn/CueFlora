@@ -10,6 +10,7 @@ describe('provider-neutral production onboarding', () => {
     const field = (name:string) => document.querySelector(`[name="${name}"]`) as HTMLInputElement;
     beforeEach(() => {
         vi.resetModules(); fakeBrowser.reset(); send.mockReset();
+        vi.spyOn(fakeBrowser.runtime,'getManifest').mockReturnValue({manifest_version:3,name:'CueFlora',version:'0.2.0'} as any);
         vi.spyOn(fakeBrowser.runtime, 'sendMessage').mockImplementation(send);
         document.body.innerHTML = new DOMParser().parseFromString(html,'text/html').body.innerHTML;
         send.mockImplementation(async message => {

@@ -171,6 +171,21 @@ class GitHubDistributionTests(unittest.TestCase):
             self.assertNotIn('class="primary-download"',(root/'prelaunch/index.html').read_text())
             with self.assertRaises(ValueError): build(root/'bad',self.configuration(),{'setupSha256':'a'*64},version='7.8.9')
 
+    def test_paired_pages_lead_with_setup_and_do_not_reuse_legacy_folder_steps(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);config={**self.configuration(),'extensionInventorySha256':'c'*64}
+            build(root/'pages',config,{'setupSha256':'a'*64,'sha256':'b'*64},version='0.2.0')
+            home=(root/'pages/index.html').read_text();download=(root/'pages/download.html').read_text()
+            for text in (home,download):
+                self.assertIn('class="primary-download" href="https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.2.0/CueFlora-0.2.0-Setup.exe"',text)
+                self.assertNotIn('One ZIP includes',text)
+            steps=download.split('<ol>',1)[1].split('</ol>',1)[0]
+            self.assertIn('Setup.exe',steps);self.assertIn('stable extension folder',steps)
+            self.assertNotIn('CueFlora Setup/Chrome-extension',download)
+            for marker in ('one-time manual bootstrap','currently loaded CueFlora extension folder','Check for updates','ChatGPT','translation only'):
+                self.assertIn(marker,download)
+            self.assertIn('Complete Windows ZIP',download)
+
     def test_release_assets_ship_keyed_extension_full_package_and_original_notices(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory).resolve(); preparation=root/'preparation'; preparation.mkdir()

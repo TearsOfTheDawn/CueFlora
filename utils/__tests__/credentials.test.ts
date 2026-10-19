@@ -57,7 +57,7 @@ describe('protected provider production service',()=>{
         expect(validCredential({...cipher,extra:'secret'})).toBe(false); const request={type:'CREDENTIAL_PROTECT',requestId:'id',apiKey:'synthetic-only'};
         expect(validNativeResponse({requestId:'old',credential:cipher},request)).toBe(false);
         expect(publicNativeResponse({requestId:'id',credential:cipher,extra:'secret'},request)).not.toHaveProperty('extra');
-        expect(publicNativeResponse({status:'PONG',tools:{},capabilities:{credentialProtection:'windows-dpapi-v1',extra:'secret'}},{type:'PING'}).capabilities).toEqual({credentialProtection:'windows-dpapi-v1'});
+        expect(publicNativeResponse({status:'PONG',tools:{},capabilities:{credentialProtection:'windows-dpapi-v1',extra:'secret'}},{type:'PING'}).capabilities).toEqual({credentialProtection:'windows-dpapi-v1',chatgpt:null,updates:null});
         expect(privateDiagnostic('synthetic-only '+cipher.blob,{...request,credential:cipher})).toBe('[redacted] [redacted]');
     });
     it('enforces store HTTPS and rejects deceptive loopback forms while preserving preview HTTP',()=>{

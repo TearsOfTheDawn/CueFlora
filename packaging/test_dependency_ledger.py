@@ -105,6 +105,20 @@ class LedgerTests(unittest.TestCase):
             self.assertTrue(result['nativeLibraries'][0]['originMatched'])
             self.assertFalse(result['nativeLibraries'][1]['originMatched'])
 
+    def test_setup_native_wheel_origin_is_exact_and_not_mislabelled_as_cpython(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            executable=Path(directory)/'setup.exe'; executable.write_bytes(b'synthetic')
+            entries={'cryptography/_rust.pyd':b'locked-wheel','unknown.pyd':b'unmatched'}
+            reader=SimpleNamespace(toc=entries,extract=lambda name:entries[name])
+            pin={hashlib.sha256(b'locked-wheel').hexdigest():'crypto.whl:cryptography/_rust.pyd'}
+            with patch('PyInstaller.archive.readers.CArchiveReader',return_value=reader), patch('release_inputs.shipped_python',return_value=[]):
+                result=setup_inventory(executable,Path(directory)/'Analysis',{},wheel_hashes=pin)
+            matched,unknown=result['nativeLibraries']
+            self.assertTrue(matched['originMatched']); self.assertIsNone(matched['lockedInterpreterFile'])
+            self.assertEqual(matched['lockedWheelFile'],'crypto.whl:cryptography/_rust.pyd')
+            self.assertFalse(unknown['originMatched']); self.assertIsNone(unknown['lockedWheelFile'])
+
     def test_pe_debug_timestamp_is_normalized_but_payload_changes_are_not(self):
         def image(path,fast_load=True):
             return SimpleNamespace(FILE_HEADER=SimpleNamespace(TimeDateStamp=1,get_field_absolute_offset=lambda _:4),

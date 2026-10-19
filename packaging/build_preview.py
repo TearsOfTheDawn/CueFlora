@@ -14,7 +14,7 @@ from runtime_notices import collect_interpreter_notices
 from build_isolation import environment, native_inputs
 
 
-def build(runtime, output, public_config=None, private_chrome_id=None):
+def build(runtime, output, public_config=None, private_chrome_id=None, extension=None):
     if public_config and private_chrome_id: raise ValueError('Choose public release or private acceptance binding, not both')
     runtime = runtime.resolve()
     metadata = verify_bundle(runtime)
@@ -49,6 +49,14 @@ def build(runtime, output, public_config=None, private_chrome_id=None):
         release = {'owner': 'Private CueFlora release acceptance' if private_chrome_id else 'Private CueFlora development preview', 'mode': 'private', 'product': 'cueflora',
             'extensionIds': {'chrome': private_chrome_id or identity['chromeId']}, 'runtimeInventorySha256': digest(runtime / 'runtime-manifest.json'),
             'publicReleaseAuthorized': False, 'redistributionApproved': False}
+    if extension is not None:
+        from cueflora_setup.extension_pair import verify_extension,INVENTORY
+        data,_=verify_extension(extension)
+        if data['version']!=metadata['hostVersion'] or data['chromeId']!=release['extensionIds']['chrome']:raise ValueError('Setup requires an exact matching extension/helper version and identity')
+        shutil.copytree(extension,bundle/'extension')
+        release['extensionInventorySha256']=digest(bundle/'extension'/INVENTORY)
+        verify_extension(bundle/'extension',release['extensionInventorySha256'])
+    elif tuple(map(int,metadata['hostVersion'].split('.'))) >= (0,2,0):raise ValueError('CueFlora 0.2 Setup requires a matched extension payload')
     (bundle / 'release.json').write_text(json.dumps(release, indent=2) + '\n', encoding='utf-8')
     for source in [ROOT / 'LICENSE.md', ROOT / 'docs/REDISTRIBUTION_CHECKLIST.md', ROOT / 'packaging/requirements-windows.lock']:
         shutil.copy2(source, bundle / source.name)
@@ -57,7 +65,7 @@ def build(runtime, output, public_config=None, private_chrome_id=None):
     subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--onefile', '--windowed', '--noupx',
         '--name', 'CueFlora Setup', '--icon', str(ROOT / 'public/icon/flower.ico'),
         '--paths', str(ROOT / 'native'), '--paths', str(Path(tkinter.__file__).parent.parent), '--hidden-import', 'tkinter',
-        '--add-data', str(bundle) + ':bundle', '--distpath', str(output / 'dist'), '--workpath', str(output / 'work'),
+        '--add-data', str(bundle) + ':bundle', '--add-data',str(ROOT/'native/cueflora_setup/legacy_extensions.json')+':cueflora_setup', '--distpath', str(output / 'dist'), '--workpath', str(output / 'work'),
         '--specpath', str(output), str(ROOT / 'packaging/setup_entry.py')], check=True, env=environment())
     (output/'native-input-isolation.json').write_text(json.dumps({'inheritedPathUsed':False,
         'inputs':native_inputs(output/'work/CueFlora Setup/Analysis-00.toc',payload=(bundle/'runtime',metadata['files']))},indent=2)+'\n',encoding='utf-8')
@@ -70,5 +78,6 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--public-config', type=Path, help='Authorized exact public identity/evidence, never a preview override')
     parser.add_argument('--private-chrome-id', help='Real assigned ID for private acceptance only; no release approval')
+    parser.add_argument('--extension',type=Path,help='Matching identified/inventoried Chrome extension for paired installation')
     args = parser.parse_args()
-    build(args.runtime, args.output, args.public_config,args.private_chrome_id)
+    build(args.runtime, args.output, args.public_config,args.private_chrome_id,args.extension)

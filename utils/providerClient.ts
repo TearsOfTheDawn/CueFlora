@@ -1,6 +1,7 @@
 import { providerDefaults, providerSummary, type ProviderSummary } from './providers';
 import { navigationGuard } from './navigation';
 import { settingsRequest } from './settingsRequest';
+import { runContext } from './runIdentity';
 let next = providerSummary(providerDefaults());
 let current: ProviderSummary | null = null;
 let currentJob: string | null = null;
@@ -21,7 +22,7 @@ export async function bindRunProviders(jobId: string): Promise<void> {
     const sequence = ++bindSequence;
     pendingJob = jobId;
     const sameNavigation = navigationGuard();
-    const response = await browser.runtime.sendMessage({ type: 'PROVIDERS_BIND', jobId, revision: next.revision });
+    const response = await browser.runtime.sendMessage({ type: 'PROVIDERS_BIND', jobId, revision: next.revision, context: runContext() });
     if (sequence !== bindSequence || !sameNavigation()) return;
     pendingJob = null;
     if (response?.error) {

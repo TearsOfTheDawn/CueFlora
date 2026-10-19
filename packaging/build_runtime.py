@@ -10,7 +10,7 @@ import subprocess
 import sys
 from runtime_notices import collect_interpreter_notices
 from release_inputs import inspect_ejs, shipped_python, source_inventory
-from build_isolation import environment, native_inputs
+from build_isolation import environment, native_inputs, native_wheel_notice_dependencies
 from source_export import source_identity
 from notice_names import is_notice_name
 
@@ -51,7 +51,7 @@ def validated_audio_build(folder, tools):
     return audio, compatibility
 
 
-def build(output, tool_lock=None, audio_build=None, transport_policy='preview', public_config=None, downloader_build=None, v8_notices=None, interpreter_notices=None, cargo_notices=None, repository_notices=None):
+def build(output, tool_lock=None, audio_build=None, transport_policy='preview', public_config=None, downloader_build=None, v8_notices=None, interpreter_notices=None, cargo_notices=None, repository_notices=None, auth_notices=None):
     if transport_policy not in ('preview', 'https-remote'):
         raise ValueError('Invalid packaged transport policy')
     public = None
@@ -98,6 +98,10 @@ def build(output, tool_lock=None, audio_build=None, transport_policy='preview', 
         from repository_notice_evidence import validate_evidence
         repository_evidence=validate_evidence(repository_notices)
     ejs = inspect_ejs(tools['yt-dlp'])
+    auth_evidence=None
+    if auth_notices:
+        from auth_notice_evidence import validate as validate_auth
+        auth_evidence=validate_auth(auth_notices)
     if tool_lock:
         locked = json.loads(tool_lock.read_text(encoding='utf-8'))
         expected = {item['name']: item['sha256'] for item in locked['tools']}
@@ -119,6 +123,7 @@ def build(output, tool_lock=None, audio_build=None, transport_policy='preview', 
     licenses.mkdir()
     observed = shipped_python(output / 'work/cueflora-host/Analysis-00.toc')
     notice_dependencies = {item['name'].lower().replace('_','-') for item in observed} | {'pyinstaller'}
+    notice_dependencies |= native_wheel_notice_dependencies(native_inventory)
     notice_origins = {}
     # Preserve available dependency notices. External tool license/source review
     # is intentionally separate and remains an explicit release gate.
@@ -192,6 +197,10 @@ def build(output, tool_lock=None, audio_build=None, transport_policy='preview', 
         shutil.copytree(repository_notices/'notices',licenses/'deno-repository-source-notices')
         shutil.copy2(repository_notices/'repository-notice-inventory.json',licenses/'repository-notice-inventory.json')
     source_files = source_inventory()
+    if auth_evidence:
+        shutil.copytree(auth_notices/'notices',licenses/'auth-native')
+        shutil.copytree(auth_notices/'sources',bundle/'corresponding-source/auth-native')
+        shutil.copy2(auth_notices/'auth-notice-evidence.json',licenses/'auth-native-notice-evidence.json')
     source_hash = source_identity(source_files)
     if public and public.get('sourceInventorySha256') not in (None, source_hash):
         raise ValueError('Public approval does not match the current source snapshot')
@@ -210,6 +219,7 @@ def build(output, tool_lock=None, audio_build=None, transport_policy='preview', 
                 'inputLockSha256': sha256(ROOT / 'packaging/inputs-windows.lock.json'),
                 'dependencyScope': 'Analysis-observed third-party Python modules; standard library, native DLLs, tools and bootloader require separate inventory review.',
                 'noticeOrigins':notice_origins,
+                'authNativeNoticeEvidence':{'lockSha256':auth_evidence['lockSha256'],'reportSha256':sha256(auth_notices/'auth-notice-evidence.json'),'componentCount':len(auth_evidence['components'])} if auth_evidence else None,
                 'dependencies': observed, 'buildEnvironmentDependencies': sorted(
                     ({'name': d.metadata['Name'], 'version': d.version} for d in importlib.metadata.distributions()),
                     key=lambda item: item['name'].lower()),
@@ -228,8 +238,9 @@ if __name__ == '__main__':
     parser.add_argument('--interpreter-notices',type=Path,help='Original notices from the pinned Windows interpreter build source')
     parser.add_argument('--cargo-notices',type=Path,help='Exact Deno source-Cargo notice superset, not binary shipment evidence')
     parser.add_argument('--repository-notices',type=Path,help='Fixed-commit missing-notice follow-up; applicability stays unapproved')
+    parser.add_argument('--auth-notices',type=Path,help='Original notices/source superset from exact authentication wheel SBOM/Cargo inputs')
     parser.add_argument('--audio-build', type=Path, help='Verified shared FFmpeg/ffprobe 9.0.2 build directory')
     parser.add_argument('--transport-policy', choices=['preview','https-remote'], default='preview')
     parser.add_argument('--public-config', type=Path, help='Explicit authorized public release configuration')
     args = parser.parse_args()
-    build(args.output, args.tool_lock, args.audio_build, args.transport_policy, args.public_config, args.downloader_build, args.v8_notices, args.interpreter_notices, args.cargo_notices, args.repository_notices)
+    build(args.output, args.tool_lock, args.audio_build, args.transport_policy, args.public_config, args.downloader_build, args.v8_notices, args.interpreter_notices, args.cargo_notices, args.repository_notices,args.auth_notices)

@@ -5,6 +5,10 @@ import { settingsRequest, SettingsTimeout } from '../../utils/settingsRequest';
 import { privateDiagnostic } from '../../utils/nativeResponse';
 import type { OnboardingFinishMessage, OnboardingFinishResult } from '../../utils/types';
 import { renderReleaseGuidance } from '../../utils/publicLinks';
+import { serviceGuidance } from '../../utils/serviceGuidance';
+import { createChatGPTControls } from './chatgpt';
+import {createUpdates} from './updates';
+let chatgpt:ReturnType<typeof createChatGPTControls>|undefined;
 
 renderReleaseGuidance(document);
 
@@ -13,7 +17,7 @@ const saveButton = document.getElementById('save') as HTMLButtonElement, cancelB
 const wizard = document.getElementById('setup');
 const fields = new Map<string, HTMLInputElement>(), checks = new Map<string, number>(), outputs = new Map<string, HTMLElement>();
 const processing = new Map<string, { input:HTMLInputElement; saved:string }>();
-let saved = providerDefaults(), loaded = false, busy = false, blocked = false, step = 1, complete = false;
+let saved = providerDefaults(), loaded = false, busy = false, authenticationBusy=false, blocked = false, step = 1, complete = false;
 let providerBaseline = '';
 const reload = document.getElementById('reload') as HTMLButtonElement || document.createElement('button');
 if (!reload.id) { reload.id = 'reload'; reload.type = 'button'; status.after(reload); }
@@ -26,7 +30,11 @@ const button = (label: string, handler: () => void) => {
 };
 for (const stage of ['transcription', 'translation'] as const) {
     const section = document.createElement('fieldset'), legend = document.createElement('legend');
-    legend.textContent = stage === 'transcription' ? 'Transcribe audio' : 'Translate subtitles'; section.append(legend);
+    legend.textContent = stage === 'transcription' ? 'Audio → subtitles' : 'Subtitles → another language'; section.append(legend);
+    const explanation = document.createElement('p'); explanation.textContent = stage === 'transcription'
+        ? 'Create subtitles from the video’s audio using your transcription service. You can instead use captions supplied by YouTube.'
+        : 'Translate existing subtitles using your translation service. This does not transcribe audio.'; section.append(explanation);
+    if(stage==='translation')chatgpt=createChatGPTControls(section,()=>{fields.get(stage+'.enabled')!.checked=true;invalidate(stage);},value=>{authenticationBusy=value;syncControls();});
     const enable = document.createElement('input'); enable.type = 'checkbox'; enable.name = stage + '.enabled'; fields.set(enable.name, enable);
     const enableLabel = document.createElement('label'); enableLabel.append(enable, document.createTextNode(' Configure this AI stage (optional)')); section.append(enableLabel);
     const choice = document.createElement('div'); choice.className = 'choices';
@@ -37,26 +45,35 @@ for (const stage of ['transcription', 'translation'] as const) {
     }
     section.append(choice);
     const advanced = document.createElement('details'), summary = document.createElement('summary'); summary.textContent = 'Advanced'; advanced.append(summary);
-    for (const [key, title] of Object.entries({ baseUrl: 'Service address', apiKey: 'API key (if required)', model: 'Model name', label: 'Display label', allowRemoteHttp: 'Allow unencrypted non-loopback HTTP' })) {
+    for (const [key, title] of Object.entries({ baseUrl: 'Service API address', apiKey: 'API access key (optional)', model: 'AI model', label: 'Display label', allowRemoteHttp: 'Allow unencrypted non-loopback HTTP' })) {
         const label = document.createElement('label'); label.textContent = title;
         const input = document.createElement('input'); input.name = stage + '.' + key; input.autocomplete = 'off';
         input.type = key === 'allowRemoteHttp' ? 'checkbox' : key === 'apiKey' ? 'password' : 'text';
         if (key === 'model') { const list = document.createElement('datalist'); list.id = stage + '-models'; input.setAttribute('list', list.id); section.append(list); }
         fields.set(input.name, input); label.append(input); (key === 'label' || key === 'allowRemoteHttp' ? advanced : section).append(label);
+        const hint = ({baseUrl:'Paste the API base address supplied by your service—not its homepage or chat website. Do not include /chat/completions or /audio/transcriptions.',apiKey:'Paste an API key created in the service dashboard—not your account password. Leave blank if your service does not require one.',model:'Choose a model from the list after checking, or paste its exact model ID. The model must support this stage.'} as Record<string,string>)[key];
+        if (hint) { const help=document.createElement('small'); help.id=stage+'-'+key+'-help'; help.textContent=hint; label.append(help); input.setAttribute('aria-describedby',help.id); }
         input.addEventListener('input', () => invalidate(stage));
         if (key === 'apiKey') input.addEventListener('input', () => {
             const replace = form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="replace"]`);
             if (replace) replace.checked = true;
+            document.getElementById(stage+'-key-status')!.textContent = input.value ? 'Not saved yet.' : saved[stage].keySaved ? 'Key saved. Replacement is empty; Cancel to keep it.' : 'No key saved.';
         });
     }
     const keyStatus = document.createElement('p'); keyStatus.id = stage + '-key-status'; keyStatus.textContent = 'No API key saved.'; section.append(keyStatus);
-    const keyChoices = document.createElement('div'); keyChoices.className='choices';
+    const keyChoices = document.createElement('div'); keyChoices.hidden=true;
     for (const [value,title] of [['keep','Keep saved key'],['replace','Replace key'],['remove','Remove key']]) {
         const label=document.createElement('label'), radio=document.createElement('input'); radio.type='radio'; radio.name=stage+'.keyAction'; radio.value=value; radio.checked=value==='keep';
         label.append(radio,document.createTextNode(title)); keyChoices.append(label);
         radio.addEventListener('change',()=>{if(value!=='replace') fields.get(stage+'.apiKey')!.value=''; invalidate(stage);});
     }
     section.append(keyChoices);
+    section.append(button('Change key',()=>{form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="replace"]`)!.checked=true; fields.get(stage+'.apiKey')!.focus(); invalidate(stage);}),
+        button('Remove key',()=>{form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="remove"]`)!.checked=true; fields.get(stage+'.apiKey')!.value=''; document.getElementById(stage+'-key-status')!.textContent='Key will be removed when you Save. Cancel keeps the saved key.'; invalidate(stage);}));
+    const guidance=document.createElement('details'), guidanceTitle=document.createElement('summary'), guidanceText=document.createElement('p');
+    guidanceTitle.textContent='Where do I find this?'; guidance.append(guidanceTitle,guidanceText); section.append(guidance);
+    const showGuidance=()=>{const guide=serviceGuidance(fields.get(stage+'.baseUrl')!.value); guidanceText.replaceChildren(document.createTextNode(guide.text)); if(guide.url){const link=document.createElement('a'); link.href=guide.url; link.target='_blank'; link.rel='noopener noreferrer'; link.textContent=' Service documentation'; guidanceText.append(link);}};
+    fields.get(stage+'.baseUrl')!.addEventListener('input',showGuidance); guidance.addEventListener('toggle',showGuidance); showGuidance();
     const reuseLabel=document.createElement('label'), reuse=document.createElement('input'); reuse.type='checkbox'; reuse.name=stage+'.reuseKey'; fields.set(reuse.name,reuse);
     reuseLabel.append(reuse,document.createTextNode('I confirm reuse of the saved key if I change this service address.'));
     advanced.append(reuseLabel); reuse.addEventListener('change',()=>invalidate(stage));
@@ -72,7 +89,13 @@ for (const stage of ['transcription', 'translation'] as const) {
     }
     const check = button('Check connection / Load models', () => void checkProvider(stage, check)); check.dataset.check = stage;
     section.append(advanced, check, output); form.append(section); enable.addEventListener('change', () => invalidate(stage));
+    if(stage==='translation'&&chatgpt){
+        const api=document.createElement('div');api.id='translation-api-fields';
+        for(const child of Array.from(section.children))if(child!==legend&&child!==explanation&&child!==enableLabel&&child!==chatgpt.mode.parentElement&&child!==chatgpt.panel)api.append(child);
+        section.append(api);chatgpt.mode.addEventListener('change',()=>{api.hidden=chatgpt!.mode.value==='chatgpt';});
+    }
 }
+const updateSection=document.createElement('section');updateSection.id='updates';document.querySelector('main')?.append(updateSection);createUpdates(updateSection,()=>loaded&&!busy&&!authenticationBusy&&!hasDraft());
 function invalidate(stage: string) {
     checks.set(stage, (checks.get(stage) || 0) + 1); outputs.get(stage)!.textContent = 'Not checked. Changes invalidate earlier results.';
     document.getElementById(stage + '-models')!.replaceChildren();
@@ -83,6 +106,7 @@ function draftProvider(stage: 'transcription' | 'translation', forCheck = false)
     const get = (key: string) => fields.get(stage + '.' + key)!;
     const kind = form.querySelector<HTMLInputElement>(`input[name="${stage}.connectionKind"]:checked`)?.value;
     if (!get('enabled').checked && !forCheck) return { ...providerDefaults()[stage] };
+    if(stage==='translation'&&chatgpt?.draft())return chatgpt.draft()!;
     return { label: get('label').value || (kind === 'local' ? 'Local service' : kind === 'hosted' ? 'Hosted service' : 'Custom provider'),
         baseUrl: get('baseUrl').value.trim(), apiKey: get('apiKey').value, model: get('model').value.trim() || (forCheck ? 'metadata-only' : ''),
         allowRemoteHttp: get('allowRemoteHttp').checked,
@@ -101,14 +125,15 @@ async function checkProvider(stage: 'transcription' | 'translation', check: HTML
         if (result?.error) throw Error(result.error);
         if (result?.requestId !== requestId) throw Error('Invalid or stale connection-check response.');
         if (result.status === 'connected') {
-            output.textContent = 'Connection verified; subtitle-generation compatibility is not tested. Select or enter your model.';
+            output.textContent = 'Service reachable. Model list loaded'+(result.partial ? ' (partial list: first 500 models)' : '')+'. Subtitle-generation compatibility is not tested. Choose or enter a model; nothing is selected automatically.';
             const list = document.getElementById(stage + '-models')!; list.replaceChildren();
             for (const model of result.models || []) { const option = document.createElement('option'); option.value = model; list.append(option); }
         } else if (result.status === 'unsupported') output.textContent = 'Model listing is unavailable. Enter the model manually; generation is not verified.';
         else output.textContent = ({auth:'Authentication failed. Check the API key and service permissions.',
             network:'Service unreachable. Check the address and that your service is running.',
             http:'The service rejected the metadata request. Check its API base address and access permissions.',
-            oversized:'The model list was too large. Enter your model name manually.',
+            timeout:'The metadata request timed out. You can enter the model manually or retry.',
+            oversized:'Service reachable, but its model list exceeded 4 MiB. Enter your model name manually; this is not an authentication failure.',
             'invalid-response':'The service returned an invalid model list. Check API compatibility or enter your model manually.'} as Record<string,string>)[result.reason] || 'Connection could not be verified. Enter your model manually or retry.';
     } catch (error) {
         if (checks.get(stage) === sequence) {
@@ -121,13 +146,14 @@ async function checkProvider(stage: 'transcription' | 'translation', check: HTML
     finally { if (checks.get(stage) === sequence) { checking.delete(stage); check.disabled = busy || !loaded; } }
 }
 function syncControls() {
-    for (const input of form.querySelectorAll<HTMLInputElement | HTMLButtonElement>('input,button')) input.disabled = busy || !loaded;
+    for (const input of form.querySelectorAll<HTMLInputElement | HTMLButtonElement>('input,button')) input.disabled = busy || authenticationBusy || !loaded;
     for (const stage of checking) (form.querySelector(`[data-check="${stage}"]`) as HTMLButtonElement).disabled = true;
-    saveButton.disabled = busy || !loaded || blocked; cancelButton.disabled = busy || !loaded;
-    for (const control of document.querySelectorAll<HTMLButtonElement | HTMLSelectElement>('[data-next],#finish,[data-language]')) control.disabled = busy || !loaded || blocked;
-    reload.disabled = busy; reload.textContent = loaded ? 'Reload saved state (keep edits)' : 'Retry loading settings';
+    saveButton.disabled = busy || authenticationBusy || !loaded || blocked; cancelButton.disabled = busy || authenticationBusy || !loaded;
+    for (const control of document.querySelectorAll<HTMLButtonElement | HTMLSelectElement>('[data-next],#finish,[data-language]')) control.disabled = busy || authenticationBusy || !loaded || blocked;
+    reload.disabled = busy || authenticationBusy; reload.textContent = loaded ? 'Reload saved state (keep edits)' : 'Retry loading settings';
     retryMigration.disabled=busy || !loaded || blocked;
     form.setAttribute('aria-busy',String(busy));
+    chatgpt?.setBusy(busy||!loaded);
 }
 function safeError(error: unknown) {
     let text = error instanceof Error ? error.message : 'Settings operation failed. Retry or reload saved state.';
@@ -136,12 +162,12 @@ function safeError(error: unknown) {
 }
 function report(error:unknown) { status.textContent = safeError(error); status.focus(); }
 function rawFields() {
-    return Array.from(form.querySelectorAll<HTMLInputElement>('input')).filter(input=>!processing.has(input.name)).map(input=>
+    return Array.from(form.querySelectorAll<HTMLInputElement>('input,select')).filter(input=>!processing.has(input.name)).map(input=>
         [input.name,input.type === 'radio' ? input.value : '',['checkbox','radio'].includes(input.type) ? input.checked : input.value]);
 }
 function hasDraft() { return JSON.stringify(rawFields()) !== providerBaseline || Array.from(processing.values()).some(field=>field.input.value !== field.saved); }
 async function action(work:()=>Promise<void>, write = false) {
-    if (busy || (write && (!loaded || blocked))) return;
+    if (busy || authenticationBusy || (write && (!loaded || blocked))) return;
     busy = true; syncControls();
     // A metadata response must not repaint a saved/cancelled/hidden draft.
     for (const stage of ['transcription','translation']) invalidate(stage);
@@ -154,6 +180,8 @@ async function action(work:()=>Promise<void>, write = false) {
 function display(value: ProviderSettings) {
     saved = value;
     retryMigration.hidden=!value.warning;
+    chatgpt?.display(value.translation);
+    const translationApi=document.getElementById('translation-api-fields');if(translationApi)translationApi.hidden=value.translation.backend==='chatgpt';
     for (const stage of ['transcription','translation'] as const) {
         fields.get(stage + '.enabled')!.checked = providerConfigured(saved[stage]);
         for (const key of ['label','baseUrl','apiKey','model','allowRemoteHttp']) {

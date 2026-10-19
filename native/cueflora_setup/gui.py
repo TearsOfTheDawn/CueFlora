@@ -5,7 +5,7 @@ import queue
 import sys
 import threading
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 from .detection import detected_browsers
 from .engine import Setup
 from .manifests import validate_release
@@ -16,14 +16,14 @@ from .terms import TERMS,confirmation
 def main():
     window = tk.Tk()
     window.title('CueFlora Setup')
-    window.geometry('540x420')
+    window.geometry('620x570')
     frame = ttk.Frame(window, padding=18)
     frame.pack(fill='both', expand=True)
     setup = Setup()
     distribution = distribution_root()
     ttk.Label(frame, text='CueFlora Setup', font=('', 18, 'bold')).pack(anchor='w')
     ttk.Label(frame, text='Installs the on-demand native runtime. No background companion runs.\n'
-              'AI services and browser extensions are not installed by this tool.\n'
+              'The matching Chrome extension is placed in a stable folder; you still Load unpacked in Chrome once. AI services are not installed.\n'
               'This installer is unsigned; Windows may show a security warning.', wraplength=490).pack(anchor='w', pady=8)
     ttk.Label(frame, text='Installation: ' + str(setup.root), wraplength=490).pack(anchor='w')
     def show_terms():
@@ -43,6 +43,12 @@ def main():
     except (ValueError, OSError):
         configured = set()
     selections = {}
+    adopted=tk.StringVar(value='')
+    def choose_existing():
+        selected=filedialog.askdirectory(title='Select the currently loaded CueFlora extension folder (not a Chrome profile)',parent=window)
+        if selected:adopted.set(selected)
+    ttk.Button(frame,text='Optional: select existing CueFlora extension folder…',command=choose_existing).pack(anchor='w',pady=4)
+    ttk.Label(frame,textvariable=adopted,wraplength=560).pack(anchor='w')
     for browser in ['chrome', 'firefox']:
         selected = tk.BooleanVar(value=False)
         selections[browser] = selected
@@ -83,6 +89,9 @@ def main():
             return
         if not messagebox.askyesno('Confirm ' + action, confirmation(action), parent=window):
             return
+        if action=='install' and adopted.get() and not messagebox.askyesno('Confirm extension adoption',
+            'Adopt this folder only if it is the currently loaded CueFlora extension? Setup verifies every file and keeps a recoverable backup. Foreign or modified folders are refused.\n\n'+adopted.get(),parent=window):return
+        adopt_path=Path(adopted.get()) if adopted.get() else None
         busy = True
         for button in buttons:
             button.state(['disabled'])
@@ -93,16 +102,20 @@ def main():
                 payload = distribution / 'runtime'
                 if action == 'install':
                     release = json.loads((distribution / 'release.json').read_text(encoding='utf-8'))
-                    setup.install(payload, release, browsers, launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None)
+                    setup.install(payload, release, browsers, launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None,
+                        extension=distribution/'extension' if release.get('extensionInventorySha256') else None,
+                        adopt_extension=adopt_path,confirm_adoption=adopt_path is not None)
                 elif action == 'repair':
-                    setup.repair(payload, launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None)
+                    setup.repair(payload, launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None,
+                        extension=distribution/'extension' if (distribution/'extension').is_dir() else None)
                 elif action == 'rollback':
                     setup.rollback()
                 else:
                     removed = setup.uninstall()
                     results.put((True, 'Unregistered. Runtime preserved for recovery at ' + str(removed)))
                     return
-                results.put((True, action.title() + ' complete. Use Check connection in extension settings to verify browser registration.'))
+                installed=setup.state();extension=(installed or {}).get('extension')
+                results.put((True, action.title() + ' complete. '+('Chrome: Load unpacked once from '+extension['directory']+'. For an adopted folder, click Chrome Reload instead. ' if extension else '')+'Reload open YouTube tabs. Settings, keys and evidence were preserved.'))
             except Exception as error:
                 results.put((False, str(error)))
         threading.Thread(target=worker, daemon=True).start()

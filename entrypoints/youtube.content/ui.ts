@@ -95,7 +95,10 @@ const renderWorkflowProgress = (): void => {
     const translationSelect = document.getElementById('cueflora-translation-lang') as HTMLSelectElement | null;
     if (runButton) {
         runButton.disabled = busy;
-        runButton.innerText = busy ? 'running…' : 'run transcription + translation';
+        const aiAudio = transcriptionSelect?.value.startsWith('transcription:');
+        const aiTranslation = translationSelect?.value.startsWith('translation:');
+        runButton.innerText = busy ? 'Running…' : aiAudio && aiTranslation ? 'Run transcription + translation'
+            : aiAudio ? 'Run transcription' : aiTranslation ? 'Run translation' : 'Show YouTube captions';
     }
     if (transcriptionSelect) transcriptionSelect.disabled = busy;
     if (translationSelect) translationSelect.disabled = busy;
@@ -147,6 +150,7 @@ export const populateDropdowns = (): void => {
             let text = getTrackDisplayName(t);
             if (t.isDefault) text += ' (Default)';
             if (t.kind === 'asr') text += ' (Auto)';
+            text += ' — YouTube captions';
             opt.text = text;
             grpYT.appendChild(opt);
         });
@@ -171,6 +175,7 @@ export const populateDropdowns = (): void => {
             opt.text = lang.name;
         }
         grpTranscribe.appendChild(opt);
+        opt.text += ' — AI transcription';
     });
     transcriptionLangSelect.appendChild(grpTranscribe);
 
@@ -192,7 +197,7 @@ export const populateDropdowns = (): void => {
         dedupTracks.forEach((t: CaptionTrack) => {
             const opt = document.createElement('option');
             opt.value = t.languageCode;
-            opt.text = getTrackDisplayName(t);
+            opt.text = getTrackDisplayName(t) + ' — YouTube captions';
             grpAvail.appendChild(opt);
         });
         translationLangSelect.appendChild(grpAvail);
@@ -220,10 +225,12 @@ export const populateDropdowns = (): void => {
             opt.style.color = '#666';
         }
         grpGen.appendChild(opt);
+        opt.text += ' — AI translation';
     });
     translationLangSelect.appendChild(grpGen);
 
     if (savedTranslationLang) translationLangSelect.value = savedTranslationLang;
+    renderWorkflowProgress();
 
 
 };

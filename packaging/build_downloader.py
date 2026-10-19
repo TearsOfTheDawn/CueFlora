@@ -111,7 +111,7 @@ def build(inputs,cache,output,online=False):
     if source.is_symlink() or digest(source)!=lock['source']['sha256']: raise ValueError('Downloader source hash mismatch')
     verify_source_pins(lock,source)
     output.mkdir(parents=True)
-    bootstrap(inputs,output/'python',official=True)
+    bootstrap(inputs,output/'python',official=True,include_auth=False)
     python=output/'python/venv/Scripts/python.exe'
     requirement=output/'downloader-requirements.lock'
     requirement.write_text('\n'.join(item['name']+'=='+item['version']+' --hash=sha256:'+item['wheel']['sha256'] for item in lock['dependencies'])+'\n')

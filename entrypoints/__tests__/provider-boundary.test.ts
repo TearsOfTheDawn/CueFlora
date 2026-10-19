@@ -12,13 +12,16 @@ describe('background provider trust boundary', () => {
         vi.spyOn(fakeBrowser.runtime,'connectNative').mockImplementation(()=>{
             let listener:(value:unknown)=>void=()=>{};
             return {onMessage:{addListener:(fn:typeof listener)=>{listener=fn;}},onDisconnect:{addListener:()=>{}},disconnect:()=>{},
-                postMessage:(message:any)=>queueMicrotask(()=>listener({requestId:message.requestId,credential:{schema:1,method:'windows-dpapi-v1',blob:'QUJDRA=='}}))} as any;
+                postMessage:(message:any)=>queueMicrotask(()=>listener(message.type==='PING'?{status:'PONG',capabilities:{runLeases:'run-leases-v1'}}:message.type==='RUN_LEASE'?{requestId:message.requestId,leased:true}:{requestId:message.requestId,credential:{schema:1,method:'windows-dpapi-v1',blob:'QUJDRA=='}}))} as any;
         });
+        vi.spyOn(fakeBrowser.tabs,'get').mockResolvedValue({...messageTab,url:'https://www.youtube.com/watch?v=U_V6Jqg7PV4'} as any);
+        vi.spyOn(fakeBrowser.tabs,'sendMessage').mockImplementation(async (_tab,message:any)=>({requestId:message.requestId,context:message.context,current:true}));
         background.main();
     });
     const player = () => ({ id: fakeBrowser.runtime.id, url: 'https://www.youtube.com/watch?v=U_V6Jqg7PV4', frameId: 0, tab: messageTab });
     const options = () => ({ id: fakeBrowser.runtime.id, url: fakeBrowser.runtime.getURL('/options.html') });
-    const call = async (message: object, sender = player()) => (await fakeBrowser.runtime.onMessage.trigger(message, sender, vi.fn()))[0];
+    const call = async (message: object, sender = player()) => (await fakeBrowser.runtime.onMessage.trigger({ ...message,
+        ...((message as any).type === 'PROVIDERS_BIND' ? {context:{videoId:'U_V6Jqg7PV4',generation:0,documentToken:'12345678-1234-1234-1234-123456789abc'}} : {}) }, sender, vi.fn()))[0];
     const configure = async () => {
         const settings = providerDefaults(); settings.transcription.apiKey = 'secret'; settings.translation.apiKey = 'secret';
         for (const stage of ['transcription','translation'] as const) { settings[stage].baseUrl = 'https://fixture.example/v1'; settings[stage].model = 'fixture'; }
@@ -30,14 +33,14 @@ describe('background provider trust boundary', () => {
         expect(await call({ type: 'PROVIDERS_CHECK', requestId:'check', provider:providerDefaults().translation })).toHaveProperty('error');
         expect(await call({ type:'ONBOARDING_SAVE', step:3, complete:true })).toHaveProperty('error');
     });
-    it('binds fresh caption-only Runs but blocks unconfigured AI without native dispatch', async () => {
+    it('binds Run tracking but blocks unconfigured AI before inference dispatch', async () => {
         const connect = vi.spyOn(fakeBrowser.runtime, 'connectNative');
         const summary = await call({ type:'PROVIDERS_SUMMARY' });
         expect(summary.transcription.label).toBe('Not configured');
         expect(await call({ type:'PROVIDERS_BIND', jobId:'fresh', revision:'' })).not.toHaveProperty('error');
         expect(await call({ type:'TRANSCRIBE_NATIVE', jobId:'fresh', videoId:'U_V6Jqg7PV4' })).toHaveProperty('error');
         expect(await call({ type:'TRANSLATE_NATIVE', jobId:'fresh', cues:[{text:'Hello'}], systemPrompt:'Translate' })).toHaveProperty('error');
-        expect(connect).not.toHaveBeenCalled();
+        expect(connect).toHaveBeenCalledTimes(1); // Lease connection only; neither AI handler was dispatched.
     });
     it('rejects stale metadata replies and never forwards arbitrary response fields', async () => {
         let listener: (value: unknown) => void = () => {};
@@ -114,7 +117,7 @@ describe('background provider trust boundary', () => {
         expect(await fakeBrowser.storage.session.get('cueflora_run_provider_9_old')).toEqual({});
         const response = await call({ type: 'TRANSCRIBE_NATIVE', jobId: 'job', videoId: 'zEpLJgf_4u0' },
             { ...player(), url: 'https://www.youtube.com/watch?v=zEpLJgf_4u0' });
-        expect(response.error).toContain('different document');
+        expect(response.error).toContain('does not match');
     });
     it('handles malformed native responses without leaking payloads or losing request accounting', async () => {
         const saved = await configure();

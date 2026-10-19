@@ -519,7 +519,13 @@ export const startTranscription = async (
         }
         let text = message.message || message.stage;
         if (message.stage === 'download' && message.percent != null) {
-            text = `downloading${message.speed ? ` — ${message.speed}` : ''}`;
+            text = `Downloading audio${message.speed ? ` — ${message.speed}` : ''}`;
+        } else if (['compress','prepare','audio-preparation','chunk'].includes(message.stage)) {
+            text = 'Preparing audio…';
+        } else if (message.stage === 'upload') {
+            text = 'Uploading audio…';
+        } else if (message.stage === 'transcribe' && !/complete/i.test(message.message || '')) {
+            text = 'Waiting for transcription…';
         }
         updateWorkflowStage(jobId, 'transcription', {
             status: 'running',

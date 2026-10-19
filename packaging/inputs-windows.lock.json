@@ -1,6 +1,10 @@
 {
   "schema": 1,
   "platform": "Windows-x64",
+  "wheelNativeFiles": [
+    {"wheel":"cryptography-50.0.2-cp311-abi3-win_amd64.whl","file":"cryptography/hazmat/bindings/_rust.pyd","sha256":"1d4332a447cab13dec8e3a533ad579e0e562b79e40822c931f33769758fc7156"},
+    {"wheel":"cffi-2.1.1-cp313-cp313-win_amd64.whl","file":"_cffi_backend.cp313-win_amd64.pyd","sha256":"21b7160d4a6da9590794fdb38718982060b5c92d56fb0e441fc8b62ee789be8d"}
+  ],
   "pythonVersion": "3.13.15",
   "pythonOrigin": "2256 upstream payload files match the official hash-verified 20260814 stripped Windows x64 archive; BUILD and EXTERNALLY-MANAGED are separately hash-locked local uv metadata. Native-library licence closure still needs review.",
   "interpreterFiles": [
@@ -9050,6 +9054,30 @@
   },
   "pythonWheels": [
     {
+      "name": "PyJWT",
+      "version": "2.15.1",
+      "file": "pyjwt-2.15.1-py3-none-any.whl",
+      "sha256": "42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2",
+      "file": "cryptography-50.0.2-cp311-abi3-win_amd64.whl",
+      "sha256": "7afa5a6602a9f29af1f3a2965f831bae7c9d5d597b7cbb716d41ab3b7d89879c"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "file": "cffi-2.1.1-cp313-cp313-win_amd64.whl",
+      "sha256": "1aa5645c30469b09530c4ebca77ebf8f17618293c58f8549cb1a543a50236e7d"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.11",
+      "file": "pycparser-3.11-py3-none-any.whl",
+      "sha256": "51d5a8ba2be0bbe440b99d2112604c95bbbc3c2748a64260186c541e1729cd80"
+    },
+    {
       "name": "altgraph",
       "version": "0.17.5",
       "file": "altgraph-0.17.5-py2.py3-none-any.whl",
@@ -9135,6 +9163,54 @@
     }
   ],
   "files": [
+    {
+      "file": "pyjwt-2.15.1-py3-none-any.whl",
+      "sha256": "42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193",
+      "url": "https://files.pythonhosted.org/packages/50/ca/44de4e75f8aadc457f0634be3b542815078ded46dca30efb960edeecad6e/pyjwt-2.15.1-py3-none-any.whl",
+      "role": "build-wheel"
+    },
+    {
+      "file": "pyjwt-2.15.1.tar.gz",
+      "sha256": "4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8",
+      "url": "https://files.pythonhosted.org/packages/43/ea/5194e52748b0da83d71e082d75496eaec6e58f419f5e184786ded517e6a9/pyjwt-2.15.1.tar.gz",
+      "role": "licence-source-evidence"
+    },
+    {
+      "file": "cryptography-50.0.2-cp311-abi3-win_amd64.whl",
+      "sha256": "7afa5a6602a9f29af1f3a2965f831bae7c9d5d597b7cbb716d41ab3b7d89879c",
+      "url": "https://files.pythonhosted.org/packages/9a/4f/adfc442765721292fff86d314ce385d3249d22db42295c0dd057727b60f3/cryptography-50.0.2-cp311-abi3-win_amd64.whl",
+      "role": "build-wheel"
+    },
+    {
+      "file": "cryptography-50.0.2.tar.gz",
+      "sha256": "7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5",
+      "url": "https://files.pythonhosted.org/packages/9d/af/182eb91b0df3fe75c4d9f26fe70684569566745f6ba7e5c9c73a862c5252/cryptography-50.0.2.tar.gz",
+      "role": "licence-source-evidence"
+    },
+    {
+      "file": "cffi-2.1.1-cp313-cp313-win_amd64.whl",
+      "sha256": "1aa5645c30469b09530c4ebca77ebf8f17618293c58f8549cb1a543a50236e7d",
+      "url": "https://files.pythonhosted.org/packages/60/a6/8b149b2c3f2e11aaa1618ef64500b45f50f22c57a977a4dff1aff1f91042/cffi-2.1.1-cp313-cp313-win_amd64.whl",
+      "role": "build-wheel"
+    },
+    {
+      "file": "cffi-2.1.1.tar.gz",
+      "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be",
+      "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz",
+      "role": "licence-source-evidence"
+    },
+    {
+      "file": "pycparser-3.11-py3-none-any.whl",
+      "sha256": "51d5a8ba2be0bbe440b99d2112604c95bbbc3c2748a64260186c541e1729cd80",
+      "url": "https://files.pythonhosted.org/packages/90/11/0e6f11117525ff0eec40ebac3d313376f102df93ca44ad9e893ee85e4f89/pycparser-3.11-py3-none-any.whl",
+      "role": "build-wheel"
+    },
+    {
+      "file": "pycparser-3.11.tar.gz",
+      "sha256": "d875f09c3507d00e1aba0eecc6dcadc1352f30fff09dc6bff2f1c2935e97c2bc",
+      "url": "https://files.pythonhosted.org/packages/da/a8/c5fdbeee588bb8ada9458774f43adf1bdd30bd59157055142183e769a024/pycparser-3.11.tar.gz",
+      "role": "licence-source-evidence"
+    },
     {
       "file": "yt-dlp.exe",
       "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",

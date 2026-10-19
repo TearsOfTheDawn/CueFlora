@@ -7,14 +7,16 @@ import {providerDefaults,LEGACY_PROVIDERS_KEY} from '../../utils/providers';
 describe('store-candidate credential/transport background boundary',()=>{
     const options=()=>({id:fakeBrowser.runtime.id,url:fakeBrowser.runtime.getURL('/options.html')});
     const player=()=>({id:fakeBrowser.runtime.id,url:'https://www.youtube.com/watch?v=U_V6Jqg7PV4',frameId:0,tab:{id:1}});
-    const call=async(message:object,sender=options())=>(await fakeBrowser.runtime.onMessage.trigger(message,sender,vi.fn()))[0];
-    beforeEach(()=>{fakeBrowser.reset(); vi.spyOn(fakeBrowser.storage.local,'setAccessLevel').mockResolvedValue(); vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation(()=>{}); vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation(()=>{}); background.main();});
+    const call=async(message:object,sender=options())=>(await fakeBrowser.runtime.onMessage.trigger({...message,...((message as any).type==='PROVIDERS_BIND' ? {context:{videoId:'U_V6Jqg7PV4',generation:0,documentToken:'12345678-1234-1234-1234-123456789abc'}} : {})},sender,vi.fn()))[0];
+    beforeEach(()=>{fakeBrowser.reset(); vi.spyOn(fakeBrowser.storage.local,'setAccessLevel').mockResolvedValue(); vi.spyOn(fakeBrowser.action.onClicked,'addListener').mockImplementation(()=>{}); vi.spyOn(fakeBrowser.runtime.onInstalled,'addListener').mockImplementation(()=>{});
+        vi.spyOn(fakeBrowser.tabs,'get').mockResolvedValue({id:1,url:'https://www.youtube.com/watch?v=U_V6Jqg7PV4'} as any);
+        vi.spyOn(fakeBrowser.tabs,'sendMessage').mockImplementation(async(_tab,message:any)=>({requestId:message.requestId,context:message.context,current:true})); background.main();});
     afterEach(()=>vi.useRealTimers());
     const bindKeyedRun=async()=>{
         vi.spyOn(fakeBrowser.runtime,'connectNative').mockImplementation(()=>{
             let listener:(value:unknown)=>void=()=>{};
             return {onMessage:{addListener:(fn:typeof listener)=>{listener=fn;}},onDisconnect:{addListener:()=>{}},disconnect:()=>{},
-                postMessage:(message:any)=>queueMicrotask(()=>listener({requestId:message.requestId,credential:{schema:1,method:'windows-dpapi-v1',blob:'QUJDRA=='}}))} as any;
+                postMessage:(message:any)=>queueMicrotask(()=>listener(message.type==='PING'?{status:'PONG',capabilities:{runLeases:'run-leases-v1'}}:message.type==='RUN_LEASE'?{requestId:message.requestId,leased:true}:{requestId:message.requestId,credential:{schema:1,method:'windows-dpapi-v1',blob:'QUJDRA=='}}))} as any;
         });
         const settings=providerDefaults(); settings.translation={...settings.translation,baseUrl:'https://service.invalid',model:'synthetic',apiKey:'synthetic-private'};
         const saved=await call({type:'PROVIDERS_SAVE',settings}); expect(saved).not.toHaveProperty('error');

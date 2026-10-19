@@ -23,6 +23,37 @@ def ordinary(root, name, expected):
     return path
 
 
+def paired_update_asset(root,configuration,bindings,version,inventory):
+    name='CueFlora-'+version+'-update.json'
+    path=ordinary(root,name,inventory.get(name))
+    from cueflora_host.updates import validate_manifest
+    from cueflora_host.update_payload import verify_update_payload
+    data=validate_manifest(json.loads(path.read_text()),current='0.0.0',chrome_id=configuration['extensionIds']['chrome'])
+    if data['version']!=version or data['sourceInventorySha256']!=bindings['sourceInventorySha256'] or data['runtimeInventorySha256']!=bindings['runtimeInventorySha256'] or data['extensionInventorySha256']!=configuration['extensionInventorySha256'] or data['setup']['sha256']!=bindings['setupSha256']:
+        raise ValueError('Publication update manifest differs from reviewed bindings')
+    setup=ordinary(root,data['setup']['name'],bindings['setupSha256'])
+    if setup.stat().st_size!=data['setup']['size']:raise ValueError('Publication update Setup size differs')
+    verify_update_payload(setup,data)
+    return name,inventory[name]
+
+
+def paired_release_notes(staging):
+    version=staging['version'];base='https://github.com/'+staging['repository']+'/releases/download/v'+version+'/'
+    return ('# CueFlora '+version+' — Windows & Chrome\n\n'
+        '## [Download CueFlora Setup.exe — the only required download]('+base+'CueFlora-'+version+'-Setup.exe)\n\n'
+        'Setup includes the matching Chrome extension, native helper and audio tools. AI services/models are separate. The installer is unsigned. Do not disable security software.\n\n'
+        '### New users\n\n'
+        '1. Run Setup, select Chrome, read the terms and confirm Install.\n'
+        '2. Open chrome://extensions, enable Developer mode and Load unpacked from the stable folder shown by Setup (normally %LOCALAPPDATA%\\CueFlora\\Chrome-extension). Keep this folder.\n'
+        '3. Open CueFlora settings, connect existing AI services or optionally ChatGPT for translation only, Save, choose languages and press Run on YouTube. No Python, administrator access or PATH edits are required.\n\n'
+        '### Existing 0.1.13 users — one-time manual upgrade\n\n'
+        'Finish all Runs. In the new Setup, select your currently loaded CueFlora extension folder and confirm adoption/Upgrade. Only recognized unmodified files are accepted and a backup is kept. Do not remove/reinstall the extension. Click Chrome Reload once, then reload YouTube tabs. Settings/keys/evidence are preserved.\n\n'
+        'Later compatible stable releases support Check for updates → Download → Install update → confirm Setup → Check installation → Restart CueFlora. No silent installation or resident updater is added.\n\n'
+        '### Optional files and limitations\n\n'
+        '[Complete Windows ZIP]('+base+'CueFlora-'+version+'-Windows-x64.zip) is an alternative, not another required download. Sources, original notices, dependency evidence, checksums and update metadata accompany this release.\n\n'
+        'Only explicit Run starts AI work. ChatGPT plan usage does not cover transcription; API services may charge. Generated subtitles may be inaccurate. Genuine ChatGPT login, live Chrome updating and clean-machine acceptance remain unverified; automated checks are not those tests. Process only content you are entitled to use under applicable terms and law.\n')
+
+
 def plan(preparation, configuration, approvals, evidence_root, target_commit):
     root=Path(preparation).resolve()
     if not isinstance(target_commit,str) or not re.fullmatch('[0-9a-f]{40}',target_commit):
@@ -61,6 +92,10 @@ def plan(preparation, configuration, approvals, evidence_root, target_commit):
         package='CueFlora-'+version+'-Windows-x64.zip'
         files[package] = (package,engineering['artifacts']['sha256'])
         files['CueFlora-notices.zip'] = ('CueFlora-notices.zip',None)
+    paired=github and bool(configuration.get('extensionInventorySha256'))
+    if paired:
+        name,checksum=paired_update_asset(assets_root,configuration,bindings,version,manifest['files'])
+        files[name]=(name,checksum)
     assets=[]
     for public_name,(name,expected) in files.items():
         actual=manifest['files'].get(name)
@@ -71,7 +106,7 @@ def plan(preparation, configuration, approvals, evidence_root, target_commit):
     return {'schema':1,'version':version,'tag':'v'+version,
         'repository':repository.removeprefix('https://github.com/'),'targetCommit':target_commit,
         'artifacts':bindings,'assets':assets,'gates':readiness,
-        'published':False,'storeSubmitted':False,'stableRelease':False,'distribution':'github' if github else 'chrome-store',
+        'published':False,'storeSubmitted':False,'stableRelease':False,'pairedExtension':paired,'distribution':'github' if github else 'chrome-store',
         'interpretation':'Reviewed helper prerelease only. Store approval/screenshots are separate; required redistribution, security and authorization gates are not waived.'}
 
 
@@ -141,6 +176,7 @@ def execute(staging, confirmed_version=None):
             'Corresponding sources and third-party notices accompany this installer. '
             'Do not disable security software. Checksums do not guarantee software safety.\n',encoding='utf-8')
         checksums=temporary/('SHA256SUMS.txt' if staging.get('distribution') == 'github' else 'CueFlora-SHA256SUMS.txt')
+        if staging.get('pairedExtension'):notes.write_text(paired_release_notes(staging),encoding='utf-8')
         checksums.write_text(''.join(item['sha256']+'  '+item['name']+'\n' for item in staging['assets']),encoding='utf-8')
         checksum_asset={'name':checksums.name,'sha256':digest(checksums),'bytes':checksums.stat().st_size}
         # gh's PATH#LABEL changes a display label, not the asset filename.
@@ -152,7 +188,7 @@ def execute(staging, confirmed_version=None):
             uploads.append(str(target))
         uploads.append(str(checksums))
         result=command(['release','create',tag,'--repo',repository,'--target',staging['targetCommit'],
-            '--draft','--prerelease','--title','CueFlora '+staging['version']+' — Windows/Chrome review candidate',
+            '--draft','--prerelease','--title','CueFlora '+staging['version']+(' — Windows & Chrome' if staging.get('pairedExtension') else ' — Windows/Chrome review candidate'),
             '--notes-file',str(notes),*uploads])
         if result.returncode:
             raise RuntimeError('Draft upload failed; an incomplete draft may remain. No public release was requested')

@@ -117,6 +117,8 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         run('cargo-source-notices',[python,'packaging/cargo_notice_evidence.py','--inputs',cache,'--cache',evidence_cache/'cargo-registry-cache','--output',cargo_notices,*(['--online'] if not offline else [])])
         repository_notices=output/'repository-notice-evidence'
         run('cargo-repository-notices',[python,'packaging/repository_notice_evidence.py','--inputs',cache,'--registry-cache',evidence_cache/'cargo-registry-cache','--repository-cache',evidence_cache/'cargo-repository-cache','--output',repository_notices,*(['--online'] if not offline else [])])
+        auth_notices=output/'auth-native-notices'
+        run('auth-native-notices',[python,'packaging/auth_notice_evidence.py','--inputs',cache,'--cache',evidence_cache/'auth-native','--output',auth_notices,*(['--online'] if not offline else [])])
         downloader_cache=(downloader_cache or cache/'downloader').resolve()
         downloader_build=output/'downloader-build'
         run('downloader-build',[python,'packaging/build_downloader.py','--inputs',cache,'--cache',downloader_cache,'--output',downloader_build,*(['--online'] if not offline else [])])
@@ -159,6 +161,8 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
             manifest = json.loads((destination/'manifest.json').read_text())
             if (profile != 'store-candidate') != ('key' in manifest): raise ValueError('Profile identity mismatch')
         # The same restored offline environment builds both fresh pairs.
+        run('paired-extension',[python,'packaging/extension_payload.py','--input',selected_extension,'--output',output/'paired-extension'])
+        selected_extension=output/'paired-extension'
         environment = dict(os.environ)
         for name, file in lock['tools'].items():
             environment[{'yt-dlp':'YT_DLP_PATH','ffmpeg':'FFMPEG_PATH','ffprobe':'FFPROBE_PATH','deno':'DENO_PATH'}[name]] = str(cache/file)
@@ -170,11 +174,12 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         for iteration in [1,2]:
             runtime_output = output/f'runtime-{iteration}'
             binding = ['--public-config',public_config.resolve()] if public_config else []
-            run(f'runtime-{iteration}',[python,'packaging/build_runtime.py','--output',runtime_output,'--tool-lock',tool_lock,'--audio-build',audio_build,'--downloader-build',downloader_build,'--v8-notices',v8_notices,'--interpreter-notices',interpreter_notices,'--cargo-notices',cargo_notices,'--repository-notices',repository_notices,*binding],env=environment)
+            run(f'runtime-{iteration}',[python,'packaging/build_runtime.py','--output',runtime_output,'--tool-lock',tool_lock,'--audio-build',audio_build,'--downloader-build',downloader_build,'--v8-notices',v8_notices,'--interpreter-notices',interpreter_notices,'--cargo-notices',cargo_notices,'--repository-notices',repository_notices,'--auth-notices',auth_notices,*binding],env=environment)
             runtime = runtime_output/'dist/cueflora-host'
-            run(f'setup-{iteration}',[python,'packaging/build_preview.py','--runtime',runtime,'--output',output/f'setup-{iteration}',*binding],env=environment)
+            run(f'setup-{iteration}',[python,'packaging/build_preview.py','--runtime',runtime,'--output',output/f'setup-{iteration}','--extension',selected_extension,*binding],env=environment)
         runtime = output/'runtime-1/dist/cueflora-host'
         setup = output/'setup-1/dist/CueFlora Setup.exe'
+        if github:run('update-manifest',[python,'packaging/update_manifest.py','--setup',setup,'--runtime',runtime,'--extension',selected_extension,'--release',output/'setup-1/bundle/release.json','--output',output/('CueFlora-'+report['effectiveConfiguration']['version']+'-update.json')])
         comparison = {'runtime':compare_outputs(runtime,output/'runtime-2/dist/cueflora-host'),
             'setup':compare_outputs(output/'setup-1/dist',output/'setup-2/dist'),
             'hostExplanation':explain_frozen_differences(runtime/'cueflora-host.exe',output/'runtime-2/dist/cueflora-host/cueflora-host.exe'),
@@ -186,6 +191,8 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         (output/'build-comparison.json').write_text(json.dumps(comparison,indent=2)+'\n')
         report['buildComparison'] = comparison
         source_evidence=collect(cache,output/'licence-evidence',lock,evidence_cache,source_audio=True,downloader_build=downloader_build)
+        shutil.copytree(auth_notices,output/'licence-evidence/auth-native')
+        source_evidence['authNativeNoticeEvidence']=json.loads((auth_notices/'auth-notice-evidence.json').read_text())
         shutil.copytree(output/'curl-source-evidence',output/'licence-evidence/downloader-native/curl')
         source_evidence['curlSourceEvidence']=json.loads((output/'curl-source-evidence/curl-source-evidence.json').read_text())
         shutil.copytree(v8_notices,output/'licence-evidence/deno-v8')
@@ -204,8 +211,9 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
         require_file_attribution(measured_ledger)
         run('capabilities',[python,'packaging/verify_capabilities.py','--runtime',runtime,'--output',output/'capability-verification'])
         run('credentials',[python,'packaging/verify_credentials.py','--runtime',runtime,'--output',output/'credential-verification'])
+        run('frozen-auth',[python,'packaging/verify_auth.py','--runtime',runtime,'--output',output/'auth-verification'])
         run('installer',[python,'packaging/verify_installer.py','--setup',setup,'--runtime',runtime,'--output',output/'installer-verification'])
-        run('lifecycle',[python,'packaging/smoke_setup.py','--payload',runtime,'--release',output/'setup-1/bundle/release.json','--launcher',setup,'--output',output/'lifecycle'])
+        run('lifecycle',[python,'packaging/smoke_setup.py','--payload',runtime,'--release',output/'setup-1/bundle/release.json','--launcher',setup,'--extension',selected_extension,'--output',output/'lifecycle'])
         isolated = {**os.environ,'GIT_CONFIG_COUNT':'2','GIT_CONFIG_KEY_0':'safe.directory','GIT_CONFIG_VALUE_0':'C:/AI/substrata',
             'GIT_CONFIG_KEY_1':'safe.directory','GIT_CONFIG_VALUE_1':'C:/AI/CueFlora','GIT_OPTIONAL_LOCKS':'0'}
         if (ROOT/'artifacts/source-baseline.json').is_file():

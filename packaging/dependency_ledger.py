@@ -66,7 +66,7 @@ def ledger(metadata, emitted, source_report, extra):
     sources=source_report['sources']+extra['inputs']
     def row(identifier,kind,version,paths,source_names,licence,obligation):
         notices=[{'path':name,'sha256':checksum} for name,checksum in files.items() if name.startswith('licenses/') and any(part.lower().replace('_','-') in name.lower().replace('_','-') for part in [identifier.split(':')[-1]])]
-        evidence=[item for item in sources if any(marker in item['file'] for marker in source_names)]
+        evidence=[item for item in sources if any(marker.lower() in item['file'].lower() for marker in source_names)]
         return {'id':identifier,'scope':kind,'version':version,'shippedFiles':[{'path':path,'sha256':files[path]} for path in paths],
                 'licence':licence,'notices':notices,'sourceEvidence':evidence,'sourceCoverage':'partial' if evidence else 'not-established',
                 'obligation':obligation,'reviewRequired':True}
@@ -89,11 +89,20 @@ def ledger(metadata, emitted, source_report, extra):
         rows.append(item)
     for dependency in metadata.get('dependencies',[]):
         rows.append(row('python:'+dependency['name'],'analysis-observed-shipped-module',dependency['version'],[],['CPython-' if dependency['name']=='python' else dependency['name']],'see matched notices','licence-specific-review'))
+    wheel_pins=json.loads((ROOT/'packaging/inputs-windows.lock.json').read_text()).get('wheelNativeFiles',[])
     for name in sorted(files):
         if name.lower().endswith(('.dll','.pyd')):
             audio = metadata.get('audioBuild') or {}
             source_built = name.startswith('tools/') and audio.get('files',{}).get(Path(name).name) == files[name]
             item = row('native:'+Path(name).name,'shipped-native-library','not-established',[name],['CPython-','python-build-standalone-'],'see interpreter/tool notices; exact closure requires review','native-binary-review')
+            wheel=next((pin for pin in wheel_pins if pin['sha256']==files[name]),None)
+            if wheel:
+                component=wheel['wheel'].split('-')[0]
+                item.update({'originEvidence':wheel,'originVerified':True,'version':wheel['wheel'].split('-')[1],
+                    'licence':'see exact '+component+' wheel notices, including bundled native-library terms; not CPython licence',
+                    'notices':[{'path':path,'sha256':checksum} for path,checksum in files.items() if path.lower().startswith('licenses/'+component.lower()+'/')],
+                    'sourceEvidence':[entry for entry in sources if entry['file'].lower().startswith(component.lower()+'-')],
+                    'sourceCoverage':'exact upstream wheel bytes and matching project source archive; native build/source linkage remains a review obligation'})
             if source_built:
                 family = 'Opus' if 'opus' in name else 'MinGW compiler runtime' if 'winpthread' in name else 'FFmpeg'
                 item.update({'version':'1.6.1' if family=='Opus' else audio['version'] if family=='FFmpeg' else 'see exact compiler package lock',
@@ -154,7 +163,7 @@ def require_file_attribution(report):
     return True
 
 
-def setup_inventory(executable, analysis, interpreter_hashes, runtime_hashes=None):
+def setup_inventory(executable, analysis, interpreter_hashes, runtime_hashes=None, wheel_hashes=None):
     from PyInstaller.archive.readers import CArchiveReader
     from release_inputs import shipped_python
     archive = CArchiveReader(str(executable))
@@ -164,12 +173,14 @@ def setup_inventory(executable, analysis, interpreter_hashes, runtime_hashes=Non
         if isinstance(content, bytes): files[name.replace('\\','/')] = hashlib.sha256(content).hexdigest()
     native = []
     runtime_hashes = runtime_hashes or {}
+    wheel_hashes = wheel_hashes or {}
     for name, checksum in files.items():
         if not name.lower().endswith(('.dll','.pyd')) or name.startswith('bundle/runtime/'): continue
         family = 'Tcl' if Path(name).name.lower().startswith('tcl') else 'Tk' if Path(name).name.lower().startswith('tk') else 'Python/native'
         native.append({'path':name,'sha256':checksum,'noticeFamily':family,
             'lockedInterpreterFile':interpreter_hashes.get(checksum),'lockedRuntimeFile':runtime_hashes.get(checksum),
-            'originMatched':checksum in interpreter_hashes or checksum in runtime_hashes,
+            'lockedWheelFile':wheel_hashes.get(checksum),
+            'originMatched':checksum in interpreter_hashes or checksum in runtime_hashes or checksum in wheel_hashes,
             'licenceClosure':'review-required; payload matching is not licence clearance'})
     return {'executableSha256':digest(executable),'archiveEntryHashes':files,'nativeLibraries':native,
             'analysisObservedPythonModules':shipped_python(analysis),
@@ -182,6 +193,11 @@ def write(runtime, extension, source_report, extra, output, source_notices=None,
     emitted=[json.loads(path.read_text()) for path in extension.rglob('cueflora-bundled-dependencies-*.json')]
     if not emitted: raise ValueError('Emitted extension inventories missing')
     report=ledger(metadata,emitted,source_report,extra)
+    auth=metadata.get('authNativeNoticeEvidence')
+    if auth:
+        detailed=source_report.get('authNativeNoticeEvidence')
+        if not detailed or detailed['lockSha256']!=auth['lockSha256'] or len(detailed['components'])!=auth['componentCount']:raise ValueError('Authentication source/runtime notice binding mismatch')
+        report['authNativeNoticeEvidence']=detailed
     repository=metadata.get('repositoryNoticeEvidence')
     if repository:
         detailed=source_report.get('repositoryNoticeEvidence')
@@ -235,11 +251,13 @@ def write(runtime, extension, source_report, extra, output, source_notices=None,
     augment(metadata,report,runtime)
     interpreter=json.loads((ROOT/'packaging/inputs-windows.lock.json').read_text())
     hashes={item['sha256']:item['file'] for item in interpreter['interpreterFiles']}
+    wheel_hashes={item['sha256']:item['wheel']+':'+item['file'] for item in interpreter.get('wheelNativeFiles',[])}
     audio = metadata.get('audioBuild') or {}
     audio_hashes = {'tools/'+name:checksum for name,checksum in audio.get('files',{}).items() if name.endswith('.dll')}
     report['nativeInterpreterPayloadMatches']={name:{'sha256':checksum,'lockedInterpreterFile':hashes.get(checksum),
+        'lockedWheelFile':wheel_hashes.get(checksum),
         'sourceBuiltAudioFile':name if audio_hashes.get(name)==checksum else None,
-        'matched':checksum in hashes or audio_hashes.get(name)==checksum}
+        'matched':checksum in hashes or checksum in wheel_hashes or audio_hashes.get(name)==checksum}
         for name,checksum in metadata['files'].items() if name.lower().endswith(('.dll','.pyd'))}
     if any(not item['matched'] for item in report['nativeInterpreterPayloadMatches'].values()):
         raise ValueError('Runtime shipped an unpinned native library')
@@ -257,7 +275,7 @@ def write(runtime, extension, source_report, extra, output, source_notices=None,
         for name,fields in source_report['ytDlpEmbeddedMetadata'].items()]
     if setup is not None and setup_analysis is not None:
         report['setupShipment']=setup_inventory(setup,setup_analysis,hashes,
-            {checksum:name for name,checksum in metadata['files'].items() if name.startswith('tools/') and name.endswith('.dll')})
+            {checksum:name for name,checksum in metadata['files'].items() if name.startswith('tools/') and name.endswith('.dll')},wheel_hashes)
         if any(not item['originMatched'] for item in report['setupShipment']['nativeLibraries']):
             raise ValueError('Setup shipped an unpinned native library')
     for tool in ('ffmpeg','ffprobe'):

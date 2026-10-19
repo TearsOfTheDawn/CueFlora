@@ -1,0 +1,280 @@
+{
+  "schema": 1,
+  "product": "cueflora",
+  "inputFiles": {
+    "cryptography-50.0.2-cp311-abi3-win_amd64.whl": "7afa5a6602a9f29af1f3a2965f831bae7c9d5d597b7cbb716d41ab3b7d89879c",
+    "cryptography-50.0.2.tar.gz": "7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5",
+    "cffi-2.1.1.tar.gz": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be"
+  },
+  "cargoLockSha256": "98778208027ce05bfff0db88c290f28355eb20e685f0c728775359fb91a1a4c4",
+  "rustSbomSha256": "246af194b4c524807c5aaffd2b7ff86c2c9bee3eb3fceeac987709ad76e4e7ef",
+  "opensslSbomSha256": "5b5eea08dd952a16eef188f7a85ad439a4409efa0e2bce9ca339a4de9c8db3f0",
+  "files": [
+    {
+      "name": "asn1",
+      "version": "0.24.1",
+      "file": "asn1-0.24.1.crate",
+      "sha256": "c9795210620c0cb3f9a7ce4f882808c38e1ef7b347c90591dceae0886e031fb1",
+      "url": "https://static.crates.io/crates/asn1/asn1-0.24.1.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "asn1_derive",
+      "version": "0.24.1",
+      "file": "asn1_derive-0.24.1.crate",
+      "sha256": "909e307f1cc32bb8bccbd98f446e6d1bf03fa30f7b53a4337da7181ad30fa11a",
+      "url": "https://static.crates.io/crates/asn1_derive/asn1_derive-0.24.1.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "base64",
+      "version": "0.23.0",
+      "file": "base64-0.23.0.crate",
+      "sha256": "b25655df2c3cdd83c5e5b293b88acd880332b2ddadd7c30ac43144fdc0033da9",
+      "url": "https://static.crates.io/crates/base64/base64-0.23.0.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "bitflags",
+      "version": "2.13.1",
+      "file": "bitflags-2.13.1.crate",
+      "sha256": "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da",
+      "url": "https://static.crates.io/crates/bitflags/bitflags-2.13.1.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "cc",
+      "version": "1.4.0",
+      "file": "cc-1.4.0.crate",
+      "sha256": "5add81bb678e6cb321aff7fa0dc7689ad82b112dbc032cea19f91d6b8e3582b9",
+      "url": "https://static.crates.io/crates/cc/cc-1.4.0.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.4",
+      "file": "cfg-if-1.0.4.crate",
+      "sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801",
+      "url": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.4.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.9",
+      "file": "find-msvc-tools-0.1.9.crate",
+      "sha256": "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582",
+      "url": "https://static.crates.io/crates/find-msvc-tools/find-msvc-tools-0.1.9.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "foreign-types",
+      "version": "0.3.2",
+      "file": "foreign-types-0.3.2.crate",
+      "sha256": "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1",
+      "url": "https://static.crates.io/crates/foreign-types/foreign-types-0.3.2.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "foreign-types-shared",
+      "version": "0.1.1",
+      "file": "foreign-types-shared-0.1.1.crate",
+      "sha256": "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b",
+      "url": "https://static.crates.io/crates/foreign-types-shared/foreign-types-shared-0.1.1.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "heck",
+      "version": "0.5.0",
+      "file": "heck-0.5.0.crate",
+      "sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea",
+      "url": "https://static.crates.io/crates/heck/heck-0.5.0.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.18",
+      "file": "itoa-1.0.18.crate",
+      "sha256": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682",
+      "url": "https://static.crates.io/crates/itoa/itoa-1.0.18.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "libc",
+      "version": "0.2.189",
+      "file": "libc-0.2.189.crate",
+      "sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2",
+      "url": "https://static.crates.io/crates/libc/libc-0.2.189.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "once_cell",
+      "version": "1.21.4",
+      "file": "once_cell-1.21.4.crate",
+      "sha256": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50",
+      "url": "https://static.crates.io/crates/once_cell/once_cell-1.21.4.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "openssl",
+      "version": "0.10.81",
+      "file": "openssl-0.10.81.crate",
+      "sha256": "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45",
+      "url": "https://static.crates.io/crates/openssl/openssl-0.10.81.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "openssl-native",
+      "version": "4.0.3",
+      "file": "openssl-4.0.3.tar.gz",
+      "sha256": "325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-4.0.3/openssl-4.0.3.tar.gz",
+      "scope": "wheel-declared static OpenSSL input, not independently rebuilt"
+    },
+    {
+      "name": "openssl-macros",
+      "version": "0.1.1",
+      "file": "openssl-macros-0.1.1.crate",
+      "sha256": "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c",
+      "url": "https://static.crates.io/crates/openssl-macros/openssl-macros-0.1.1.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "openssl-sys",
+      "version": "0.9.117",
+      "file": "openssl-sys-0.9.117.crate",
+      "sha256": "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695",
+      "url": "https://static.crates.io/crates/openssl-sys/openssl-sys-0.9.117.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pem",
+      "version": "4.0.0",
+      "file": "pem-4.0.0.crate",
+      "sha256": "d354a98a3d1251555de99e8fdd8afda05573c31b82f59063a7b0a29b5527f120",
+      "url": "https://static.crates.io/crates/pem/pem-4.0.0.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pkg-config",
+      "version": "0.3.33",
+      "file": "pkg-config-0.3.33.crate",
+      "sha256": "19f132c84eca552bf34cab8ec81f1c1dcc229b811638f9d283dceabe58c5569e",
+      "url": "https://static.crates.io/crates/pkg-config/pkg-config-0.3.33.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "portable-atomic",
+      "version": "1.14.0",
+      "file": "portable-atomic-1.14.0.crate",
+      "sha256": "3d20d5497ef88037a52ff98267d066e7f11fcc5e99bbfbd58a42336193aacec3",
+      "url": "https://static.crates.io/crates/portable-atomic/portable-atomic-1.14.0.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "file": "proc-macro2-1.0.107.crate",
+      "sha256": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9",
+      "url": "https://static.crates.io/crates/proc-macro2/proc-macro2-1.0.107.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pyo3",
+      "version": "0.29.2",
+      "file": "pyo3-0.29.2.crate",
+      "sha256": "4688ddedf473e32662b9b067670129a8afb8c18e351482c70d62ba4a88171e8b",
+      "url": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pyo3-build-config",
+      "version": "0.29.2",
+      "file": "pyo3-build-config-0.29.2.crate",
+      "sha256": "f41027e41b4bd03f6e60f9f417fe24a6341a6bb744edd62b6f709f2a52ea30e9",
+      "url": "https://static.crates.io/crates/pyo3-build-config/pyo3-build-config-0.29.2.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pyo3-ffi",
+      "version": "0.29.2",
+      "file": "pyo3-ffi-0.29.2.crate",
+      "sha256": "e591a95526fead067432c3b3a33fc74770b87b1e04e73671090d9c2055a2b327",
+      "url": "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-0.29.2.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pyo3-macros",
+      "version": "0.29.2",
+      "file": "pyo3-macros-0.29.2.crate",
+      "sha256": "73225868fc1cd84eef2c3c230ddb91273bf1de46aeb8a4248da76d32a0924a1c",
+      "url": "https://static.crates.io/crates/pyo3-macros/pyo3-macros-0.29.2.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "pyo3-macros-backend",
+      "version": "0.29.2",
+      "file": "pyo3-macros-backend-0.29.2.crate",
+      "sha256": "571575aa3749fa6216757dd47d2a3e7ef360f329a40f0666a9fbd14889024952",
+      "url": "https://static.crates.io/crates/pyo3-macros-backend/pyo3-macros-backend-0.29.2.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47",
+      "file": "quote-1.0.47.crate",
+      "sha256": "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001",
+      "url": "https://static.crates.io/crates/quote/quote-1.0.47.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "self_cell",
+      "version": "1.3.0",
+      "file": "self_cell-1.3.0.crate",
+      "sha256": "2ab42ca02749e120097e328d91d415325bdf43b1c72c4c8badf37375fe40a813",
+      "url": "https://static.crates.io/crates/self_cell/self_cell-1.3.0.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "shlex",
+      "version": "2.0.1",
+      "file": "shlex-2.0.1.crate",
+      "sha256": "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba",
+      "url": "https://static.crates.io/crates/shlex/shlex-2.0.1.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "syn",
+      "version": "2.0.119",
+      "file": "syn-2.0.119.crate",
+      "sha256": "872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297",
+      "url": "https://static.crates.io/crates/syn/syn-2.0.119.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "target-lexicon",
+      "version": "0.13.5",
+      "file": "target-lexicon-0.13.5.crate",
+      "sha256": "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca",
+      "url": "https://static.crates.io/crates/target-lexicon/target-lexicon-0.13.5.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.24",
+      "file": "unicode-ident-1.0.24.crate",
+      "sha256": "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75",
+      "url": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.24.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    },
+    {
+      "name": "vcpkg",
+      "version": "0.2.15",
+      "file": "vcpkg-0.2.15.crate",
+      "sha256": "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426",
+      "url": "https://static.crates.io/crates/vcpkg/vcpkg-0.2.15.crate",
+      "scope": "exact upstream source-lock/SBOM superset; may include build-only code"
+    }
+  ],
+  "redistributionApproved": false,
+  "scope": "Exact upstream-declared native dependency sources and original notices; not proof every source-lock package is runtime code"
+}

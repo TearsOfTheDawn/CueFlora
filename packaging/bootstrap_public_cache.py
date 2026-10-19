@@ -12,6 +12,8 @@ def bootstrap(cache, audio_cache, evidence_cache, online=False):
     from observed_sources import obtain as obtain_observed
     obtain_observed(evidence_cache,online)
     obtain_inputs(json.loads((ROOT/'packaging/inputs-windows.lock.json').read_text()),cache,offline=not online,source_audio=True)
+    from auth_notice_evidence import obtain as obtain_auth
+    obtain_auth(cache,evidence_cache/'auth-native',online)
     from build_downloader import obtain as obtain_downloader
     obtain_downloader(cache/'downloader',online)
     from collect_curl_sources import obtain as obtain_curl

@@ -5,7 +5,7 @@ from pathlib import Path,PurePosixPath
 import re
 from release_inputs import digest
 
-REVIEWABLE={'yt-dlp native dependencies','Deno/V8','CPython native dependencies'}
+REVIEWABLE={'yt-dlp native dependencies','Deno/V8','CPython native dependencies','Authentication native dependencies'}
 PURPOSES={'notice','corresponding-source','build-recipe','binary-scope','redistribution-terms'}
 
 

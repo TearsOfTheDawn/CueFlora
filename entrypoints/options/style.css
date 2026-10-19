@@ -10,3 +10,4 @@ button { font: inherit; border: 1px solid #8b5cf6; border-radius: 7px; padding: 
 button:disabled { opacity: .55; cursor: wait; } :focus-visible { outline: 3px solid #8b5cf6; outline-offset: 3px; }
 [hidden] { display: none !important; } [role=status] { white-space: pre-wrap; overflow-wrap: anywhere; }
 details { margin: 16px 0; } footer { margin-top: 32px; font-size: .85rem; opacity: .8; }
+small { display: block; margin-top: 6px; line-height: 1.5; opacity: .85; }

@@ -9,6 +9,7 @@ describe('production options Save/Cancel interactions', () => {
     const settings = () => { const value = { ...providerDefaults(), revision: 'saved' }; for (const stage of ['transcription','translation'] as const) Object.assign(value[stage], { baseUrl: 'https://fixture.example/v1', model: 'fixture' }); return value; };
     beforeEach(() => {
         vi.resetModules(); fakeBrowser.reset(); send.mockReset();
+        vi.spyOn(fakeBrowser.runtime,'getManifest').mockReturnValue({manifest_version:3,name:'CueFlora',version:'0.2.0'} as any);
         vi.spyOn(fakeBrowser.runtime, 'sendMessage').mockImplementation(send);
         document.body.innerHTML = '<form id="providers"></form><p id="status"></p><button id="save"></button><button id="cancel"></button><button id="health"></button><p id="health-status"></p>';
     });
