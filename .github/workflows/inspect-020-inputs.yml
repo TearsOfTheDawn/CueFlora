@@ -1,0 +1,45 @@
+name: Inspect exact CueFlora 0.2.0 candidate inputs
+on:
+  push:
+    branches: ['codex/inspect-0.2.0-inputs']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    if: github.repository == 'TearsOfTheDawn/CueFlora'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: cueflora-020-reviewed-inputs
+          run-id: 39332062218
+          github-token: ${{ github.token }}
+          path: candidate
+      - name: Inspect and copy metadata only; do not execute candidate
+        run: |
+          python - <<'PY'
+          import hashlib,json,shutil,zipfile
+          from pathlib import Path
+          root=Path('candidate');out=Path('review-metadata');out.mkdir()
+          paths=['CANDIDATE_SUMMARY.json','CANDIDATE_INVENTORY.json','source-export/source-audit.json','readiness.json','setup-1/bundle/release.json','auth-native-notices/auth-notice-evidence.json','release-assets/CueFlora-source.zip','release-assets/CueFlora-0.2.0-update.json','release-assets/release-ledger/dependency-ledger.json','release-assets/build-comparison.json']
+          for name in paths:
+              source=root/name;target=out/name
+              target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
+          audit=json.loads((root/'source-export/source-audit.json').read_text())
+          with zipfile.ZipFile(root/'release-assets/CueFlora-source.zip') as archive:
+              files={name:hashlib.sha256(archive.read(name)).hexdigest() for name in archive.namelist()}
+          assert files==audit['files']
+          auth=root/'auth-native-notices/auth-notice-evidence.json'
+          print('CUEFLORA_020_SOURCE_AUDIT='+json.dumps(audit,separators=(',',':')))
+          print('CUEFLORA_020_AUTH_EVIDENCE_SHA256='+hashlib.sha256(auth.read_bytes()).hexdigest())
+          print('CUEFLORA_020_METADATA_INSPECTION='+json.dumps({'sourceZipMatchesEveryFile':True,'candidateRunId':39332062218,'inference':False,'executedCandidate':False}))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cueflora-020-metadata-review
+          path: review-metadata/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
