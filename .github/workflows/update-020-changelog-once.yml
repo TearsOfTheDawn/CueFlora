@@ -1,0 +1,62 @@
+name: Update CueFlora 0.2.0 changelog once
+on:
+  push:
+    branches: ['codex/release-changelog-0.2.0']
+    paths: ['.github/workflows/update-020-changelog-once.yml']
+permissions:
+  contents: read
+jobs:
+  notes-only:
+    if: github.repository == 'TearsOfTheDawn/CueFlora' && github.ref == 'refs/heads/codex/release-changelog-0.2.0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Edit only the exact existing 0.2.0 release body
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          endpoint='repos/TearsOfTheDawn/CueFlora/releases/417821883'
+          expected_assets=[[657624291,"CueFlora-0.2.0-Setup.exe",207973207,"sha256:01fbdc4c9ddfa1f417c22f214a7a7dd32dc7bd64a440ac6e0d603068189dd536"],[657624353,"CueFlora-0.2.0-update.json",821,"sha256:f0344b01c74e915c228359bae8e12d539d693803565e2120da858dc27e212bc0"],[657624343,"CueFlora-0.2.0-Windows-x64.zip",316242898,"sha256:4778a07314ea4ff5bb056a09d6b16ba92917850effb708acbd839deec467b164"],[657624305,"CueFlora-Chrome-extension.zip",230110,"sha256:31e5ec1177e7277703322d5e584bc3c8492d4a46961360b4262e232cfa02c0eb"],[657624293,"CueFlora-CONSOLIDATED-NOTICES.txt",11351816,"sha256:ac074b54a1bb457feb66a72e4cf65c93c5835f2a2f5fdcb9c1533a72dd67d27a"],[657624294,"CueFlora-dependency-ledger.json",8302264,"sha256:50851153f9e052c5a7bab2dc2f46f18669f435c6ac6deea8f334d26713047103"],[657624348,"CueFlora-notices.zip",5259520,"sha256:f0aa461a3067bac007138bb1b04d23bfee6b04bf74e505f179292b15e7bc7b96"],[657624292,"CueFlora-source.zip",1084563,"sha256:a5ccd0c57a9a44fe0098defba55490bde6b8522e7f16a87038e17119e0e80739"],[657624290,"CueFlora-third-party-sources.zip",585208687,"sha256:122cd767dd589f43984fe5c3d8c8155cb29c2bca3341021beeda40b5a80fd5cb"],[657624377,"SHA256SUMS.txt",847,"sha256:24a0b8b5cd5704c62a8aa75b15595f76a60bf3499afa72c440e468eda0a97b50"]]
+          def api(payload=None):
+              command=['gh','api',endpoint]
+              if payload is not None: command+=['--method','PATCH','--input','-']
+              result=subprocess.run(command,input=None if payload is None else json.dumps(payload),capture_output=True,text=True,timeout=60)
+              if result.returncode: raise RuntimeError('Release-note request failed; no token or raw response is logged')
+              return json.loads(result.stdout)
+          def identity(value):
+              assert value['id']==417821883 and value['tag_name']=='v0.2.0'
+              assert value['target_commitish']=='8f5f078e7a65d48ca2b9ee2ba5e71c4d23e9f410'
+              assert value['draft'] is False and value['prerelease'] is False
+              actual=sorted([[a['id'],a['name'],a['size'],a['digest']] for a in value['assets']],key=lambda a:a[1])
+              assert actual==sorted(expected_assets,key=lambda a:a[1]),'Release asset identity differs; edit refused'
+              return [value[key] for key in ('id','tag_name','target_commitish','name','draft','prerelease','published_at')]
+          path=Path('docs/GITHUB_RELEASE_NOTES_0.2.0.md')
+          raw=path.read_bytes()
+          assert hashlib.sha256(raw).hexdigest()=='d7273e91383e2c70c9d8e9e47ed766c47e0c39540544da4f39478bf31774038c'
+          notes=raw.decode('utf-8')
+          assert len(raw)<16000 and '### New features' in notes and '### Fixes and improvements' in notes
+          assert '### Upgrading from 0.1.13' in notes and '### Known limitations' in notes
+          before=api(); original_identity=identity(before)
+          old_hash=hashlib.sha256(before['body'].encode()).hexdigest()
+          assert old_hash=='0dd601d5b5e5f6576fd7a207aa7dd70dffb084603acf56c3da6b7bc7334695dc' or before['body']==notes,'Concurrent release-note edit detected'
+          if before['body']!=notes: api({'body':notes})
+          after=api()
+          assert after['body']==notes and identity(after)==original_identity
+          receipt={'version':'0.2.0','releaseUrl':after['html_url'],'bodySha256':'d7273e91383e2c70c9d8e9e47ed766c47e0c39540544da4f39478bf31774038c','assetsUnchanged':True,'assetCount':len(expected_assets),'releaseTagUnchanged':True,'newReleasePublished':False}
+          Path('note-update-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print('CUEFLORA_020_CHANGELOG='+json.dumps(receipt,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cueflora-020-changelog-receipt
+          path: note-update-receipt.json
+          if-no-files-found: error
+          retention-days: 14
