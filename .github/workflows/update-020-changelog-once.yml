@@ -40,7 +40,7 @@ jobs:
               return [value[key] for key in ('id','tag_name','target_commitish','name','draft','prerelease','published_at')]
           path=Path('docs/GITHUB_RELEASE_NOTES_0.2.0.md')
           raw=path.read_bytes()
-          assert hashlib.sha256(raw).hexdigest()=='d7273e91383e2c70c9d8e9e47ed766c47e0c39540544da4f39478bf31774038c'
+          assert hashlib.sha256(raw).hexdigest()=='23b3175c8e8c6f71a6528b0e2f1502f0feda3bf69f19e45bdcda30b22c778d44'
           notes=raw.decode('utf-8')
           assert len(raw)<16000 and '### New features' in notes and '### Fixes and improvements' in notes
           assert '### Upgrading from 0.1.13' in notes and '### Known limitations' in notes
@@ -50,7 +50,7 @@ jobs:
           if before['body']!=notes: api({'body':notes})
           after=api()
           assert after['body']==notes and identity(after)==original_identity
-          receipt={'version':'0.2.0','releaseUrl':after['html_url'],'bodySha256':'d7273e91383e2c70c9d8e9e47ed766c47e0c39540544da4f39478bf31774038c','assetsUnchanged':True,'assetCount':len(expected_assets),'releaseTagUnchanged':True,'newReleasePublished':False}
+          receipt={'version':'0.2.0','releaseUrl':after['html_url'],'bodySha256':'23b3175c8e8c6f71a6528b0e2f1502f0feda3bf69f19e45bdcda30b22c778d44','assetsUnchanged':True,'assetCount':len(expected_assets),'releaseTagUnchanged':True,'newReleasePublished':False}
           Path('note-update-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('CUEFLORA_020_CHANGELOG='+json.dumps(receipt,separators=(',',':')))
           PY
