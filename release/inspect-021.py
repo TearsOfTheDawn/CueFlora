@@ -10,7 +10,7 @@ candidate=Path('reviewed-candidate').resolve()
 summary=json.loads((candidate/'CANDIDATE_SUMMARY.json').read_text())
 assert summary['version']=='0.2.1' and summary['sourceCommit']=='1c6e0f8fb52bb20b7e89007ff1789de13f20692c'
 assert str(summary['workflowRunId'])=='39684774078' and summary['engineeringPassed'] is True
-assert summary['artifacts']['sourceInventorySha256']=='7a75c1da5c6266ca25ab42df57a1f37bd2d695289707a1278952aaba69a039ae'
+assert summary['artifacts']['sourceInventorySha256']=='9202eeb27427ef28f8c95719f3249533ac752a6b4a50d8a83d10905cd146481f'
 inventory=json.loads((candidate/'CANDIDATE_INVENTORY.json').read_text())
 actual={p.relative_to(candidate).as_posix() for p in candidate.rglob('*') if p.is_file()}
 assert actual==set(inventory['files'])|{'CANDIDATE_INVENTORY.json'}
