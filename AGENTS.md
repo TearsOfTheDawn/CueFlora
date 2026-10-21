@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-19
+> **Last updated:** 2026-10-21
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -23,6 +23,8 @@ On 2026-10-17 the publisher selected GitHub-only distribution and explicitly aut
 
 `github-candidate.yml` builds only branch `codex/github-build-0.1.13` with read-only permissions. `github_candidate.py` creates and independently verifies an exact inventory handoff; no build generates approvals. `github_publication.py` requires artifact-bound review, verifies source/blob/mode identity and downloads, stages/promotes without overwrite, anonymously verifies every asset, then updates Pages. `github-publication.yml` is restricted to the exact repository, version and `release/github-publication.json` on `codex/github-publish-0.1.13`; it is not an automatic future-version publisher. Licensing/native-security checks remain mandatory. Only GitHub download policy may be `reviewed` with an exact publisher direction and `authorizationEstablished: false`; it never claims YouTube permission. The publisher expressly said "Yes, publish anyway". Clean-machine/browser checks may be explicitly waived, not passed. See the fresh candidate/receipt for actual execution status.
 
+0.2.0 was separately authorised by "Publish" and released by one-time job `39336036237` from reviewed Windows candidate `39332062218`. The exact built-source tag is `8f5f078e7a65d48ca2b9ee2ba5e71c4d23e9f410` (411 files); only `native/uv.lock` line endings distinguish it from the build commit, with identical parsed TOML and an explicit file-by-file normalization record. Operations branch `codex/github-publish-0.2.0` holds the exact-hash review/workflow separately from release source. All ten release assets were anonymously hash-verified, including the paired update manifest. New users download only Setup; 0.1.13 users manually bootstrap/adopt and Chrome Reload once. Never overwrite that release or infer authorization for a later version. Genuine ChatGPT login, live Chrome updating and clean-machine acceptance remain unverified. Generic macOS unit CI has a symlinked-temp-path fixture failure; Windows/Linux native checks and Windows preparation passed, not all-platform certification.
+
 ---
 
 ## Technology Stack
@@ -34,7 +36,7 @@ The 0.1.13 clean-runner workflow restores `git archive HEAD` bytes before source
 | Extension framework | [WXT](https://wxt.dev/) 0.21.4 / Vite 8.3.4 | Manifest V3, Chrome and Firefox regression builds; no automatic browser launcher |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest 4.1.12 + jsdom, Python unittest | 306 TypeScript tests; native/setup includes OAuth, update, download and paired lifecycle tests; packaging includes GitHub identity, channel decisions, lifecycle and one-time publication boundaries; 9 Node profile/release tests; fresh logs are authoritative for counts |
+| Testing | Vitest 4.1.12 + jsdom, Python unittest | 315 TypeScript tests; 131 native/setup tests (two Windows symlink-privilege skips locally); 191 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -719,6 +721,12 @@ python -m cueflora_host.test_whisper path/to/audio.m4a --base-url YOUR_API_BASE 
 ---
 
 ## Updating This Document
+
+0.2.1 is an unpublished patch candidate: `failures.py` and `failureDiagnostics.ts` share strict stage/code/status vocabularies, with no raw provider bodies/keys in public errors or reports. `createSessionDiagnosticLog` serializes up to 20 allowlisted events in `cueflora_debug_session_v1` under `browser.storage.session`: no disk/sync persistence, no credentials, and history survives worker sleep but not extension reload/update or browser restart. Retention failures set a report warning without affecting AI execution. Settings-only `DIAGNOSTICS_GET` performs PING and exports projected metadata. `diagnostics.ts` provides explicit collect/copy with manual fallback. Settings open in a full tab and hide unchanged saved-key fields; Save/Cancel and provider-neutral configuration remain. Update metadata uses JSON Accept; binary downloads retain octet-stream. `UPDATER_VERSION` is the compatible updater protocol floor (0.2.0), not the product version. `test_failures` is in local verification; `CHANGELOG.md` is in source exports. See `docs/CUEFLORA_021_IMPLEMENTATION.md`; fresh reports determine verification status. This does not authorise publication or claim the original transcription failure resolved.
+
+`CHANGELOG.md` is the user-facing history of public releases. Before each new release, add its dated entry with new features, fixes, upgrade instructions and known limitations, then copy that entry into its GitHub release notes. Keep required Chrome Reload/bootstrap steps prominent; do not invent historical changes or manual acceptance. Changelog/release-note edits do not replace immutable release assets or authorise another release.
+
+On 2026-10-21 the publisher explicitly requested publication of 0.2.1. `candidate-021.yml` builds only `codex/github-build-0.2.1` with read-only permissions, exact committed source restoration and the full pinned preparation/evidence handoff. It does not publish. The local 0.2.1 candidate remains preserved; any runner rebuild has its own hashes and requires fresh artifact-bound review. One-time publishing operations stay outside the built source tree and cannot grant future-release authority. The dated 0.2.1 changelog is copied into release notes; a dated entry alone is not proof of hosting or publication.
 
 CueFlora's current release preparation is described by `docs/RELEASE_COMPLETION.md` plus the fresh preparation directory's `readiness.json` and `IMPLEMENTATION_HANDOFF.md`; earlier security/implementation/polish handoffs remain historical evidence. Substrata historical handoffs were not imported as CueFlora acceptance evidence. Original preservation is recorded by `verify_isolation.py`; private captures were not copied. Automated success is not live browser, GUI, clean-machine, semantic or public-distribution acceptance. Computer Use and browser automation remain prohibited.
 

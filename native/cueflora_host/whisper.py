@@ -13,6 +13,7 @@ import time
 import unicodedata
 
 import httpx
+from .failures import OperationFailure, http_failure
 
 WHISPER_FORMATS = {"flac", "mp3", "mp4", "mpeg", "mpga", "m4a", "ogg", "wav", "webm"}
 
@@ -1371,6 +1372,7 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
                 capture.record("asr-attempt", {"upload": upload, "params": params,
                     "mime": mime, "attempt": attempt, "status": "transport-error"})
             last_error = f"attempt {attempt}: {type(e).__name__}"
+            last_failure = OperationFailure('upload', 'timeout' if isinstance(e, httpx.TimeoutException) else 'network')
             print(f"  {last_error}", file=sys.stderr)
             if attempt < max_attempts:
                 time.sleep(2)
@@ -1382,6 +1384,7 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
                 "durationMs": round((time.monotonic() - started) * 1000),
                 "response": resp.json() if resp.status_code == 200 else None})
         if resp.status_code >= 500:
+            last_failure = http_failure('transcription', resp.status_code)
             last_error = (
                 f"attempt {attempt}: HTTP {resp.status_code}"
             )
@@ -1391,15 +1394,13 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
             continue
 
         if resp.status_code != 200:
-            raise RuntimeError(f"Whisper API HTTP {resp.status_code}")
+            raise http_failure('transcription', resp.status_code)
 
         result = resp.json()
         print("  ASR response received", file=sys.stderr)
         return result
 
-    raise RuntimeError(
-        f"Whisper API upload failed after {max_attempts} attempts: {last_error}"
-    )
+    raise last_failure if last_error is not None else OperationFailure('upload', 'unknown')
 
 
 def _merge_chunk_results(chunk_results):

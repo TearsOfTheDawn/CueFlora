@@ -12,6 +12,7 @@ import { verifyRunDocument } from '../utils/documentBinding';
 import { validRunContext, type RunContext } from '../utils/runIdentity';
 import { createNativeTasks } from '../utils/nativeTasks';
 import { createRunLeases } from '../utils/runLeases';
+import { createSessionDiagnosticLog, safeFailure } from '../utils/failureDiagnostics';
 
 interface NativeProgressResponse {
     type: 'progress';
@@ -30,7 +31,8 @@ export default defineBackground(() => {
     console.log('[cueflora] Background service worker loaded.');
 
     const NATIVE_HOST = 'cueflora_host';
-    const tasks = createNativeTasks(() => browser.runtime.connectNative(NATIVE_HOST));
+    const debug = createSessionDiagnosticLog(browser.storage.session);
+    const tasks = createNativeTasks(() => browser.runtime.connectNative(NATIVE_HOST),(operation,failure)=>debug.record(operation,failure));
     const leases = createRunLeases(() => browser.runtime.connectNative(NATIVE_HOST));
     const nativeCancellations=new Map<string,Set<()=>void>>();
     const cancelNative=(tab:number,job?:string)=>{for(const [key,cancellations] of nativeCancellations)
@@ -100,12 +102,13 @@ export default defineBackground(() => {
         return new Promise((resolve, reject) => {
             let port: ReturnType<typeof browser.runtime.connectNative>;
             try { port = browser.runtime.connectNative(NATIVE_HOST); }
-            catch { reject(new NativePreflightError('CueFlora helper could not be started. Install or Upgrade/Repair the helper.')); return; }
+            catch { debug.record(msg.type,{stage:'native-connection',code:'helper-unavailable'});reject(new NativePreflightError('CueFlora helper could not be started. Install or Upgrade/Repair the helper.')); return; }
             let settled = false;
             const requiredCapability=String(msg.type).startsWith('CHATGPT_')?'chatgpt':String(msg.type).startsWith('UPDATES_')?'updates':null;
             let awaitingCapabilities = !!requiredCapability || ['whisperConfig','translateConfig','provider'].some(field=>!!(msg[field] as {credential?:unknown}|undefined)?.credential);
             const boundedRequest=['PING', 'PROVIDERS_CHECK', 'CREDENTIAL_PROTECT','CHATGPT_STATUS','CHATGPT_MODELS','CHATGPT_MODELS_CACHED','CHATGPT_DISCONNECT','CHATGPT_ACK_USAGE','UPDATES_STATUS','UPDATES_INSTALL'].includes(String(msg.type));
             let timeout = boundedRequest || awaitingCapabilities ? setTimeout(() => {
+                debug.record(msg.type,{stage:'native-connection',code:'timeout'});
                 settled = true;
                 port.disconnect();
                 reject(awaitingCapabilities ? new NativePreflightError('Saved keys require the latest Windows helper. Upgrade/Repair CueFlora; capability check timed out.') : Error('Native health check timed out.'));
@@ -132,6 +135,7 @@ export default defineBackground(() => {
                     return;
                 }
                 if (!validNativeResponse(incoming, msg)) {
+                    debug.record(msg.type,{stage:'native-connection',code:'invalid-response'});
                     settled = true;
                     if (timeout) clearTimeout(timeout);
                     port.disconnect();
@@ -139,6 +143,7 @@ export default defineBackground(() => {
                     return;
                 }
                 const response = publicNativeResponse(incoming, msg) as NativeResponse;
+                if('error' in response){debug.record(msg.type,safeFailure((response as unknown as Record<string,unknown>).failure)||{stage:'unknown',code:'unknown'});}
                 if ('error' in response && typeof response.error === 'string') response.error = privateDiagnostic(response.error, msg);
                 // Progress updates (non-final)
                 if ('type' in response && response.type === 'progress') {
@@ -176,6 +181,7 @@ export default defineBackground(() => {
                 if(cancellationKey){const set=nativeCancellations.get(cancellationKey);set?.delete(cancel);if(!set?.size)nativeCancellations.delete(cancellationKey);}
                 if (timeout) clearTimeout(timeout);
                 if (!settled) {
+                    debug.record(msg.type,{stage:'native-connection',code:'helper-unavailable'});
                     const err = browser.runtime.lastError;
                     settled = true;
                     reject(awaitingCapabilities
@@ -199,7 +205,7 @@ export default defineBackground(() => {
     browser.runtime.onMessage.addListener(async (message: ExtensionMessage | any, sender: Browser.runtime.MessageSender) => {
         if (!message || typeof message.type !== 'string') return;
         const known = ['PING','CREDENTIAL_PROTECT','PROVIDERS_MIGRATE','PROVIDERS_CHECK','ONBOARDING_GET','ONBOARDING_SAVE','ONBOARDING_FINISH','SETTINGS_RECONCILE','TRANSCRIBE_NATIVE','TRANSLATE_NATIVE','CAPTURE_PRESENTATION','PROVIDERS_GET','PROVIDERS_SAVE','PROVIDERS_SUMMARY','PROVIDERS_BIND','PROVIDERS_RELEASE','OPEN_OPTIONS','CACHE_LIST','CACHE_GET','CACHE_PUT','CACHE_REMOVE','PREFERENCES_INIT','PREFERENCES_SAVE'];
-        const authentication = ['CHATGPT_LOGIN','CHATGPT_STATUS','CHATGPT_MODELS','CHATGPT_DISCONNECT','CHATGPT_ACK_USAGE','TASK_STATUS','TASK_CANCEL','UPDATES_CHECK','UPDATES_DOWNLOAD','UPDATES_INSTALL','UPDATES_STATUS','RESTART_CUEFLORA'].includes(message.type);
+        const authentication = ['CHATGPT_LOGIN','CHATGPT_STATUS','CHATGPT_MODELS','CHATGPT_DISCONNECT','CHATGPT_ACK_USAGE','TASK_STATUS','TASK_CANCEL','UPDATES_CHECK','UPDATES_DOWNLOAD','UPDATES_INSTALL','UPDATES_STATUS','RESTART_CUEFLORA','DIAGNOSTICS_GET'].includes(message.type);
         if (!known.includes(message.type) && !authentication) return;
         try {
         if (!await storageAccess) throw Error('Private storage access could not be restricted. Reload the extension.');
@@ -208,6 +214,10 @@ export default defineBackground(() => {
         validateRequest(message);
         if(authentication) {
             if(!options)throw Error('Account operations are restricted to extension settings.');
+            if(message.type==='DIAGNOSTICS_GET'){
+                const health=await sendNativeMessage({type:'PING'},null).catch(()=>({}));
+                return debug.report(browser.runtime.getManifest()?.version||'unavailable',health as Record<string,unknown>);
+            }
             if(message.type==='TASK_STATUS')return tasks.status(message.taskId);
             if(message.type==='TASK_CANCEL')return tasks.cancel(message.taskId);
             if(message.type==='UPDATES_CHECK'){

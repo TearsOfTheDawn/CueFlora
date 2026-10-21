@@ -1,4 +1,6 @@
 import {settingsRequest} from '../../utils/settingsRequest';
+import {safeFailure,failureMessage} from '../../utils/failureDiagnostics';
+class UpdateTaskFailure extends Error {}
 
 /** No polling until a user starts a bounded update task. No automatic install. */
 export function createUpdates(section:HTMLElement,canInstall:()=>boolean=()=>true) {
@@ -8,11 +10,12 @@ export function createUpdates(section:HTMLElement,canInstall:()=>boolean=()=>tru
     const explanation=document.createElement('p');explanation.textContent='Extension '+version+'. Check published stable releases from TearsOfTheDawn/CueFlora. Downloads are verified; the installer is unsigned. Initial Chrome Load unpacked and the first 0.1.13 upgrade are manual. No update is installed silently.';
     let selected:{selectionRef:string;version:string;size:number}|null=null,taskId:string|null=null,ready=false,launched=false,busy=false,installed=false;
     let timer:ReturnType<typeof setTimeout>|undefined,sequence=0;
-    const make=(text:string,work:()=>Promise<void>)=>{const button=document.createElement('button');button.type='button';button.textContent=text;button.addEventListener('click',()=>void work().catch(()=>{busy=false;status.textContent='Update unavailable or verification failed. Retry explicitly, or download the complete package from GitHub. Older helpers need a manual Upgrade. No installation was assumed.';status.focus();sync();}));return button;};
+    const showError=(error:unknown)=>{busy=false;status.textContent=error instanceof UpdateTaskFailure?error.message:'Update unavailable or verification failed. Retry explicitly, or download the matching Setup from GitHub. Older helpers need a manual Upgrade. Nothing was installed automatically.';status.focus();sync();};
+    const make=(text:string,work:()=>Promise<void>)=>{const button=document.createElement('button');button.type='button';button.textContent=text;button.addEventListener('click',()=>void work().catch(showError));return button;};
     const sync=()=>{check.disabled=busy;download.disabled=busy||!selected||ready;install.disabled=busy||!ready;cancel.disabled=!taskId;recheck.disabled=busy;restart.disabled=busy||!installed;};
     async function poll(id:string,expected:number,operation:'check'|'download'){
         const result=await settingsRequest({type:'TASK_STATUS',taskId:id});if(sequence!==expected||taskId!==id)return;
-        if(result.error||result.status==='error'){taskId=null;busy=false;sync();throw Error('Update task failed');}
+        if(result.error||result.status==='error'){taskId=null;busy=false;sync();throw new UpdateTaskFailure(failureMessage(safeFailure(result.failure)||{stage:operation==='check'?'update-check':'update-download',code:'unknown'}));}
         if(result.status==='complete'){
             taskId=null;busy=false;
             if(operation==='check'){
@@ -22,7 +25,7 @@ export function createUpdates(section:HTMLElement,canInstall:()=>boolean=()=>tru
             sync();return;
         }
         status.textContent=operation==='download'?'Downloading update'+(typeof result.percent==='number'?' — '+result.percent+'%':'…'):'Checking published stable releases…';
-        timer=setTimeout(()=>void poll(id,expected,operation).catch(()=>{taskId=null;busy=false;status.textContent='Update task failed, expired or was cancelled. Retry explicitly; no automatic installation occurred.';sync();}),800);
+        timer=setTimeout(()=>void poll(id,expected,operation).catch(error=>{taskId=null;showError(error);}),800);
     }
     async function start(operation:'check'|'download'){
         if(busy)return;busy=true;if(operation==='check'){selected=null;ready=false;installed=false;launched=false;}sync();

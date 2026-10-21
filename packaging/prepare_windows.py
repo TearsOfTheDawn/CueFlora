@@ -159,6 +159,8 @@ def prepare(output, cache, offline, evidence_cache=None, audio_build=None, audio
             destination = output/('Chrome-'+profile)
             shutil.copytree(workspace/'.output/chrome-mv3',destination)
             manifest = json.loads((destination/'manifest.json').read_text())
+            if manifest.get('options_ui',{}).get('open_in_tab') is not True:
+                raise ValueError('Settings must open in a full browser tab')
             if (profile != 'store-candidate') != ('key' in manifest): raise ValueError('Profile identity mismatch')
         # The same restored offline environment builds both fresh pairs.
         run('paired-extension',[python,'packaging/extension_payload.py','--input',selected_extension,'--output',output/'paired-extension'])

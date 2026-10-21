@@ -12,9 +12,11 @@ import uuid
 import httpx
 from .account_store import safe_directory
 from .update_payload import verify_update_payload
+from .failures import OperationFailure, http_failure
 
 REPOSITORY='TearsOfTheDawn/CueFlora'
 API='https://api.github.com/repos/'+REPOSITORY
+# Updater protocol compatibility floor, not the installed product version.
 UPDATER_VERSION='0.2.0'
 CHROME_ID='akcolbcdfnjcahhhodnpablekjagfadf'
 REDIRECT_HOSTS={'github.com','release-assets.githubusercontent.com','objects.githubusercontent.com'}
@@ -50,18 +52,18 @@ def validate_manifest(data, current=UPDATER_VERSION, chrome_id=CHROME_ID):
     return data
 
 
-def download_bytes(client,url,limit,cancel=None,on_chunk=None,allow_redirects=False,overall=120):
+def download_bytes(client,url,limit,cancel=None,on_chunk=None,allow_redirects=False,overall=120,accept='application/octet-stream',stage='update-download'):
     started=time.monotonic(); last=started; received=0
     for hop in range(6):
         parsed=urlsplit(url)
         if parsed.scheme!='https' or parsed.username or parsed.password or parsed.port not in (None,443): raise ValueError('Unsafe update transport')
         if hop and (not allow_redirects or parsed.hostname not in REDIRECT_HOSTS): raise ValueError('Update redirect host rejected')
-        with client.stream('GET',url,headers={'Accept':'application/octet-stream','User-Agent':'CueFlora-Updater/'+UPDATER_VERSION}) as response:
+        with client.stream('GET',url,headers={'Accept':accept,'User-Agent':'CueFlora-Updater/'+UPDATER_VERSION}) as response:
             if response.status_code in (301,302,303,307,308):
                 location=response.headers.get('location','')
                 if not allow_redirects or not location.startswith('https://'): raise ValueError('Unexpected update redirect')
                 url=location;continue
-            if response.status_code!=200: raise RuntimeError('GitHub update request failed. Retry explicitly.')
+            if response.status_code!=200: raise http_failure(stage,response.status_code)
             for chunk in response.iter_bytes():
                 now=time.monotonic()
                 if cancel is not None and cancel.is_set(): raise RuntimeError('Update download cancelled')
@@ -76,7 +78,8 @@ def download_bytes(client,url,limit,cancel=None,on_chunk=None,allow_redirects=Fa
 
 def metadata(client,url,limit=1024*1024,asset=False):
     raw=bytearray()
-    download_bytes(client,url,limit,on_chunk=raw.extend,allow_redirects=asset)
+    download_bytes(client,url,limit,on_chunk=raw.extend,allow_redirects=asset,
+                   accept='application/json' if asset else 'application/vnd.github+json',stage='update-check')
     return json.loads(raw)
 
 

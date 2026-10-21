@@ -17,7 +17,7 @@ def run(output):
     modules = ['cueflora_setup.test_setup', 'cueflora_host.test_runtime_tools', 'cueflora_host.test_deno',
         'cueflora_setup.test_maintenance', 'cueflora_setup.test_terms', 'cueflora_setup.test_extension_pair', 'cueflora_host.test_provider_check', 'cueflora_host.test_credentials', 'cueflora_host.test_chatgpt',
         'cueflora_host.test_controlled_evidence', 'cueflora_host.test_audio_preparation','cueflora_host.test_download_progress','cueflora_host.test_updates','cueflora_host.test_update_payload',
-        'cueflora_host.test_translate', 'cueflora_host.test_whisper_regressions',
+        'cueflora_host.test_translate', 'cueflora_host.test_failures', 'cueflora_host.test_whisper_regressions',
         'cueflora_host.test_evidence', 'cueflora_host.test_quality_benchmark',
         'cueflora_host.test_quality_translation', 'cueflora_host.test_native_protocol']
     checks = [(name, npm + ['run', name], ROOT) for name in

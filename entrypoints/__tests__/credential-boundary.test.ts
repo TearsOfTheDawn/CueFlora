@@ -23,6 +23,17 @@ describe('store-candidate credential/transport background boundary',()=>{
         expect(await call({type:'PROVIDERS_BIND',jobId:'keyed',revision:saved.revision},player())).not.toHaveProperty('error');
     };
     const translate=()=>call({type:'TRANSLATE_NATIVE',jobId:'keyed',cues:[{text:'synthetic'}],systemPrompt:'Translate'},player());
+    it('restricts debug reports to settings and only performs a health PING',async()=>{
+        vi.spyOn(fakeBrowser.runtime,'getManifest').mockReturnValue({manifest_version:3,name:'CueFlora',version:'0.2.1'} as any);
+        const native=vi.spyOn(fakeBrowser.runtime,'connectNative').mockImplementation(()=>{
+            let listener:(value:unknown)=>void=()=>{};
+            return {onMessage:{addListener:(fn:typeof listener)=>listener=fn},onDisconnect:{addListener:()=>{}},disconnect:()=>{},
+                postMessage:(message:any)=>{expect(message).toEqual({type:'PING'});queueMicrotask(()=>listener({status:'PONG',version:'0.2.1',tools:{ffmpeg:{available:true}},apiKey:'synthetic-secret'}));}} as any;
+        });
+        expect(await call({type:'DIAGNOSTICS_GET'},player())).toHaveProperty('error');expect(native).not.toHaveBeenCalled();
+        expect(await call({type:'DIAGNOSTICS_GET',includeKeys:true})).toHaveProperty('error');expect(native).not.toHaveBeenCalled();
+        const report=await call({type:'DIAGNOSTICS_GET'});expect(report).not.toHaveProperty('error');expect(report.schema).toBe(1);expect(report.helperVersion).toBe('0.2.1');expect(JSON.stringify(report)).not.toContain('synthetic-secret');
+    });
     it('rejects player key protection/migration and remote HTTP before native dispatch',async()=>{
         const native=vi.spyOn(fakeBrowser.runtime,'connectNative');
         expect(await call({type:'CREDENTIAL_PROTECT',requestId:'id',stage:'translation',baseUrl:'https://service.invalid',apiKey:'synthetic'},player())).toHaveProperty('error');

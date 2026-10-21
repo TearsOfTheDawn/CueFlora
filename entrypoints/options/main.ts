@@ -8,6 +8,7 @@ import { renderReleaseGuidance } from '../../utils/publicLinks';
 import { serviceGuidance } from '../../utils/serviceGuidance';
 import { createChatGPTControls } from './chatgpt';
 import {createUpdates} from './updates';
+import {createDiagnostics} from './diagnostics';
 let chatgpt:ReturnType<typeof createChatGPTControls>|undefined;
 
 renderReleaseGuidance(document);
@@ -55,6 +56,7 @@ for (const stage of ['transcription', 'translation'] as const) {
         if (hint) { const help=document.createElement('small'); help.id=stage+'-'+key+'-help'; help.textContent=hint; label.append(help); input.setAttribute('aria-describedby',help.id); }
         input.addEventListener('input', () => invalidate(stage));
         if (key === 'apiKey') input.addEventListener('input', () => {
+            if(input.value)label.hidden=false;
             const replace = form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="replace"]`);
             if (replace) replace.checked = true;
             document.getElementById(stage+'-key-status')!.textContent = input.value ? 'Not saved yet.' : saved[stage].keySaved ? 'Key saved. Replacement is empty; Cancel to keep it.' : 'No key saved.';
@@ -65,11 +67,12 @@ for (const stage of ['transcription', 'translation'] as const) {
     for (const [value,title] of [['keep','Keep saved key'],['replace','Replace key'],['remove','Remove key']]) {
         const label=document.createElement('label'), radio=document.createElement('input'); radio.type='radio'; radio.name=stage+'.keyAction'; radio.value=value; radio.checked=value==='keep';
         label.append(radio,document.createTextNode(title)); keyChoices.append(label);
-        radio.addEventListener('change',()=>{if(value!=='replace') fields.get(stage+'.apiKey')!.value=''; invalidate(stage);});
+        radio.addEventListener('change',()=>{if(value!=='replace') fields.get(stage+'.apiKey')!.value='';fields.get(stage+'.apiKey')!.closest('label')!.hidden=!!saved[stage].keySaved&&value!=='replace'; invalidate(stage);});
     }
     section.append(keyChoices);
-    section.append(button('Change key',()=>{form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="replace"]`)!.checked=true; fields.get(stage+'.apiKey')!.focus(); invalidate(stage);}),
-        button('Remove key',()=>{form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="remove"]`)!.checked=true; fields.get(stage+'.apiKey')!.value=''; document.getElementById(stage+'-key-status')!.textContent='Key will be removed when you Save. Cancel keeps the saved key.'; invalidate(stage);}));
+    const keyActions=document.createElement('div');keyActions.className='key-actions';
+    keyActions.append(button('Change key',()=>{form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="replace"]`)!.checked=true; fields.get(stage+'.apiKey')!.closest('label')!.hidden=false; fields.get(stage+'.apiKey')!.focus(); invalidate(stage);}),
+        button('Remove key',()=>{form.querySelector<HTMLInputElement>(`input[name="${stage}.keyAction"][value="remove"]`)!.checked=true; fields.get(stage+'.apiKey')!.value='';fields.get(stage+'.apiKey')!.closest('label')!.hidden=!!saved[stage].keySaved; document.getElementById(stage+'-key-status')!.textContent='Key will be removed when you Save. Cancel keeps the saved key.'; invalidate(stage);}));section.append(keyActions);
     const guidance=document.createElement('details'), guidanceTitle=document.createElement('summary'), guidanceText=document.createElement('p');
     guidanceTitle.textContent='Where do I find this?'; guidance.append(guidanceTitle,guidanceText); section.append(guidance);
     const showGuidance=()=>{const guide=serviceGuidance(fields.get(stage+'.baseUrl')!.value); guidanceText.replaceChildren(document.createTextNode(guide.text)); if(guide.url){const link=document.createElement('a'); link.href=guide.url; link.target='_blank'; link.rel='noopener noreferrer'; link.textContent=' Service documentation'; guidanceText.append(link);}};
@@ -96,6 +99,7 @@ for (const stage of ['transcription', 'translation'] as const) {
     }
 }
 const updateSection=document.createElement('section');updateSection.id='updates';document.querySelector('main')?.append(updateSection);createUpdates(updateSection,()=>loaded&&!busy&&!authenticationBusy&&!hasDraft());
+const debugSection=document.createElement('section');document.querySelector('main')?.append(debugSection);createDiagnostics(debugSection);
 function invalidate(stage: string) {
     checks.set(stage, (checks.get(stage) || 0) + 1); outputs.get(stage)!.textContent = 'Not checked. Changes invalidate earlier results.';
     document.getElementById(stage + '-models')!.replaceChildren();
@@ -190,7 +194,8 @@ function display(value: ProviderSettings) {
         }
         for (const radio of form.querySelectorAll<HTMLInputElement>(`input[name="${stage}.connectionKind"]`)) radio.checked = radio.value === saved[stage].connectionKind;
         fields.get(stage+'.apiKey')!.value='';
-        fields.get(stage+'.apiKey')!.placeholder = saved[stage].keySaved ? 'Type a replacement key, or keep the saved key' : 'Optional: your service API key';
+        fields.get(stage+'.apiKey')!.placeholder = saved[stage].keySaved ? 'Paste replacement key' : 'Paste API access key (if required)';
+        fields.get(stage+'.apiKey')!.closest('label')!.hidden=!!saved[stage].keySaved&&!saved[stage].migrationRequired;
         fields.get(stage+'.reuseKey')!.checked=false;
         for(const radio of form.querySelectorAll<HTMLInputElement>(`input[name="${stage}.keyAction"]`)) radio.checked=radio.value==='keep';
         document.getElementById(stage+'-key-status')!.textContent = saved[stage].migrationRequired ? 'API key migration incomplete. Upgrade/Repair and Reload, or Replace/Remove it.' : saved[stage].keySaved ? 'API key saved — protected by your Windows account.' : 'No API key saved.';
@@ -243,6 +248,9 @@ document.getElementById('health')!.addEventListener('click', async () => {
     finally { check.disabled = false; }
 });
 function showStep() {
+    for(const button of document.querySelectorAll<HTMLButtonElement>('.setup-nav [data-next]')){
+        if(Number(button.dataset.next)===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');
+    }
     for (const section of document.querySelectorAll<HTMLElement>('[data-step]')) section.hidden = Number(section.dataset.step) !== step;
     document.getElementById('setup-progress')!.textContent = complete ? 'Setup saved. You can revisit any step.' : `Step ${step} of 3`;
 }

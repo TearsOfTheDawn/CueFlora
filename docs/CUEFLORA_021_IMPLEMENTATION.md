@@ -1,0 +1,19 @@
+# CueFlora 0.2.1 patch handoff
+
+Unpublished Windows x64 / Chrome candidate. No live installation, browser automation, paid inference or publication. Published 0.2.0/0.1.13 assets, the live CueFlora installation and Substrata remain untouched.
+
+## Changes
+
+- Update metadata uses GitHub JSON Accept; executable assets retain binary Accept. Redirect/size/hash/pair/identity safeguards remain. Already-current checks return no update without creating a selection folder. Native update failures carry safe stage/code/HTTP metadata.
+- Native transcription separates credential/transport, download, preparation, upload and provider failures. Provider errors are classified by HTTP status without returning response bodies. Existing upload retries, 48 kHz mono / 24 kbps audio, normalization, cue timing and eight-request TypeScript translation recovery are unchanged.
+- Translation errors add safe status metadata without changing error kinds, request counts, batching or retry ownership.
+- Background-owned recent failures are bounded to 20 entries in `browser.storage.session`, not disk or synced storage. Serialized reads/writes preserve history across worker sleep; extension reload/update or browser restart clears it. Retention failure is a report warning, never failed subtitle generation or new inference. Only extension settings may request a report; collection performs PING, not provider inference. Both storage restore and settings export project fixed metadata only, excluding credentials (including ciphertext), addresses, model/video identities, subtitle text and raw error/response content.
+- Settings use a full tab, responsive provider cards, section navigation and compact saved-key controls. Saved keys are not displayed; Change reveals an empty replacement field. Cancel restores persisted state and hiding. User-triggered report collection/copy has manual selection fallback. No provider/model defaults or permission additions.
+
+## Upgrade and verification
+
+Users on 0.2.0 must download this repair manually after it is released because their updater contains the header defect. Run matching Setup, confirm Install / Upgrade, then Chrome Reload and reload YouTube tabs. Do not remove/reinstall. Older 0.1.13 users retain explicit exact-folder adoption. The candidate keeps the existing GitHub Chrome identity, protected credentials and remote HTTPS.
+
+Run `packaging/verify_local.py --output <fresh-directory>` and the full offline preparation. Fresh reports record actual results; no predicted pass/count is recorded here. New regressions exercise HTTP 415/JSON negotiation, current-version checks, native HTTP classifications, stage separation, report privacy/settings authorization, key Change/Cancel and error focus. Build output must have `options_ui.open_in_tab: true`.
+
+Known boundary: the original failed transcription's provider response was suppressed in 0.2.0 and has not been recovered. Download/preparation for the supplied video and a mocked upload succeeded; no actual transcription was purchased. 0.2.1 enables useful diagnosis, not an unproven claim that the original cause is fixed. Genuine ChatGPT login, live Chrome updates, visual/clean-machine acceptance and other-platform certification remain unverified. Signing and fresh artifact-bound publication review remain separate.

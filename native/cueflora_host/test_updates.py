@@ -17,6 +17,26 @@ def manifest(payload=b'x'*(1024*1024)):
 
 
 class UpdatesTests(unittest.TestCase):
+    def test_json_accept_regression_and_already_current_performs_no_download_or_write(self):
+        requests=[]
+        def handler(request):
+            requests.append(request)
+            if request.headers.get('Accept')!='application/vnd.github+json':
+                return httpx.Response(415,json={'message':'Unsupported Accept header'})
+            return httpx.Response(200,json=[{'draft':False,'prerelease':False,'published_at':'2026-10-19T00:00:00Z','tag_name':'v0.2.1'}])
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)/'unused'
+            with patch('cueflora_host.updates.httpx.Client',return_value=httpx.Client(transport=httpx.MockTransport(handler))):
+                result=Updates(root,current='0.2.1').check()
+            self.assertEqual(result,{'available':False,'currentVersion':'0.2.1'})
+            self.assertEqual(len(requests),1);self.assertFalse(root.exists())
+    def test_metadata_http_failure_retains_safe_status_not_provider_body(self):
+        from .updates import metadata
+        from .failures import OperationFailure
+        client=httpx.Client(transport=httpx.MockTransport(lambda _:httpx.Response(415,text='synthetic-secret https://private.invalid')))
+        with self.assertRaises(OperationFailure) as caught:metadata(client,API+'/releases?per_page=20')
+        self.assertEqual(caught.exception.detail,{'stage':'update-check','code':'provider-request','httpStatus':415})
+        self.assertNotIn('synthetic-secret',str(caught.exception))
     def test_manifest_rejects_identity_platform_version_and_arbitrary_assets(self):
         data=manifest();validate_manifest(data)
         for changes in [{'repository':'foreign/repository'},{'chromeId':'a'*32},{'version':'0.2.0'},{'version':'0.2.1-beta'},{'platform':'Linux'},
@@ -38,7 +58,7 @@ class UpdatesTests(unittest.TestCase):
             if str(request.url)==data['setup']['url']:return httpx.Response(302,headers={'location':'https://release-assets.githubusercontent.com/synthetic?sig=temporary'})
             return httpx.Response(200,content=payload)
         with tempfile.TemporaryDirectory(prefix='CueFlora updates Ω ') as folder:
-            updater=Updates(folder);cancel=threading.Event();client=httpx.Client(transport=httpx.MockTransport(handler))
+            updater=Updates(Path(folder).resolve(),current='0.2.0');cancel=threading.Event();client=httpx.Client(transport=httpx.MockTransport(handler))
             with patch('cueflora_host.updates.httpx.Client',return_value=client):selected=updater.check()
             ref=selected['selectionRef'];self.assertEqual(selected['version'],'0.2.1')
             # Recreate each client because production closes each bounded HTTP session.

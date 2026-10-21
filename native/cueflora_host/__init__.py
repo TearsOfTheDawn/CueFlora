@@ -83,6 +83,7 @@ def send_message(obj):
 
 
 def handle_transcribe(msg):
+    from .failures import OperationFailure
     job_id = msg.get("jobId")
     video_id = msg.get("videoId")
     whisper_config = msg.get("whisperConfig")
@@ -94,9 +95,14 @@ def handle_transcribe(msg):
 
     try:
         base_url = validate_transport(whisper_config, msg.get('transportPolicy', 'preview'))
+    except Exception:
+        failure = OperationFailure('credentials', 'transport-policy')
+        return {'jobId': job_id, 'error': str(failure), 'failure': failure.detail}
+    try:
         api_key = resolve_key(whisper_config, 'transcription')
     except Exception:
-        return {'jobId': job_id, 'error': 'Invalid service transport or protected key. Open settings or upgrade/repair CueFlora.'}
+        failure = OperationFailure('credentials', 'credential-unavailable')
+        return {'jobId': job_id, 'error': str(failure), 'failure': failure.detail}
     model = whisper_config['model']
     language = whisper_config.get("language")
     prompt = whisper_config.get("prompt")
@@ -112,6 +118,7 @@ def handle_transcribe(msg):
     except (TypeError, ValueError):
         mb_per_req = None
 
+    active_stage = 'download'
     try:
         capture = RunCapture.open("create", video_id, job_id)
         if capture:
@@ -130,6 +137,9 @@ def handle_transcribe(msg):
             audio_path = download_audio(video_id, tmp_dir, job_id=job_id, capture=capture, **({'cancel':msg['_cancel']} if '_cancel' in msg else {}))
 
             def on_progress(stage, message, percent=None, raw=None):
+                nonlocal active_stage
+                active_stage = {'compress': 'audio-preparation', 'prepare': 'audio-preparation', 'chunk': 'audio-preparation',
+                                'upload': 'upload', 'transcribe': 'transcription', 'merge': 'transcription'}.get(stage, active_stage)
                 msg = {
                     "type": "progress",
                     "jobId": job_id,
@@ -142,6 +152,7 @@ def handle_transcribe(msg):
                 # never in progress/diagnostic messages sent to the browser.
                 send_message(msg)
 
+            active_stage = 'audio-preparation'
             result = transcribe(
                 audio_path,
                 api_key,
@@ -165,8 +176,13 @@ def handle_transcribe(msg):
 
             return {"jobId": job_id, "cues": cues, "diagnostics": diagnostics}
 
-    except Exception as e:
-        return {"jobId": job_id, "error": redact(e, api_key)}
+    except OperationFailure as error:
+        return {'jobId': job_id, 'error': str(error), 'failure': error.detail}
+    except Exception:
+        code = 'download-failed' if active_stage == 'download' else 'audio-preparation-failed' if active_stage == 'audio-preparation' else 'invalid-response'
+        if msg.get('_cancel') is not None and msg['_cancel'].is_set(): code = 'cancelled'
+        failure = OperationFailure(active_stage, code)
+        return {'jobId': job_id, 'error': str(failure), 'failure': failure.detail}
 
 
 def handle_translate(msg):
@@ -186,7 +202,7 @@ def handle_translate(msg):
             if capture: result['evidence']=capture.diagnostics()
             return {'jobId':job_id,**result}
         except TranslationError as error:
-            return {'jobId':job_id,'error':str(error),'errorKind':error.kind,'requestCount':1}
+            return {'jobId':job_id,'error':str(error),'errorKind':error.kind,'requestCount':1,'failure':error.failure}
         except Exception:
             return {'jobId':job_id,'error':'ChatGPT account is unavailable. Sign in again; no paid API fallback was used.','errorKind':'auth','requestCount':0}
 
@@ -240,6 +256,7 @@ def handle_translate(msg):
             "error": redact(e, api_key),
             "errorKind": e.kind,
             "requestCount": 1,
+            "failure": e.failure,
         }
         if e.finish_reason:
             result["finishReason"] = e.finish_reason
@@ -334,8 +351,16 @@ def main():
                     else:result=updater.download(msg.get('selectionRef'),msg['_cancel'],lambda percent:send_message({'type':'task','taskId':task_id,'status':'progress','stage':'downloading','percent':percent}))
                 else:raise ValueError('Unsupported task')
                 send_message({'type':'task','taskId':task_id,'status':'complete','result':result})
-            except Exception:
-                send_message({'type':'task','taskId':task_id,'status':'error','reason':'cancelled' if msg['_cancel'].is_set() else 'authentication-failed' if str(operation).startswith('chatgpt-') else 'download-failed'})
+            except Exception as error:
+                from .failures import OperationFailure
+                failure = None
+                if str(operation).startswith('update-'):
+                    import httpx
+                    stage = 'update-check' if operation == 'update-check' else 'update-download'
+                    code = 'cancelled' if msg['_cancel'].is_set() else 'timeout' if isinstance(error, httpx.TimeoutException) else 'network' if isinstance(error, httpx.HTTPError) else 'invalid-response' if operation == 'update-check' else 'verification-failed'
+                    failure = error if isinstance(error, OperationFailure) else OperationFailure(stage, code)
+                send_message({'type':'task','taskId':task_id,'status':'error','reason':'cancelled' if msg['_cancel'].is_set() else 'authentication-failed' if str(operation).startswith('chatgpt-') else 'download-failed',
+                              **({'failure': failure.detail} if failure else {})})
             finally: tasks.pop(task_id,None)
 
         elif msg_type in ('CHATGPT_STATUS','CHATGPT_MODELS','CHATGPT_MODELS_CACHED','CHATGPT_DISCONNECT','CHATGPT_ACK_USAGE'):

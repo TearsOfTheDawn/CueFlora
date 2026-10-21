@@ -2,6 +2,7 @@ import { validCues } from './cacheRepository';
 import { TRANSCRIPTION_NORMALIZATION_VERSION } from './constants';
 import type { Cue, EvidenceDiagnostics } from './types';
 import { validCredential } from './credentials';
+import { safeFailure, failureMessage } from './failureDiagnostics';
 
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
 const evidenceStages = new Set(['capture-open', 'normalizer', 'normalizer-source', 'download-tool', 'source-metadata',
@@ -45,7 +46,9 @@ export function publicNativeResponse(value: Record<string, unknown>, request: Re
         modelListAvailable:value.status === 'connected', generationCompatibility:'unverified', partial:value.partial === true };
     if (request.jobId !== undefined) result.jobId = request.jobId;
     const protectedRequest = ['whisperConfig','translateConfig','provider'].some(field=>object(request[field]) && object(request[field].credential));
-    if (typeof value.error === 'string') result.error = protectedRequest
+    const failure=safeFailure(value.failure);
+    if(failure)result.failure=failure;
+    if (typeof value.error === 'string') result.error = failure ? failureMessage(failure) : protectedRequest
         ? 'Protected provider request failed. Check the service/key settings; upgrade or repair CueFlora if needed.'
         : privateDiagnostic(value.error, request);
     if (['output', 'network', 'auth', 'http', 'protocol'].includes(String(value.errorKind))) result.errorKind = value.errorKind;
@@ -117,6 +120,7 @@ export function privateDiagnostic(value: string, request: Record<string, unknown
 export function validNativeResponse(value: unknown, request: Record<string, unknown>): value is Record<string, unknown> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
     const result = value as Record<string, unknown>;
+    if(result.failure!==undefined&&!safeFailure(result.failure))return false;
     if(request.type==='UPDATES_STATUS'||request.type==='UPDATES_INSTALL'){
         if(result.requestId!==request.requestId)return false;
         if(typeof result.error==='string')return true;

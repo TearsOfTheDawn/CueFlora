@@ -101,6 +101,7 @@ export interface ProgressMessage {
 }
 
 export type ExtensionMessage =
+  | {type:'DIAGNOSTICS_GET'}
   | PingMessage
   | AccountMessage
   | UpdateMessage
@@ -141,6 +142,7 @@ export interface TranslateConfig {
 }
 
 export interface NativeTranscribeResult {
+  failure?: import('./failureDiagnostics').SafeFailure;
   jobId?: string;
   cues?: Cue[];
   error?: string;
@@ -148,6 +150,7 @@ export interface NativeTranscribeResult {
 }
 
 export interface NativeTranslateResult {
+  failure?: import('./failureDiagnostics').SafeFailure;
   evidence?: EvidenceDiagnostics;
   jobId?: string;
   translations?: unknown[];

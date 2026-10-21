@@ -2,7 +2,9 @@
 
 AI Subtitles & Translation for YouTube — Windows x64 / Google Chrome.
 
-Development source: **0.2.0 candidate**, not published. It adds clearer setup, optional ChatGPT-plan translation and paired Setup/in-app update engineering. See [0.2 implementation and acceptance boundaries](docs/CUEFLORA_020_IMPLEMENTATION.md). The public 0.1.13 release and its instructions below remain unchanged; this source update does not authorise a new release.
+[Changelog — features, fixes and upgrade instructions](CHANGELOG.md)
+
+**Current release: 0.2.0.** Clearer setup, optional ChatGPT-plan translation and a matching extension/helper installer. See [implementation and acceptance boundaries](docs/CUEFLORA_020_IMPLEMENTATION.md). Earlier packages, including 0.1.13, remain available.
 
 ![Five-petal CueFlora flower](public/icon/flower.svg)
 
@@ -10,35 +12,36 @@ Use available YouTube captions, or your own compatible AI services for transcrip
 
 ## Install from GitHub
 
-### [Download CueFlora for Windows — includes everything you need](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.1.13/CueFlora-0.1.13-Windows-x64.zip)
+### [Download CueFlora Setup.exe — the only required download](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.2.0/CueFlora-0.2.0-Setup.exe)
 
-**This is the only download you need:** it contains both the Chrome extension and Setup. You do not need the separate installer, extension ZIP or source-code downloads listed under Assets.
+Setup contains the matching Chrome extension, helper and audio tools. You do not need the other files under Assets for normal installation. AI services and models are separate.
 
-1. Download **CueFlora-0.1.13-Windows-x64.zip** above and extract it to a permanent folder.
-2. Open `chrome://extensions`, enable **Developer mode**, select **Load unpacked**, and choose `CueFlora Setup/Chrome-extension` from the extracted package. Keep this folder.
-3. In the extracted `CueFlora Setup` folder, run **CueFlora Setup.exe**, select Chrome, read Third-party terms, and confirm **Install**.
-4. Open CueFlora settings: check the helper, connect your existing AI services, save, and choose languages.
-5. On YouTube, open the flower button and press **Run**.
+1. Download and run Setup. Select Chrome, read Third-party terms, and confirm **Install**.
+2. Open `chrome://extensions`, enable **Developer mode**, select **Load unpacked**, and choose the stable extension folder shown by Setup (normally `%LOCALAPPDATA%\CueFlora\Chrome-extension`). Keep this folder.
+3. Open CueFlora settings: check the helper, connect existing AI services or explicitly choose ChatGPT for translation only, save, and choose languages.
+4. On YouTube, open the flower button and press **Run**.
 
-The installer bundles Python, yt-dlp, FFmpeg/ffprobe and Deno. It needs no administrator access, separate Python installation or PATH changes. The helper runs on demand; it is not a continuously running companion. Setup does not install the extension or AI services.
+The installer bundles Python, yt-dlp, FFmpeg/ffprobe and Deno. It needs no administrator access, separate Python installation or PATH changes. The helper runs on demand; it is not a continuously running companion. Setup supplies the extension folder, but Chrome's initial Load unpacked step remains manual. It does not install AI services.
 
-Transcription requires a compatible `/audio/transcriptions` API; translation requires `/chat/completions` with structured JSON Schema output. Supply your API address, optional key and exact model name for each stage. Neither a provider nor a model is preselected. Local services must already be running. ChatGPT/other website subscriptions are not necessarily API access. Available captions can be used without AI configuration.
+Transcription requires a compatible `/audio/transcriptions` API. Translation uses either your `/chat/completions` service with structured JSON Schema output or optional **Continue with ChatGPT**. Supply your service's API address, optional access key and exact model ID; no provider/model is preselected. Local services must already be running. The ChatGPT route uses eligible plan models/limits and does not cover transcription or silently switch to a paid API. Available captions can be used without AI configuration.
 
 The [download page](https://tearsofthedawn.github.io/CueFlora/download.html) has the same installation steps, optional technical files and hashes. Chrome Web Store publication is not planned. This is Chrome's manual Developer-mode installation route.
 
 ## Updates and removal
 
-Keep the same extension folder and key/ID. Replace its files with the new release and click **Reload** in Chrome's Extensions page, then reload YouTube tabs. Do not remove/reinstall the extension just to update it. Run the matching Setup for helper upgrades. Settings remain associated with the same Chrome ID.
+**Upgrading from 0.1.13:** finish all Runs, download this Setup manually, select the currently loaded CueFlora extension folder, and confirm adoption/Upgrade. Only recognized, unmodified files are accepted; a recoverable backup is kept. Click **Reload** once in Chrome's Extensions page, then reload YouTube tabs. Do not remove/reinstall the extension; its ID and settings must stay unchanged.
+
+**Later compatible releases:** in settings choose **Check for updates → Download update → Install update**, confirm Setup, then **Check installation → Restart CueFlora** and reload YouTube tabs. There is no silent installation, resident updater or scheduled task. Matching Setup plus manual Chrome Reload remains the fallback.
 
 The Start Menu maintenance launcher offers **Repair**, **Roll back** and recoverable **Uninstall**. Uninstall preserves settings/evidence and quarantines runtime files; remove the browser extension separately if desired. Older development previews have a different identity: do not mix their helpers or promise that settings transfer between IDs. CueFlora does not modify Substrata.
 
 ## Privacy and limitations
 
-Remembered API keys use user-scoped Windows DPAPI; existing plaintext keys are never returned by settings. This does not protect against malware running as you. Remote services require HTTPS; exact loopback HTTP exceptions support existing local services. Provider redirects are rejected. Audio/text and relevant metadata are sent to the services you choose. Optional local evidence capture is off unless enabled. See [Privacy](https://tearsofthedawn.github.io/CueFlora/privacy.html) and [credential details](docs/SECURE_CREDENTIALS.md).
+Remembered API keys use user-scoped Windows DPAPI; existing plaintext keys are never returned by settings. ChatGPT tokens remain exclusively in the helper's protected native account store. This does not protect against malware running as you. Remote services require HTTPS; exact loopback HTTP exceptions support existing local services. Provider redirects are rejected. Audio/text and relevant metadata are sent to the services you choose. Optional local evidence capture is off unless enabled. See [Privacy](https://tearsofthedawn.github.io/CueFlora/privacy.html) and [credential details](docs/SECURE_CREDENTIALS.md).
 
 The installer is unsigned. Do not disable antivirus or automatically bypass warnings. Checksums establish file identity, not guaranteed safety. Hosted AI can cost money; subtitles can be wrong. Use content you are entitled to process and comply with applicable terms and law.
 
-Automated tests are not clean-machine or actual Chrome/native Run acceptance; those checks remain deferred. Firefox/macOS/Linux are not certified. There is no automatic extension update, ChatGPT sign-in, model installation or AI-service provisioning.
+Genuine ChatGPT login, live Chrome updating, clean-machine acceptance and semantic subtitle quality remain unverified; automated checks are not those tests. Firefox/macOS/Linux are not certified. There is no unattended update, model installation or AI-service provisioning.
 
 ## For developers and verification — optional
 

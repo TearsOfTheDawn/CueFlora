@@ -7,6 +7,7 @@ const text = (value: unknown, max: number): value is string => typeof value === 
 export function validateRequest(message: Record<string, unknown>): void {
     const fail = () => { throw Error('Invalid extension request.'); };
     const type = message.type;
+    if(type==='DIAGNOSTICS_GET'&&Object.keys(message).some(key=>key!=='type'))fail();
     if(String(type).startsWith('CHATGPT_')||String(type).startsWith('UPDATES_')||['TASK_STATUS','TASK_CANCEL','RESTART_CUEFLORA'].includes(String(type))) {
         const allowed:Record<string,string[]>={CHATGPT_LOGIN:['accountRef'],CHATGPT_STATUS:[],CHATGPT_MODELS:['accountRef'],CHATGPT_DISCONNECT:['accountRef'],CHATGPT_ACK_USAGE:['accountRef'],TASK_STATUS:['taskId'],TASK_CANCEL:['taskId'],UPDATES_CHECK:[],UPDATES_STATUS:[],UPDATES_DOWNLOAD:['selectionRef'],UPDATES_INSTALL:['selectionRef','confirmation'],RESTART_CUEFLORA:['version','confirmation']};
         if(!allowed[String(type)]||Object.keys(message).some(key=>key!=='type'&&!allowed[String(type)].includes(key)))fail();

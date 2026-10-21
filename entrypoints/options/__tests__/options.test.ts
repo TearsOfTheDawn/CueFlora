@@ -84,6 +84,13 @@ describe('production options Save/Cancel interactions', () => {
         await vi.waitFor(()=>expect(button('save').disabled).toBe(false));
         expect(send.mock.calls.at(-1)![0].settings.translation).toMatchObject({apiKey:'',keyAction:'remove'});
     });
+    it('hides an unchanged saved key field, reveals Change and preserves Cancel',async()=>{
+        const value=settings();value.translation.keySaved=true;send.mockResolvedValueOnce(value);await open();
+        const input=field('translation.apiKey');expect(input.closest('label')!.hidden).toBe(true);
+        const change=Array.from(input.closest('fieldset')!.querySelectorAll('button')).find(button=>button.textContent==='Change key')!;
+        change.click();expect(input.closest('label')!.hidden).toBe(false);expect(document.activeElement).toBe(input);
+        button('cancel').click();expect(input.closest('label')!.hidden).toBe(true);expect(input.value).toBe('');
+    });
     it('shows migration failures and permits retry without false success',async()=>{
         const value=settings(); value.warning='Stored API keys need protected migration. Reload to retry.'; value.translation.migrationRequired=true;
         send.mockResolvedValueOnce(value); await open();

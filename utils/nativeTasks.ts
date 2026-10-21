@@ -1,12 +1,14 @@
 /** Transient native connections owned by extension settings, never by page messages. */
+import {safeFailure,type SafeFailure} from './failureDiagnostics';
 type Port = ReturnType<typeof browser.runtime.connectNative>;
-export interface TaskState { taskId:string; status:'starting'|'started'|'progress'|'complete'|'error'; stage?:string; reason?:string; result?:Record<string,unknown> }
+export interface TaskState { taskId:string; status:'starting'|'started'|'progress'|'complete'|'error'; stage?:string; reason?:string; result?:Record<string,unknown>;failure?:SafeFailure }
 const uuid = (value:unknown):value is string => typeof value==='string' && /^[a-f0-9-]{36}$/.test(value);
 export function publicTask(value:unknown, taskId:string, operation='chatgpt-login'):TaskState {
     if (!value || typeof value!=='object') throw Error('Invalid helper task response.');
     const incoming=value as Record<string,unknown>;
     if(incoming.taskId!==taskId || incoming.type!=='task' || !['started','progress','complete','error'].includes(String(incoming.status))) throw Error('Invalid helper task response.');
     const result:TaskState={taskId,status:incoming.status as TaskState['status']};
+    if(incoming.failure!==undefined){const failure=safeFailure(incoming.failure);if(!failure)throw Error('Invalid helper failure metadata.');result.failure=failure;}
     if(['waiting-for-user','validating-account','downloading','verifying','ready-to-install'].includes(String(incoming.stage)))result.stage=String(incoming.stage);
     if(['cancelled','authentication-failed','download-failed','invalid-request'].includes(String(incoming.reason))) result.reason=String(incoming.reason);
     const raw=incoming.result as Record<string,unknown>|undefined;
@@ -24,7 +26,7 @@ export function publicTask(value:unknown, taskId:string, operation='chatgpt-logi
     if(result.status==='complete'&&!result.result)throw Error('Invalid helper task result.');
     return result;
 }
-export function createNativeTasks(connect:()=>Port) {
+export function createNativeTasks(connect:()=>Port,onFailure:(operation:string,failure:SafeFailure)=>void=()=>{}) {
     const tasks=new Map<string,{state:TaskState;port:Port;cancel:()=>void;expires:number}>();
     return {
         async start(operation:'chatgpt-login'|'chatgpt-models'|'chatgpt-disconnect'|'update-check'|'update-download',accountRef?:string,selectionRef?:string):Promise<TaskState> {
@@ -37,7 +39,7 @@ export function createNativeTasks(connect:()=>Port) {
                 let acknowledged=false, preflight=true, ended=false;
                 const task={state:{taskId,status:'starting'} as TaskState,port,cancel:()=>{},expires:Date.now()+(operation==='update-download'?62:12)*60*1000};
                 if(tasks.size>=16)for(const [id,old]of tasks){if(['complete','error'].includes(old.state.status)){tasks.delete(id);if(tasks.size<16)break;}}
-                const fail=(reason:string)=>{if(ended)return; ended=true;clearTimeout(ack);clearTimeout(limit);task.state={taskId,status:'error',reason};port.disconnect();if(!acknowledged)reject(Error('ChatGPT sign-in requires the latest CueFlora helper. Upgrade/Repair and retry.'));};
+                const fail=(reason:string)=>{if(ended)return; ended=true;clearTimeout(ack);clearTimeout(limit);const failure:SafeFailure={stage:'native-connection',code:reason==='cancelled'?'cancelled':'helper-unavailable'};task.state={taskId,status:'error',reason,failure};onFailure(operation,failure);port.disconnect();if(!acknowledged)reject(Error('This operation requires the latest CueFlora helper. Upgrade/Repair and retry.'));};
                 const ack=setTimeout(()=>fail('authentication-failed'),10000);
                 const limit=setTimeout(()=>fail('cancelled'),operation==='update-download'?3610000:610000);
                 task.cancel=()=>{if(ended)return;try{port.postMessage({type:'TASK_CANCEL',taskId});}finally{fail('cancelled');}};
@@ -52,6 +54,7 @@ export function createNativeTasks(connect:()=>Port) {
                             preflight=false;port.postMessage({type:'TASK_START',taskId,operation,...(accountRef?{accountRef}: {}),...(selectionRef?{selectionRef}: {})});return;
                         }
                         task.state=publicTask(value,taskId,operation);
+                        if(task.state.status==='error')onFailure(operation,task.state.failure||{stage:'unknown',code:'unknown'});
                         if(!acknowledged){acknowledged=true;clearTimeout(ack);resolve({...task.state});}
                         if(['complete','error'].includes(task.state.status)){ended=true;clearTimeout(limit);port.disconnect();}
                     }catch{fail('authentication-failed');}

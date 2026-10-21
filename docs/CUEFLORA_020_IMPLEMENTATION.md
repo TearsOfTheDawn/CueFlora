@@ -1,6 +1,6 @@
 # CueFlora 0.2.0 implementation and handoff
 
-Unpublished Windows x64 / Chrome candidate. Work is confined to CueFlora; Substrata, existing installations, settings/evidence and all prior packages/releases are preserved. No live installation, browser automation, genuine login, inference or publication is part of the implementation checks.
+Published Windows x64 / Chrome version 0.2.0. Work is confined to CueFlora; Substrata, existing installations, settings/evidence and all prior packages/releases are preserved. No live installation, browser automation, genuine login or inference is part of the implementation checks. Publication was separately authorised and completed by the one-time [GitHub job](https://github.com/TearsOfTheDawn/CueFlora/actions/runs/39336036237); use its receipt and [release assets](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.0) to identify the final bytes.
 
 ## Implemented surfaces
 
@@ -35,6 +35,6 @@ The publication follow-up retains 34 exact authentication-native source/notice c
 
 ## Acceptance/release boundaries
 
-Genuine ChatGPT account login/plan eligibility, actual structured-output model compatibility, live Chrome update/reload, visual acceptance, clean-Windows behaviour and semantic subtitle quality are unverified by automated mocks/probes. Signing and other platforms remain outside this candidate. Updates/checksums do not protect against a compromised publisher account. Publication of 0.2 requires new explicit authorization and a candidate-bound review; the one-time 0.1.13 authorization does not carry forward. Nothing here promises OpenAI/YouTube/Store approval.
+Genuine ChatGPT account login/plan eligibility, actual structured-output model compatibility, live Chrome update/reload, visual acceptance, clean-Windows behaviour and semantic subtitle quality are unverified by automated mocks/probes. Signing and other platforms remain outside this release. Updates/checksums do not protect against a compromised publisher account. The publisher separately authorised 0.2.0 with "Publish"; the candidate-bound review and one-time job do not authorise future releases. Nothing here promises OpenAI/YouTube/Store approval.
 
 Official authentication/inference contracts: [sign-in](https://developers.openai.com/siwc/token-sharing-open-source/sign-in), [sessions](https://developers.openai.com/siwc/token-sharing-open-source/profiles-and-sessions), [Responses](https://developers.openai.com/siwc/token-sharing-open-source/models-and-inference), [limitations](https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations).
