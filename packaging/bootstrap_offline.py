@@ -8,7 +8,7 @@ import zipfile
 from release_inputs import ROOT, obtain_inputs, digest
 
 
-def bootstrap(cache, output, official=False):
+def bootstrap(cache, output, official=False,include_auth=True):
     lock = json.loads((ROOT / 'packaging/inputs-windows.lock.json').read_text())
     cache = obtain_inputs(lock, cache, offline=True, source_audio=official)
     if output.exists():
@@ -46,7 +46,14 @@ def bootstrap(cache, output, official=False):
             archive.extractall(base)
     subprocess.run([str(base / 'python.exe'), '-m', 'venv', str(output / 'venv')], check=True)
     python = output / 'venv/Scripts/python.exe'
-    subprocess.run([str(python), '-m', 'pip', 'install', '--no-index', '--find-links', str(cache), '--require-hashes', '-r', str(ROOT / 'packaging/requirements-windows-hashed.lock')], check=True)
+    requirements=ROOT/'packaging/requirements-windows-hashed.lock'
+    if not include_auth:
+        # The downloader has its own complete optional-dependency policy. Do not
+        # accidentally expand it when the host's auth dependencies grow.
+        filtered=output/'build-requirements.lock'
+        filtered.write_text('\n'.join(line for line in requirements.read_text().splitlines() if not line.lower().startswith(('pyjwt==','cryptography==','cffi==','pycparser==')))+'\n',encoding='utf-8')
+        requirements=filtered
+    subprocess.run([str(python), '-m', 'pip', 'install', '--no-index', '--find-links', str(cache), '--require-hashes', '-r', str(requirements)], check=True)
     print(python)
     return python
 

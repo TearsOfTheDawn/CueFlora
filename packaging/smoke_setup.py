@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--release', type=Path, help='Use actual private configuration without prototype overrides')
     parser.add_argument('--launcher', type=Path, help='Retain the actual Setup with simulated Start Menu writes')
+    parser.add_argument('--extension',type=Path)
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -33,6 +34,7 @@ if __name__ == '__main__':
         release = json.loads(args.release.read_text(encoding='utf-8'))
     browsers = list(release['extensionIds'])
     options = {} if args.release else {'allow_prototype': True}
+    if args.extension:options['extension']=args.extension
     setup = Setup(output / 'spaces and Ω' / 'CueFlora', output, registration=FakeRegistration(),maintenance=FakeMaintenance(output,'Windows'))
     first = setup.install(args.payload, release, browsers, launcher=args.launcher, **options)
     executable_name = 'cueflora-host.exe' if sys.platform == 'win32' else 'cueflora-host'

@@ -2,6 +2,7 @@ import { validCues } from './cacheRepository';
 import { TRANSCRIPTION_NORMALIZATION_VERSION } from './constants';
 import type { Cue, EvidenceDiagnostics } from './types';
 import { validCredential } from './credentials';
+import { safeFailure, failureMessage } from './failureDiagnostics';
 
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
 const evidenceStages = new Set(['capture-open', 'normalizer', 'normalizer-source', 'download-tool', 'source-metadata',
@@ -28,14 +29,26 @@ function evidence(value: unknown): EvidenceDiagnostics | undefined {
 /** Project only supported public fields; never forward arbitrary nested payloads. */
 export function publicNativeResponse(value: Record<string, unknown>, request: Record<string, unknown>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
+    if(request.type==='UPDATES_STATUS')return {requestId:request.requestId,...(value.error?{error:'Update status unavailable. Upgrade/Repair CueFlora.'}:{installedVersion:value.installedVersion,extensionVersion:value.extensionVersion,managed:value.managed})};
+    if(request.type==='UPDATES_INSTALL')return {requestId:request.requestId,...(value.error?{error:'Setup could not start. Finish all Runs; check/download the update again, or run the matching complete package manually.'}:{launched:true,version:value.version})};
+    if (String(request.type).startsWith('CHATGPT_')) {
+        if(value.error) return {requestId:request.requestId,error:'ChatGPT account operation failed. Upgrade/Repair or reconnect; no paid fallback was used.'};
+        if(request.type==='CHATGPT_STATUS') return {requestId:request.requestId,accounts:(value.accounts as Record<string,unknown>[]).map(account=>({accountRef:account.accountRef,label:account.label,connected:account.connected,planEnabled:account.planEnabled}))};
+        if(String(request.type).startsWith('CHATGPT_MODELS')) return {requestId:request.requestId,models:(value.models as Record<string,unknown>[]).map(model=>({id:model.id,label:model.label})),partial:value.partial===true};
+        if(request.type==='CHATGPT_ACK_USAGE')return {requestId:request.requestId,acknowledged:value.acknowledged===true};
+        return {requestId:request.requestId,disconnected:value.disconnected===true,revocationConfirmed:value.revocationConfirmed===true};
+    }
     if (request.type === 'CREDENTIAL_PROTECT') return typeof value.error === 'string'
         ? {requestId:request.requestId, error:'Windows key protection unavailable or invalid. Upgrade/Repair CueFlora; no plaintext was saved.'}
         : {requestId:request.requestId, credential:value.credential};
     if (request.type === 'PROVIDERS_CHECK') return { requestId: request.requestId, status: value.status,
-        models: value.models, reason: value.reason };
+        models: value.models, reason: value.reason, reachable:value.reachable === true,
+        modelListAvailable:value.status === 'connected', generationCompatibility:'unverified', partial:value.partial === true };
     if (request.jobId !== undefined) result.jobId = request.jobId;
     const protectedRequest = ['whisperConfig','translateConfig','provider'].some(field=>object(request[field]) && object(request[field].credential));
-    if (typeof value.error === 'string') result.error = protectedRequest
+    const failure=safeFailure(value.failure);
+    if(failure)result.failure=failure;
+    if (typeof value.error === 'string') result.error = failure ? failureMessage(failure) : protectedRequest
         ? 'Protected provider request failed. Check the service/key settings; upgrade or repair CueFlora if needed.'
         : privateDiagnostic(value.error, request);
     if (['output', 'network', 'auth', 'http', 'protocol'].includes(String(value.errorKind))) result.errorKind = value.errorKind;
@@ -57,7 +70,9 @@ export function publicNativeResponse(value: Record<string, unknown>, request: Re
         const tools = object(value.tools) ? value.tools : {};
         result.tools = Object.fromEntries(['yt-dlp', 'ffmpeg', 'ffprobe', 'deno'].map(name => [name, { available: object(tools[name]) && tools[name].available === true }]));
         result.helperUpgradeRequired = !object(tools.deno);
-        result.capabilities = {credentialProtection: object(value.capabilities) && value.capabilities.credentialProtection === 'windows-dpapi-v1' ? 'windows-dpapi-v1' : null};
+        result.capabilities = {credentialProtection: object(value.capabilities) && value.capabilities.credentialProtection === 'windows-dpapi-v1' ? 'windows-dpapi-v1' : null,
+            chatgpt:object(value.capabilities)&&value.capabilities.chatgpt==='chatgpt-translation-v1'?'chatgpt-translation-v1':null,
+            updates:object(value.capabilities)&&value.capabilities.updates==='paired-updates-v1'?'paired-updates-v1':null};
     }
     if (validCues(value.cues)) result.cues = value.cues.map((cue: Cue) => ({ startMs: cue.startMs, endMs: cue.endMs, text: cue.text,
         ...(cue.words ? { words: cue.words.map(word => ({ text: word.text, startMs: word.startMs, endMs: word.endMs,
@@ -105,11 +120,27 @@ export function privateDiagnostic(value: string, request: Record<string, unknown
 export function validNativeResponse(value: unknown, request: Record<string, unknown>): value is Record<string, unknown> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
     const result = value as Record<string, unknown>;
+    if(result.failure!==undefined&&!safeFailure(result.failure))return false;
+    if(request.type==='UPDATES_STATUS'||request.type==='UPDATES_INSTALL'){
+        if(result.requestId!==request.requestId)return false;
+        if(typeof result.error==='string')return true;
+        const version=(value:unknown)=>value==null||(typeof value==='string'&&/^\d+\.\d+\.\d+$/.test(value));
+        return request.type==='UPDATES_STATUS'?typeof result.managed==='boolean'&&version(result.installedVersion)&&version(result.extensionVersion):result.launched===true&&typeof result.version==='string'&&version(result.version);
+    }
+    if(String(request.type).startsWith('CHATGPT_')) {
+        if(result.requestId!==request.requestId)return false;
+        if(typeof result.error==='string')return true;
+        if(request.type==='CHATGPT_STATUS')return Array.isArray(result.accounts)&&result.accounts.length<=8&&result.accounts.every(item=>object(item)&&typeof item.accountRef==='string'&&/^[a-f0-9-]{36}$/.test(item.accountRef)&&typeof item.label==='string'&&item.label.length<=200&&typeof item.connected==='boolean'&&typeof item.planEnabled==='boolean');
+        if(String(request.type).startsWith('CHATGPT_MODELS'))return Array.isArray(result.models)&&result.models.length<=500&&result.models.every(item=>object(item)&&typeof item.id==='string'&&/^[\w.:/\-]{1,200}$/.test(item.id)&&typeof item.label==='string'&&item.label.length<=200)&&typeof result.partial==='boolean';
+        if(request.type==='CHATGPT_ACK_USAGE')return result.acknowledged===true;
+        return request.type==='CHATGPT_DISCONNECT'&&typeof result.disconnected==='boolean'&&typeof result.revocationConfirmed==='boolean';
+    }
     if (request.type === 'CREDENTIAL_PROTECT') return result.requestId === request.requestId &&
         (typeof result.error === 'string' || validCredential(result.credential));
     if (request.type === 'PROVIDERS_CHECK') return result.requestId === request.requestId &&
         ['connected','unavailable','unsupported'].includes(String(result.status)) &&
-        ['ok','auth','http','network','unsupported','invalid-response','oversized'].includes(String(result.reason)) &&
+        ['ok','auth','http','network','timeout','unsupported','invalid-response','oversized'].includes(String(result.reason)) &&
+        (result.partial === undefined || typeof result.partial === 'boolean') &&
         Array.isArray(result.models) && result.models.length <= 500 && result.models.every(id => typeof id === 'string' && /^[\w.:/\-]{1,200}$/.test(id));
     if (request.type !== 'PING' && result.jobId !== request.jobId) return false;
     if (result.type === 'progress') return typeof result.stage === 'string' &&

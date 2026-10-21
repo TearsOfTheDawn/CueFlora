@@ -11,6 +11,7 @@ import shutil
 import uuid
 import threading
 import time
+import re
 from functools import wraps
 from .locking import installation_lock
 from .bundle import verify_bundle, digest
@@ -18,6 +19,7 @@ from .manifests import manifest, manifest_path, validate_release
 from .registration import Registration, atomic_json
 from .package_policy import validate_package
 from .maintenance import Maintenance
+from .extension_pair import ExtensionPair
 
 
 def default_root():
@@ -42,7 +44,9 @@ def serialized(method):
         # Check ownership before creating even the lock file.
         if not (self.root / 'pending-activation.json').exists():
             self.state()
-        with installation_lock(self.root):
+        from cueflora_host.activity import activity_gate,assert_no_native_jobs
+        with installation_lock(self.root), activity_gate(self.root,install=True):
+            assert_no_native_jobs(self.root)
             self._lock_depth += 1
             try:
                 return method(self, *args, **kwargs)
@@ -63,6 +67,7 @@ class Setup:
         self.state_path = self.root / 'setup-state.json'
         self._lock_depth = 0
         self._thread_lock = threading.RLock()
+        self.extensions = ExtensionPair(self.root)
 
     def _safe_path(self, path):
         if path.is_symlink() or path.resolve() != path:
@@ -101,6 +106,8 @@ class Setup:
         for key in ('maintenance', 'previousMaintenance'):
             if state.get(key) is not None:
                 self._validate_maintenance(state[key])
+        for key in ('extension','previousExtension'):
+            if state.get(key) is not None:self.extensions.source(state[key])
         return state
 
     def _launcher(self, identifier):
@@ -119,7 +126,7 @@ class Setup:
     def state(self):
         self._safe_path(self.state_path)
         if not self.state_path.exists():
-            if self.root.exists() and any(path.name != '.setup.lock' for path in self.root.iterdir()):
+            if self.root.exists() and any(path.name not in ('.setup.lock','.activity.lock') for path in self.root.iterdir()):
                 raise ValueError('Unowned installation directory; refusing to modify it')
             return None
         state = json.loads(self.state_path.read_text(encoding='utf-8'))
@@ -133,11 +140,16 @@ class Setup:
             raise ValueError('Linked installation path rejected')
         return path
 
-    def _activate(self, identifier, release, browsers, previous, maintenance=None):
+    def _activate(self, identifier, release, browsers, previous, maintenance=None, extension=None, previous_extension=None, extension_change=None):
         folder = self._version(identifier)
         metadata = verify_bundle(folder)
         if release.get('mode') in ('private', 'public'):
             validate_package(folder, release, metadata, browsers)
+        if release.get('extensionInventorySha256'):
+            from .extension_pair import verify_extension
+            if extension is None:raise ValueError('Matching extension/helper pair is required')
+            ext,_=verify_extension(self.extensions.source(extension),release['extensionInventorySha256'])
+            if ext['version']!=metadata['hostVersion'] or ext['chromeId']!=release['extensionIds']['chrome']:raise ValueError('Activation pair identity/version mismatch')
         executable = folder / ('cueflora-host.exe' if self.system == 'Windows' else 'cueflora-host')
         if not executable.is_file():
             raise ValueError('Native host executable missing')
@@ -158,6 +170,9 @@ class Setup:
         journal = {'schema': 1, 'previousState': previous, 'changes': [
             {'browser': b, 'old': old.decode('utf-8') if old else None, 'pointer': pointer}
             for b, _, old, pointer, _ in changes]}
+        if extension is not None or previous.get('extension') is not None:
+            journal['extension'] = extension_change or self.extensions.change(extension,previous.get('extension'))
+            self.extensions.validate_change(journal['extension'])
         shortcut = None
         if maintenance or previous.get('maintenance'):
             launcher = self._launcher(maintenance['launcher']) if maintenance else None
@@ -166,6 +181,7 @@ class Setup:
             maintenance, shortcut, journal['maintenance'] = self.maintenance.prepare(previous.get('maintenance'), maintenance, launcher)
         atomic_json(self.root / 'pending-activation.json', journal)
         try:
+            if 'extension' in journal:self.extensions.apply(journal['extension'])
             for browser, path, _, _, value in changes:
                 atomic_json(path, value)
                 self.registration.write_pointer(browser, path)
@@ -176,6 +192,9 @@ class Setup:
                      'release': release, 'previousRelease': previous.get('release') if previous else None,
                      'browsers': list(browsers), 'hostVersion': metadata.get('hostVersion'),
                      'maintenance': maintenance, 'previousMaintenance': previous.get('maintenance')}
+            if 'extension' in journal:
+                state['extension']=extension
+                state['previousExtension']=previous_extension or previous.get('extension')
             atomic_json(self.state_path, state)
         except Exception:
             self.recover()
@@ -224,6 +243,7 @@ class Setup:
                         raise ValueError('Foreign recovery manifest')
         removed_name = journal.get('movedVersions')
         shortcut = None
+        if 'extension' in journal:self.extensions.validate_change(journal['extension'])
         if 'maintenance' in journal:
             shortcut = self.maintenance.validate_recovery(journal['maintenance'], previous.get('maintenance'))
         if removed_name:
@@ -234,6 +254,7 @@ class Setup:
             self._safe_path(self.root / 'versions')
             if removed.exists() and not (self.root / 'versions').exists():
                 self._rename_owned_directory(removed, self.root / 'versions')
+        if 'extension' in journal:self.extensions.recover(journal['extension'])
         for change in reversed(journal['changes']):
             target = manifest_path(change['browser'], self.system, self.home, self.root)
             if change['old'] is None:
@@ -250,7 +271,7 @@ class Setup:
         path.unlink()
 
     @serialized
-    def install(self, payload, release, browsers, *, allow_prototype=False, launcher=None):
+    def install(self, payload, release, browsers, *, allow_prototype=False, launcher=None, extension=None, adopt_extension=None, confirm_adoption=False):
         validate_release(release)
         browsers = sorted(set(browsers))
         if not browsers or any(browser not in ('chrome', 'firefox') for browser in browsers):
@@ -260,6 +281,11 @@ class Setup:
         if previous and set(previous['browsers']) - set(browsers):
             raise ValueError('Upgrade must retain previously registered browsers; uninstall to change selection')
         metadata = verify_bundle(payload)
+        if previous and previous.get('current') and previous.get('hostVersion'):
+            from cueflora_host.updates import version
+            if re.fullmatch(r'\d+\.\d+\.\d+',str(metadata.get('hostVersion',''))) and re.fullmatch(r'\d+\.\d+\.\d+',str(previous['hostVersion'])):
+                if version(metadata['hostVersion']) < version(previous['hostVersion']):raise ValueError('Incompatible downgrade refused. Use a compatible paired rollback instead.')
+            elif release.get('extensionInventorySha256') or previous.get('extension'):raise ValueError('Paired installation requires exact semantic versions')
         validate_package(payload, release, metadata, browsers, allow_prototype)
         if previous and previous['browsers'] and any(previous['release']['extensionIds'][b] != release['extensionIds'].get(b) for b in previous['browsers']):
             raise ValueError('Upgrade cannot change installed browser identities')
@@ -267,6 +293,10 @@ class Setup:
             raise ValueError('Runtime platform does not match this computer')
         if metadata.get('architecture', '').lower() != platform.machine().lower():
             raise ValueError('Runtime architecture does not match this computer')
+        if release.get('extensionInventorySha256') and extension is None:raise ValueError('Matching bundled Chrome extension required for this release')
+        if previous and previous.get('extension') and extension is None:raise ValueError('Upgrade must retain the managed extension/helper pair')
+        if extension is not None and previous and previous.get('current') and not previous.get('extension') and adopt_extension is None:
+            raise ValueError('Select the currently loaded CueFlora extension folder for this one-time upgrade. Setup does not inspect Chrome profiles or remove the extension.')
         identifier = uuid.uuid4().hex
         folder = self._version(identifier)
         folder.parent.mkdir(parents=True, exist_ok=True)
@@ -290,15 +320,18 @@ class Setup:
             if digest(launcher) != digest(target):
                 raise ValueError('Maintenance launcher changed during copy')
             maintenance = {'launcher': identifier, 'sha256': digest(target), 'shortcutSha256': '0' * 64}
-        return self._activate(identifier, release, browsers, previous, maintenance)
+        extension_record=old_extension=extension_change=None
+        if extension is not None:
+            extension_record,old_extension,extension_change=self.extensions.prepare(extension,release,previous.get('extension'),adopt_extension,confirm_adoption)
+        return self._activate(identifier, release, browsers, previous, maintenance,extension_record,old_extension,extension_change)
 
     @serialized
-    def repair(self, payload, *, allow_prototype=False, launcher=None):
+    def repair(self, payload, *, allow_prototype=False, launcher=None, extension=None):
         self.recover()
         state = self.state()
         if not state:
             raise ValueError('No installation to repair')
-        return self.install(payload, state['release'], state['browsers'], allow_prototype=allow_prototype, launcher=launcher)
+        return self.install(payload, state['release'], state['browsers'], allow_prototype=allow_prototype, launcher=launcher,extension=extension)
 
     @serialized
     def rollback(self):
@@ -306,7 +339,11 @@ class Setup:
         state = self.state()
         if not state or not state.get('previous'):
             raise ValueError('No previous runtime to restore')
-        return self._activate(state['previous'], state.get('previousRelease') or state['release'], state['browsers'], state, state.get('previousMaintenance'))
+        if state.get('extension') and not state.get('previousExtension'):raise ValueError('No compatible previous extension/helper pair is available')
+        if state.get('previousExtension'):
+            from cueflora_host.updates import version
+            if version(state['previousExtension']['version']) < (0,2,0):raise ValueError('Rollback to 0.1.x cannot safely read 0.2 account settings. The recoverable files are preserved; downgrade refused.')
+        return self._activate(state['previous'], state.get('previousRelease') or state['release'], state['browsers'], state, state.get('previousMaintenance'),state.get('previousExtension'))
 
     @serialized
     def uninstall(self):
@@ -332,8 +369,10 @@ class Setup:
              'pointer': self.registration.read_pointer(browser)} for browser, path in targets]}
         if state.get('maintenance'):
             _, _, journal['maintenance'] = self.maintenance.prepare(state['maintenance'], None, None)
+        if state.get('extension'):journal['extension']=self.extensions.change(None,state['extension'])
         atomic_json(self.root / 'pending-activation.json', journal)
         try:
+            if 'extension' in journal:self.extensions.apply(journal['extension'])
             for browser, path in targets:
                 self.registration.write_pointer(browser, None)
                 path.unlink(missing_ok=True)
@@ -343,7 +382,9 @@ class Setup:
             versions = self.root / 'versions'
             self._rename_owned_directory(versions, removed)
             atomic_json(self.state_path, {**state, 'current': None, 'previous': None, 'browsers': [],
-                                         'maintenance': None, 'previousMaintenance': None, 'removedTo': str(removed)})
+                                         'maintenance': None, 'previousMaintenance': None, 'removedTo': str(removed),
+                                         'extension':None,'previousExtension':None,
+                                         'removedExtensionTo':journal.get('extension',{}).get('backup')})
         except Exception:
             if 'removed' in locals() and removed.exists() and not (self.root / 'versions').exists():
                 self._rename_owned_directory(removed, self.root / 'versions')

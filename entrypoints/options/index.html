@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CueFlora setup</title></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="manifest.open_in_tab" content="true"><title>CueFlora settings</title></head>
 <body><main id="setup"><header><img src="/icon/128.png" alt="" width="48" height="48"><div><h1>CueFlora</h1><p>AI Subtitles &amp; Translation for YouTube</p></div></header>
 <p id="setup-progress" role="status">Loading setup…</p>
+<nav class="setup-nav" aria-label="Settings sections"><button type="button" data-next="1">Helper</button><button type="button" data-next="2">AI connections</button><button type="button" data-next="3">Languages</button><a href="#updates">Updates</a><a href="#diagnostics">Debugging</a></nav>
 <section data-step="1"><h2>1. Connect the helper</h2><p>The helper downloads and prepares audio and connects to your chosen AI services. It runs only when needed.</p>
 <p id="helper-install-guidance">Run <strong>CueFlora Setup.exe</strong> from the preview package, select Chrome, then Install. Python and audio tools are included. Substrata is a separate installation.</p>
 <button id="health" type="button">Check helper connection</button><p id="health-status" role="status" aria-live="polite"></p>
@@ -9,9 +10,10 @@
 <button type="button" data-next="2">Next: AI connections</button></section>
 <section data-step="2" hidden><h2>2. Connect your AI services</h2><p>Choose hosted or existing local services independently for each stage. Neither is preselected. Hosted providers may charge for API use; local services must already be running.</p>
 <p>Transcription needs a compatible <code>/audio/transcriptions</code> API. Translation needs <code>/chat/completions</code> with structured JSON output. Ollama alone is not a transcription service.</p>
-<p>Enter the API base address supplied by your service, not the individual operation URL. Successfully saved keys are encrypted using Windows user protection and sent only to the service you configure. Existing saved keys are never displayed. A migration warning means an older key still needs protection. Windows protection does not defend against malware running as your Windows user.</p>
+<p>For each stage, enter your service's API address, optional access key and exact model ID. Save explicitly; active Runs keep their current settings.</p>
+<details><summary>Saved keys and privacy</summary><p>Keys use Windows user protection and are sent only to the configured service. Existing saved keys are never displayed. A migration warning means an older key still needs protection. This does not defend against malware running as your Windows user.</p></details>
 <details><summary>What information do I need?</summary><p>Ask your service provider or local-service administrator for its API base address, the exact model name, and an API key if authentication is required. A website login or subscription is not necessarily API access. CueFlora does not choose a provider, buy API access, install models, or start local services.</p><p>Model discovery is optional and checks metadata only. If it is unavailable, you can still enter the model name yourself. Only Run on YouTube requests transcription or translation.</p></details>
-<form id="providers"></form><button id="save" type="button">Save AI settings</button> <button id="cancel" type="button">Cancel edits</button>
+<form id="providers"></form><div class="save-actions"><button id="save" class="primary" type="button">Save AI settings</button> <button id="cancel" type="button">Cancel edits</button></div>
 <p>Save AI settings before continuing. You can leave either stage unconfigured and use available YouTube captions instead.</p>
 <button type="button" data-next="1">Back</button> <button type="button" data-next="3">Next / Postpone AI setup</button></section>
 <section data-step="3" hidden><h2>3. Choose your languages</h2>

@@ -12,18 +12,21 @@ import time
 from urllib.parse import urlparse
 
 import httpx
+from .failures import OperationFailure, http_failure
 
 
 class TranslationError(RuntimeError):
     """Structured native error returned to the TypeScript recovery owner."""
 
     def __init__(
-        self, message, kind="protocol", finish_reason=None, diagnostics=None
+        self, message, kind="protocol", finish_reason=None, diagnostics=None, http_status=None
     ):
         super().__init__(message)
         self.kind = kind
         self.finish_reason = finish_reason
         self.diagnostics = diagnostics or {}
+        self.failure = http_failure('translation', http_status).detail if http_status is not None else OperationFailure(
+            'translation', 'network' if kind == 'network' else 'provider-auth' if kind == 'auth' else 'invalid-response').detail
 
 
 def _log(msg):
@@ -240,6 +243,7 @@ def translate(cues, system_prompt, api_key, base_url, model, on_progress=None, c
         raise TranslationError(
             f"LLM API returned HTTP {response.status_code}",
             kind=kind,
+            http_status=response.status_code,
             diagnostics={
                 "requestedOutputTokens": max_tokens,
                 "durationMs": duration_ms,

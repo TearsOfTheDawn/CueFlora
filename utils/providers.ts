@@ -4,6 +4,8 @@ import { validCredential, type ProtectedCredential, type CredentialStage, type K
 import { transportPolicy, type TransportPolicy } from './releasePolicy';
 
 export interface Provider {
+    backend?: 'api' | 'chatgpt';
+    accountRef?: string;
     label: string;
     model: string;
     baseUrl: string;
@@ -39,6 +41,13 @@ export const providerDefaults = (): ProviderSettings => ({
 export function validateProvider(value: unknown, policy: TransportPolicy = transportPolicy): Provider {
     if (!value || typeof value !== 'object') throw Error('Invalid provider settings.');
     const p = value as Record<string, unknown>;
+    if (p.backend !== undefined && p.backend !== 'api' && p.backend !== 'chatgpt') throw Error('Unsupported translation backend.');
+    if (p.backend === 'chatgpt') {
+        if (typeof p.accountRef !== 'string' || !/^[a-f0-9-]{36}$/.test(p.accountRef) ||
+            typeof p.model !== 'string' || !/^[\w.:/\-]{1,200}$/.test(p.model) || p.apiKey || p.baseUrl || p.credentialId)
+            throw Error('Choose a connected ChatGPT account and an eligible model.');
+        return {backend:'chatgpt',accountRef:p.accountRef,label:'Using ChatGPT plan',model:p.model,baseUrl:'',apiKey:'',allowRemoteHttp:false};
+    }
     for (const key of ['label', 'model', 'baseUrl', 'apiKey']) {
         if (typeof p[key] !== 'string' || (p[key] as string).length > (key === 'apiKey' ? 8192 : 2048)) throw Error('Invalid provider field.');
     }
@@ -56,7 +65,7 @@ export function validateProvider(value: unknown, policy: TransportPolicy = trans
         baseUrl: url.href.replace(/\/+$/, ''), apiKey: p.apiKey as string, allowRemoteHttp: p.allowRemoteHttp === true,
         ...(p.connectionKind === 'hosted' || p.connectionKind === 'local' ? { connectionKind: p.connectionKind } : {}) };
 }
-export const providerConfigured = (provider: Provider) => !!provider.baseUrl && !!provider.model;
+export const providerConfigured = (provider: Provider) => provider.backend === 'chatgpt' ? !!provider.accountRef && !!provider.model : !!provider.baseUrl && !!provider.model;
 export function providerSummary(settings: ProviderSettings): ProviderSummary {
     const summary = (provider: Provider) => ({ label: providerConfigured(provider) ? provider.label : 'Not configured',
         model: provider.model, configured: providerConfigured(provider) });
@@ -66,7 +75,9 @@ export function providerSummary(settings: ProviderSettings): ProviderSummary {
 
 /** Opaque cache identity; raw endpoints and keys never enter player messages. */
 export async function providerSummaryWithIdentity(settings: ProviderSettings): Promise<ProviderSummary> {
-    const identity = (provider: Provider) => providerConfigured(provider) ? sha256({ endpoint: provider.baseUrl.replace(/\/+$/, ''), model: provider.model }) : Promise.resolve('');
+    const identity = (provider: Provider) => providerConfigured(provider) ? sha256(provider.backend === 'chatgpt'
+        ? { backend:'chatgpt', account:provider.accountRef, model:provider.model }
+        : { endpoint: provider.baseUrl.replace(/\/+$/, ''), model: provider.model }) : Promise.resolve('');
     const [transcription, translation] = await Promise.all([identity(settings.transcription), identity(settings.translation)]);
     return { ...providerSummary(settings), cacheIdentities: { transcription, translation } };
 }
@@ -81,7 +92,7 @@ export function createProviderService(storage: {
     get: (keys: string | string[]) => Promise<Record<string, unknown>>;
     set: (items: Record<string, unknown>) => Promise<void>;
     remove?: (key: string) => Promise<void>;
-}, options: { protect?: Protector; retain?: () => Promise<string[]>; policy?: TransportPolicy } = {}) {
+}, options: { protect?: Protector; retain?: () => Promise<string[]>; policy?: TransportPolicy; validateAccount?:(ref:string,model:string)=>Promise<void> } = {}) {
     let queue: Promise<unknown> = Promise.resolve();
     const serial = <T>(work: () => Promise<T>): Promise<T> => {
         const result = queue.then(work); queue = result.catch(() => {}); return result;
@@ -95,6 +106,7 @@ export function createProviderService(storage: {
             const settings = providerDefaults(); settings.revision = record.revision;
             for (const stage of ['transcription', 'translation'] as const) {
                 const item = record[stage];
+                if (stage === 'transcription' && item?.backend === 'chatgpt') throw Error('ChatGPT plan does not support transcription.');
                 if (!item || 'apiKey' in item || (item.credentialId !== undefined && !record.vault[item.credentialId])) throw Error('Invalid protected provider reference.');
                 settings[stage] = { ...validateProvider({...item, apiKey:''}, 'preview'),
                     ...(item.credentialId ? {credentialId:item.credentialId} : {}), keySaved:!!item.credentialId };
@@ -152,6 +164,14 @@ export function createProviderService(storage: {
     };
     const prepare = async (input: Provider, stage: CredentialStage, previous: Provider, vault: Record<string, ProtectedCredential>, seal: boolean) => {
         const provider = validateProvider(input, options.policy ?? transportPolicy);
+        if (provider.backend === 'chatgpt') {
+            if (stage !== 'translation') throw Error('ChatGPT plan does not support transcription.');
+            if(seal && (previous.backend!=='chatgpt'||previous.accountRef!==provider.accountRef||previous.model!==provider.model)) {
+                if(!options.validateAccount)throw Error('ChatGPT account validation unavailable. Reconnect in settings.');
+                await options.validateAccount(provider.accountRef!,provider.model);
+            }
+            return provider;
+        }
         const action = input.keyAction ?? (input.apiKey ? 'replace' : 'keep');
         if (!['keep','replace','remove'].includes(action) || (action !== 'replace' && !!input.apiKey)) throw Error('Invalid API key action.');
         if (!providerConfigured(provider) || action === 'remove') return {...provider, apiKey:'', keySaved:false};

@@ -101,7 +101,10 @@ export interface ProgressMessage {
 }
 
 export type ExtensionMessage =
+  | {type:'DIAGNOSTICS_GET'}
   | PingMessage
+  | AccountMessage
+  | UpdateMessage
   | import('./credentials').ProtectCredentialMessage
   | import('./credentials').MigrateCredentialsMessage
   | OnboardingFinishMessage
@@ -109,6 +112,18 @@ export type ExtensionMessage =
   | TranslateMessage
   | CapturePresentationMessage
   | ProgressMessage;
+
+/** Options-origin only; no tokens, URLs or executable paths are client fields. */
+export type AccountMessage =
+  | {type:'CHATGPT_LOGIN';accountRef?:string}
+  | {type:'CHATGPT_STATUS'}
+  | {type:'CHATGPT_MODELS'|'CHATGPT_DISCONNECT'|'CHATGPT_ACK_USAGE';accountRef:string}
+  | {type:'TASK_STATUS'|'TASK_CANCEL';taskId:string};
+export type UpdateMessage =
+  | {type:'UPDATES_CHECK'|'UPDATES_STATUS'}
+  | {type:'UPDATES_DOWNLOAD';selectionRef:string}
+  | {type:'UPDATES_INSTALL';selectionRef:string;confirmation:'install'}
+  | {type:'RESTART_CUEFLORA';version:string;confirmation:'restart'};
 
 export interface WhisperConfig {
   apiKey: string;
@@ -127,6 +142,7 @@ export interface TranslateConfig {
 }
 
 export interface NativeTranscribeResult {
+  failure?: import('./failureDiagnostics').SafeFailure;
   jobId?: string;
   cues?: Cue[];
   error?: string;
@@ -134,6 +150,7 @@ export interface NativeTranscribeResult {
 }
 
 export interface NativeTranslateResult {
+  failure?: import('./failureDiagnostics').SafeFailure;
   evidence?: EvidenceDiagnostics;
   jobId?: string;
   translations?: unknown[];

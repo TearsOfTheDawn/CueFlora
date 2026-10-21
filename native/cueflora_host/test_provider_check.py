@@ -19,7 +19,7 @@ class ProviderCheckTests(unittest.TestCase):
 
     def test_hosted_metadata_only_with_key(self):
         result, calls = self.request(httpx.Response(200, json={'data': [{'id': 'b'}, {'id': 'a'}, {'id': 'a'}]}))
-        self.assertEqual(result, {'requestId': 'check-1', 'status': 'connected', 'reason': 'ok', 'models': ['a','b']})
+        self.assertEqual(result, {'requestId': 'check-1', 'status': 'connected', 'reason': 'ok', 'models': ['a','b'], 'reachable':True, 'partial':False, 'modelListAvailable':True, 'generationCompatibility':'unverified'})
         self.assertEqual([request.method for request in calls], ['GET'])
         self.assertEqual(str(calls[0].url), 'https://fixture.invalid/v1/models')
         self.assertEqual(calls[0].headers['Authorization'], 'Bearer private-test-key')
@@ -41,7 +41,7 @@ class ProviderCheckTests(unittest.TestCase):
                          httpx.Response(200, json={'data': [{'id': 'private-test-key'}]})]:
             result, _ = self.request(response)
             self.assertEqual(result['reason'], 'invalid-response')
-        for response in [httpx.Response(200, content=b'x'*262145), httpx.Response(200, json={'data':[{'id':'model'}]*501})]:
+        for response in [httpx.Response(200, content=b'x'*(4*1024*1024+1))]:
             result, _ = self.request(response)
             self.assertEqual(result['reason'], 'oversized')
 
@@ -50,6 +50,24 @@ class ProviderCheckTests(unittest.TestCase):
             result, calls = self.request(httpx.Response(200), {'baseUrl': base})
             self.assertEqual(result['status'], 'unavailable')
             self.assertEqual(calls, [])
+
+    def test_large_valid_and_partial_lists_are_not_authentication_failures(self):
+        result,calls=self.request(httpx.Response(200,json={'data':[{'id':'model-'+str(index),'description':'x'*600} for index in range(600)]}))
+        self.assertEqual(result['status'],'connected');self.assertTrue(result['partial']);self.assertEqual(len(result['models']),500)
+        self.assertEqual(len(calls),1)
+
+    def test_openrouter_stage_specific_catalogue_and_translation_metadata(self):
+        for stage in ('transcription','translation'):
+            calls=[]
+            def handler(request):
+                calls.append(request)
+                return httpx.Response(200,json={'data':[{'id':'text-model','architecture':{'input_modalities':['text'],'output_modalities':['text']},'supported_parameters':['response_format']},
+                    {'id':'image-model','architecture':{'output_modalities':['image']}}]})
+            client=httpx.Client(transport=httpx.MockTransport(handler))
+            with patch('cueflora_host.provider_check.httpx.Client',return_value=client):
+                result=check_provider({'requestId':'stage-check','stage':stage,'provider':{'baseUrl':'https://openrouter.ai/api/v1'}})
+            self.assertEqual(str(calls[0].url),'https://openrouter.ai/api/v1/models'+('?output_modalities=transcription' if stage=='transcription' else ''))
+            if stage=='translation':self.assertEqual(result['models'],['text-model'])
 
     def test_network_error_is_redacted(self):
         with patch('cueflora_host.provider_check.httpx.Client', side_effect=httpx.ConnectError('private-test-key https://secret.invalid')):

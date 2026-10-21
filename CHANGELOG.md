@@ -2,6 +2,22 @@
 
 User-facing changes for published CueFlora releases, newest first. Unpublished development builds are not listed as public releases.
 
+## [0.2.1](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.1) — 2026-10-21
+
+### Fixes and improvements
+
+- Updated the bundled HTTPS certificate store to certifi 2026.10.19, addressing GHSA-6q48-6c7w-9gw2. The helper, Setup and downloader use the fixed, hash-pinned upstream bundle; TLS verification remains enabled.
+- Fixed GitHub update checks being rejected with HTTP 415: JSON metadata and binary downloads now use the correct separate request headers.
+- Transcription and translation failures now retain privacy-safe stages, reason codes and HTTP status instead of treating every protected-key request failure as a key problem.
+- Added user-triggered **Debugging & support → Collect debug report → Copy report**. Reports contain versions, tool health and at most 20 recent failure codes, never credentials, service addresses, models, video IDs, subtitle text or raw provider responses. Browser-session memory preserves history across worker sleep; extension reload/update or browser restart clears it. Failed retention is reported without failing subtitle generation.
+- Settings open in a full browser tab, with responsive provider cards, simpler navigation and compact saved-key controls. Save/Cancel, drafts and explicit Run are retained.
+
+### Upgrade and limitations
+
+0.2.0's broken update check cannot fetch this first repair automatically. Download 0.2.1's matching Setup manually, confirm Install / Upgrade, then click CueFlora **Reload** at `chrome://extensions` and reload YouTube tabs. Do not remove/reinstall the extension. Existing 0.1.13 users still follow the one-time folder-adoption steps below.
+
+This patch improves diagnosis; it does not claim to resolve the original, still-unrecovered provider transcription failure or change subtitle/audio processing. No paid AI request or live installation is part of its automated verification. Visual and live-browser acceptance remain separate. The release URL and publication receipt, not this dated entry alone, establish publication.
+
 ## [0.2.0](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.0) — 2026-10-19
 
 ### New features

@@ -13,6 +13,7 @@ import time
 import unicodedata
 
 import httpx
+from .failures import OperationFailure, http_failure
 
 WHISPER_FORMATS = {"flac", "mp3", "mp4", "mpeg", "mpga", "m4a", "ogg", "wav", "webm"}
 
@@ -1337,7 +1338,18 @@ def _split_into_chunks(audio_path, chunk_length_s, overlap_s, output_dir):
     return chunks
 
 
-def _post_transcription(upload_path, url, headers, params, mime, max_attempts, capture=None, upload_filename=None):
+class _ProgressUpload:
+    """Report multipart body consumption without changing its bytes or retry policy."""
+    def __init__(self,stream,complete):self.stream=stream;self.complete=complete;self.notified=False
+    def __getattr__(self,name):return getattr(self.stream,name)
+    def read(self,size=-1):
+        data=self.stream.read(size)
+        if not self.notified and self.stream.tell()>=os.fstat(self.stream.fileno()).st_size:
+            self.notified=True;self.complete()
+        return data
+
+
+def _post_transcription(upload_path, url, headers, params, mime, max_attempts, capture=None, upload_filename=None,on_progress=None):
     """Upload one file to the transcription endpoint with retry logic."""
     last_error = None
     upload = capture.preserve("upload", upload_path) if capture else None
@@ -1345,7 +1357,9 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
         started = time.monotonic()
         try:
             with open(upload_path, "rb") as f:
-                files = {"file": (upload_filename or os.path.basename(upload_path), f, mime)}
+                if on_progress:on_progress('upload','Uploading audio…')
+                upload_stream=_ProgressUpload(f,lambda:on_progress('transcribe','Waiting for transcription…')) if on_progress else f
+                files = {"file": (upload_filename or os.path.basename(upload_path), upload_stream, mime)}
                 with httpx.Client(timeout=300.0) as client:
                     resp = client.post(
                         url,
@@ -1358,6 +1372,7 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
                 capture.record("asr-attempt", {"upload": upload, "params": params,
                     "mime": mime, "attempt": attempt, "status": "transport-error"})
             last_error = f"attempt {attempt}: {type(e).__name__}"
+            last_failure = OperationFailure('upload', 'timeout' if isinstance(e, httpx.TimeoutException) else 'network')
             print(f"  {last_error}", file=sys.stderr)
             if attempt < max_attempts:
                 time.sleep(2)
@@ -1369,6 +1384,7 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
                 "durationMs": round((time.monotonic() - started) * 1000),
                 "response": resp.json() if resp.status_code == 200 else None})
         if resp.status_code >= 500:
+            last_failure = http_failure('transcription', resp.status_code)
             last_error = (
                 f"attempt {attempt}: HTTP {resp.status_code}"
             )
@@ -1378,15 +1394,13 @@ def _post_transcription(upload_path, url, headers, params, mime, max_attempts, c
             continue
 
         if resp.status_code != 200:
-            raise RuntimeError(f"Whisper API HTTP {resp.status_code}")
+            raise http_failure('transcription', resp.status_code)
 
         result = resp.json()
         print("  ASR response received", file=sys.stderr)
         return result
 
-    raise RuntimeError(
-        f"Whisper API upload failed after {max_attempts} attempts: {last_error}"
-    )
+    raise last_failure if last_error is not None else OperationFailure('upload', 'unknown')
 
 
 def _merge_chunk_results(chunk_results):
@@ -1533,6 +1547,7 @@ def _transcribe_one_chunk(
         mime,
         max_attempts,
         capture=capture,
+        on_progress=on_progress,
     )
     _dump_debug_json(
         f"chunk_{chunk_index:04d}_raw.json",
@@ -1724,7 +1739,7 @@ def transcribe(
             f"Uploading {file_mb:.1f} MB {ext} to {model}...",
         )
         result = _post_transcription(
-            upload_path, url, headers, params, mime, max_attempts, capture=capture
+            upload_path, url, headers, params, mime, max_attempts, capture=capture,on_progress=on_progress
         )
         _dump_debug_json(
             "single_raw.json",

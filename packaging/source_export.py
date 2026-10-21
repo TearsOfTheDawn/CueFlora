@@ -8,7 +8,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORIES = ('.agents', '.github', 'docs', 'entrypoints', 'native', 'packaging', 'public', 'scripts', 'utils')
-ROOT_FILES = ('AGENTS.md','LICENSE.md','README.md','.gitignore','.gitattributes','package.json','package-lock.json',
+ROOT_FILES = ('AGENTS.md','LICENSE.md','README.md','CHANGELOG.md','.gitignore','.gitattributes','package.json','package-lock.json',
     'wxt.config.ts','tsconfig.json','vitest.config.ts','product.json','preview-identity.json')
 SKIP_DIRS = {'__pycache__','.venv','.packaging-venv','node_modules','.git','testdata','artifacts','build','dist','.output','.wxt'}
 SKIP_FILES = {'SOURCE_COPY_BASELINE.json'}

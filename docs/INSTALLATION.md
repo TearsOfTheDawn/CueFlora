@@ -1,5 +1,7 @@
 # CueFlora private preview: install and remove
 
+For the new 0.2 candidate's **single Setup, one-time 0.1.13 folder adoption and later in-app updates**, use [CUEFLORA_020_IMPLEMENTATION.md](CUEFLORA_020_IMPLEMENTATION.md) and its generated `START_HERE.md`. The older preview instructions below remain historical and do not describe ChatGPT support or the new managed extension folder.
+
 **Current release route:** GitHub only; Chrome Store publication is abandoned. This page still describes existing private-preview packages, not a newly rebuilt public release. See [GitHub-only distribution](GITHUB_DISTRIBUTION.md) for the matching unpacked extension/helper route. Historical Store ZIPs must not be substituted for a keyed unpacked extension.
 
 This guide is only for development-identity private previews. Public-identity candidates must use their own generated `START_HERE.md` and matching `Chrome-acceptance` folder; do not mix identities/helpers or treat an older package as updated by source changes. Public release remains gated by the current candidate's reports and [launch checklist](PUBLIC_LAUNCH_CHECKLIST.md).

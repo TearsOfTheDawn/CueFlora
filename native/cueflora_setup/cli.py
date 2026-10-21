@@ -16,6 +16,9 @@ def main(argv=None):
     parser.add_argument('action', choices=['detect', 'status', 'self-check', 'validate-package', 'terms', 'install', 'repair', 'rollback', 'uninstall'])
     parser.add_argument('--payload', type=Path)
     parser.add_argument('--release', type=Path)
+    parser.add_argument('--extension',type=Path)
+    parser.add_argument('--adopt-extension',type=Path,help='Exact currently loaded CueFlora extension folder, never a Chrome profile')
+    parser.add_argument('--confirm-adoption',action='store_true',help='Explicitly permit validated extension-folder adoption with recoverable backup')
     parser.add_argument('--browser', action='append', choices=['chrome', 'firefox'], default=[])
     parser.add_argument('--apply', action='store_true')
     parser.add_argument('--report', type=Path, help='Write JSON without requiring a console')
@@ -39,6 +42,9 @@ def main(argv=None):
         metadata = verify_bundle(payload)
         validate_package(payload, release, metadata, list(release['extensionIds']))
         result = {'valid': True, 'release': release, 'inventory': metadata, 'liveRegistration': False}
+        if release.get('extensionInventorySha256'):
+            from .extension_pair import verify_extension
+            result['extensionInventory']=verify_extension(args.extension or root/'extension',release['extensionInventorySha256'])[0]
     elif args.action == 'detect':
         result = {'detected': detected_browsers(), 'certified': False}
     elif args.action == 'status':
@@ -55,15 +61,18 @@ def main(argv=None):
         if set(args.browser) - set(detected_browsers()):
             parser.error('Only supported detected browsers can be registered')
         release = json.loads(args.release.read_text(encoding='utf-8'))
+        extension=args.extension or (distribution_root()/'extension' if getattr(sys,'frozen',False) and release.get('extensionInventorySha256') else None)
         result = setup.install(args.payload, release, args.browser, allow_prototype=args.allow_prototype,
-                               launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None)
+                               launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None,
+                               extension=extension,adopt_extension=args.adopt_extension,confirm_adoption=args.confirm_adoption)
     elif args.action == 'repair':
         if getattr(sys, 'frozen', False):
             args.payload = args.payload or distribution_root() / 'runtime'
         if not args.payload:
             parser.error('repair requires --payload')
         result = setup.repair(args.payload, allow_prototype=args.allow_prototype,
-                              launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None)
+                              launcher=Path(sys.executable) if getattr(sys, 'frozen', False) else None,
+                              extension=args.extension or (distribution_root()/'extension' if (distribution_root()/'extension').is_dir() else None))
     elif args.action == 'rollback':
         result = setup.rollback()
     else:

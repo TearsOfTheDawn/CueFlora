@@ -8,8 +8,11 @@ import struct
 import subprocess
 import sys
 import threading
+import queue
+import time
 from pathlib import Path
 from .runtime_tools import packaged_tool, download_runtime_options, download_process_environment
+from .owned_process import OwnedProcess
 
 # We need a lock-free way to send progress while stdout is used for
 # native-messaging frames.  _real_stdout is captured before any redirect.
@@ -21,9 +24,11 @@ def _send_on_real_stdout(obj):
     if _real_stdout is None:
         return
     encoded = json.dumps(obj).encode("utf-8")
-    _real_stdout.buffer.write(struct.pack("<I", len(encoded)))
-    _real_stdout.buffer.write(encoded)
-    _real_stdout.buffer.flush()
+    from . import _write_lock
+    with _write_lock:
+        _real_stdout.buffer.write(struct.pack("<I", len(encoded)))
+        _real_stdout.buffer.write(encoded)
+        _real_stdout.buffer.flush()
 
 
 _PROGRESS_RE = re.compile(
@@ -132,7 +137,66 @@ def _stream_progress(pipe, job_id=None, stderr_tail=None):
             )
 
 
-def download_audio(video_id, tmp_dir, job_id=None, capture=None):
+def _consume_download(owned, job_id, cancel=None, inactivity=300, overall=3600, clock=time.monotonic):
+    """Drain both pipes concurrently. Log spam is not download progress."""
+    events = queue.Queue(maxsize=128)
+    def pump(name, pipe):
+        try:
+            while True:
+                line = pipe.readline(262145)
+                if not line: break
+                events.put((name, line))
+        finally:
+            pipe.close(); events.put((name, None))
+    workers = [threading.Thread(target=pump, args=(name, pipe), daemon=True)
+               for name, pipe in [('stdout', owned.process.stdout), ('stderr', owned.process.stderr)]]
+    for worker in workers: worker.start()
+    started = last_progress = clock(); previous_bytes = -1; ended = set(); stdout = []; size = 0; tail = []
+    try:
+        while len(ended) < 2 or owned.process.poll() is None:
+            now = clock()
+            if cancel is not None and cancel.is_set(): raise RuntimeError('Audio download cancelled')
+            if now - started >= overall: raise RuntimeError('Audio download exceeded the 60-minute limit')
+            if now - last_progress >= inactivity: raise RuntimeError('Audio download made no progress for five minutes. Retry the Run.')
+            try: name, raw = events.get(timeout=0.2)
+            except queue.Empty: continue
+            if raw is None: ended.add(name); continue
+            if len(raw) > 262144: raise RuntimeError('Invalid oversized downloader output')
+            line = raw.decode('utf-8', errors='replace').strip()
+            if line.startswith('cueflora_progress:'):
+                try:
+                    received,total,speed=line.split(':',1)[1].split('|');received=int(received)
+                    if received>previous_bytes:previous_bytes=received;last_progress=now
+                    progress={'type':'progress','jobId':job_id,'stage':'download'}
+                    try:
+                        total=float(total)
+                        if total>0:progress['percent']=round(min(100,max(0,received*100/total)),1)
+                    except ValueError:pass
+                    try:
+                        speed=float(speed)
+                        if 0<=speed<10**12:progress['speed']=f'{speed/1024:.0f} KiB/s'
+                    except ValueError:pass
+                    _send_on_real_stdout(progress)
+                except ValueError:pass
+            elif name == 'stdout':
+                size += len(raw)
+                if size > 2 * 1024 * 1024: raise RuntimeError('Downloader output exceeded its limit')
+                stdout.append(line)
+            else:
+                tail.append(re.sub(r'https?://\S+', '[media URL]', line)[-500:]); del tail[:-20]
+        if owned.process.returncode:
+            raise RuntimeError(f'yt-dlp exited with code {owned.process.returncode}: ' + ' | '.join(tail[-3:]))
+        return stdout
+    finally:
+        owned.close()
+        # Drain any queued items so pipe readers can exit after cancellation.
+        for _ in range(256):
+            try: events.get_nowait()
+            except queue.Empty: break
+        for worker in workers: worker.join(timeout=1)
+
+
+def download_audio(video_id, tmp_dir, job_id=None, capture=None, cancel=None):
     """Download cheapest audio-only stream via yt-dlp CLI."""
     global _real_stdout
     _real_stdout = sys.stdout
@@ -150,8 +214,12 @@ def download_audio(video_id, tmp_dir, job_id=None, capture=None):
         "--no-playlist",
         "--no-warnings",
         "--newline",  # one progress line per update (no \r)
+        "--progress",
+        "--progress-template", "download:cueflora_progress:%(progress.downloaded_bytes)s|%(progress.total_bytes,progress.total_bytes_estimate)s|%(progress.speed)s",
+        "--socket-timeout", "30", "--retries", "3", "--fragment-retries", "3", "--extractor-retries", "2",
+        "--abort-on-unavailable-fragments",
         "--print",
-        "after_move:filepath",  # print final path to stdout
+        "after_move:cueflora_filepath:%(filepath)j",  # dedicated JSON path marker, never a progress/log line
         url,
     ]
     cmd[1:1] = download_runtime_options()
@@ -171,7 +239,7 @@ def download_audio(video_id, tmp_dir, job_id=None, capture=None):
         capture.record("download-tool", {"version": version, "selection": "worstaudio"})
 
     try:
-        proc = subprocess.Popen(
+        owned = OwnedProcess(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -183,30 +251,20 @@ def download_audio(video_id, tmp_dir, job_id=None, capture=None):
             "its shebang interpreter, or set YT_DLP_PATH to a working binary."
         ) from e
 
-    # Stream progress from stderr in a background thread
-    stderr_tail = []
-    progress_thread = threading.Thread(
-        target=_stream_progress, args=(proc.stderr, job_id, stderr_tail), daemon=True
-    )
-    progress_thread.start()
-
-    stdout_data = proc.stdout.read()
-    proc.wait()
-    progress_thread.join(timeout=5)
-
-    if proc.returncode != 0:
-        detail = " | ".join(stderr_tail[-3:]) if stderr_tail else "no stderr output"
-        raise RuntimeError(f"yt-dlp exited with code {proc.returncode}: {detail}")
-
-    lines = stdout_data.decode("utf-8").strip().splitlines()
+    _send_on_real_stdout({'type':'progress', 'jobId':job_id, 'stage':'download', 'message':'Connecting to YouTube…'})
+    lines = _consume_download(owned, job_id, cancel)
     if capture:
         for line in lines:
             if line.startswith("cueflora_metadata:"):
                 capture.record_lazy("source-metadata", lambda line=line: json.loads(line.split(":", 1)[1]))
         lines = [line for line in lines if not line.startswith("cueflora_metadata:")]
-    if not lines:
+    paths=[line.split(':',1)[1] for line in lines if line.startswith('cueflora_filepath:')]
+    if not paths:
         raise RuntimeError("yt-dlp completed without printing an output file")
-    filepath = lines[-1]
+    if len(paths)!=1:raise RuntimeError('yt-dlp returned ambiguous output paths')
+    try:filepath=json.loads(paths[0])
+    except ValueError:raise RuntimeError('yt-dlp returned an invalid output path') from None
+    if not isinstance(filepath,str):raise RuntimeError('yt-dlp returned an invalid output path')
 
     filepath = _validated_download_path(filepath, tmp_dir)
 

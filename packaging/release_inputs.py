@@ -52,6 +52,13 @@ def validate_lock(lock):
     wheels = lock.get('pythonWheels')
     if not isinstance(wheels, list) or not wheels or any(not isinstance(w,dict) or w.get('file') not in {i['file'] for i in files} for w in wheels):
         raise ValueError('Pinned Python wheels required')
+    native=lock.get('wheelNativeFiles',[]);native_names=set()
+    if not isinstance(native,list):raise ValueError('Invalid native wheel inventory')
+    for item in native:
+        if not isinstance(item,dict) or set(item)!={'wheel','file','sha256'} or item['wheel'] not in {wheel['file'] for wheel in wheels}:raise ValueError('Invalid native wheel origin')
+        path=PurePosixPath(str(item['file']));identity=(item['wheel'],item['file'])
+        if path.is_absolute() or '..' in path.parts or path.as_posix()!=item['file'] or '\\' in item['file'] or ':' in item['file'] or path.suffix not in ('.pyd','.dll') or identity in native_names or not re.fullmatch('[0-9a-f]{64}',str(item['sha256'])):raise ValueError('Invalid native wheel member')
+        native_names.add(identity)
     if not re.fullmatch(r'\d+\.\d+\.\d+',str(lock.get('pythonVersion',''))):
         raise ValueError('Pinned Python version required')
     interpreter = lock.get('interpreterFiles')
@@ -98,6 +105,9 @@ def obtain_inputs(lock, cache, offline=True, source_audio=False):
         if digest(partial) != item['sha256']:
             raise ValueError('Downloaded input hash mismatch: ' + item['file'])
         partial.rename(path)
+    for item in lock.get('wheelNativeFiles',[]):
+        with zipfile.ZipFile(cache/item['wheel']) as archive:
+            if archive.namelist().count(item['file'])!=1 or hashlib.sha256(archive.read(item['file'])).hexdigest()!=item['sha256']:raise ValueError('Native member does not match its exact wheel origin')
     return cache
 
 

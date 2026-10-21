@@ -15,7 +15,10 @@ def packaged_tool(name):
     """
     if name not in ('yt-dlp', 'ffmpeg', 'ffprobe', 'deno'):
         raise ValueError('Unsupported runtime tool')
-    override = os.environ.get({'yt-dlp': 'YT_DLP_PATH', 'ffmpeg': 'FFMPEG_PATH', 'ffprobe': 'FFPROBE_PATH', 'deno': 'DENO_PATH'}[name])
+    variable = {'yt-dlp': 'YT_DLP_PATH', 'ffmpeg': 'FFMPEG_PATH', 'ffprobe': 'FFPROBE_PATH', 'deno': 'DENO_PATH'}[name]
+    override = os.environ.get('CUEFLORA_DEV_' + variable)
+    if not getattr(sys, 'frozen', False):
+        override = override or os.environ.get(variable)
     if override:
         candidate = Path(override)
         if not candidate.is_absolute() or not candidate.is_file():
@@ -66,7 +69,7 @@ def download_process_environment():
 def download_runtime_options():
     # Frozen releases ignore unrelated user configuration/plugins and never
     # fetch EJS components. The solver is included inside the pinned yt-dlp EXE.
-    if getattr(sys, 'frozen', False) or os.environ.get('DENO_PATH'):
+    if getattr(sys, 'frozen', False) or os.environ.get('CUEFLORA_DEV_DENO_PATH') or os.environ.get('DENO_PATH'):
         return ['--ignore-config', '--no-plugin-dirs', '--no-remote-components',
                 '--no-js-runtimes', '--js-runtimes', 'deno:' + resolve_deno()]
     return ['--no-remote-components']

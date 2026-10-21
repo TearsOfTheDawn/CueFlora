@@ -29,7 +29,8 @@ def verify(cache, output):
     environment.pop('CUEFLORA_BUILD_PROFILE',None)
     # A clean-source check must not import private modules or enable captures.
     for name in ('PYTHONPATH','PYTHONHOME','PYTHONSTARTUP','PYTHONUSERBASE','NODE_PATH','NODE_OPTIONS',
-            'CUEFLORA_PROVIDER_CONFIG','CUEFLORA_EVIDENCE_DIR','YT_DLP_PATH','FFMPEG_PATH','FFPROBE_PATH','DENO_PATH'):
+            'CUEFLORA_PROVIDER_CONFIG','CUEFLORA_EVIDENCE_DIR','YT_DLP_PATH','FFMPEG_PATH','FFPROBE_PATH','DENO_PATH',
+            'CUEFLORA_DEV_YT_DLP_PATH','CUEFLORA_DEV_FFMPEG_PATH','CUEFLORA_DEV_FFPROBE_PATH','CUEFLORA_DEV_DENO_PATH'):
         environment.pop(name,None)
     environment['PYTHONNOUSERSITE'] = '1'
     npm = ['cmd.exe','/d','/c','npm'] if os.name=='nt' else ['npm']
@@ -38,6 +39,7 @@ def verify(cache, output):
     checks += [('native',[sys.executable,'-m','unittest','cueflora_setup.test_setup','cueflora_setup.test_maintenance','cueflora_host.test_credentials',
         'cueflora_host.test_provider_check','cueflora_host.test_deno','cueflora_host.test_runtime_tools','cueflora_host.test_controlled_evidence',
         'cueflora_host.test_audio_preparation','cueflora_host.test_translate','cueflora_host.test_whisper_regressions','cueflora_host.test_evidence',
+        'cueflora_host.test_chatgpt','cueflora_host.test_updates','cueflora_host.test_update_payload','cueflora_host.test_download_progress','cueflora_setup.test_extension_pair',
         'cueflora_host.test_quality_benchmark','cueflora_host.test_quality_translation','cueflora_host.test_native_protocol'],workspace/'native'),
         ('packaging',[sys.executable,'-m','unittest','discover','-s','packaging','-p','test_*.py'],workspace),
         ('node-release',['node','--test','scripts/release-config.test.mjs'],workspace)]
