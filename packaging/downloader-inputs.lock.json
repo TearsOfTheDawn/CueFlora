@@ -8,7 +8,7 @@
     "url": "https://codeload.github.com/yt-dlp/yt-dlp/zip/refs/tags/2026.08.19",
     "role": "licence-source-evidence"
   },
-  "selection": "Exact tag pin/pin-curl-cffi markers for Windows CPython 3.13, with one explicit urllib3 2.8.0 security override; no optional feature removed",
+  "selection": "Exact tag pin/pin-curl-cffi markers for Windows CPython 3.13, with explicit urllib3 2.8.0 and certifi 2026.10.19 security overrides; no optional feature removed",
   "dependencies": [
     {
       "name": "brotli",
@@ -28,19 +28,31 @@
     },
     {
       "name": "certifi",
-      "version": "2026.7.22",
+      "version": "2026.10.19",
       "wheel": {
-        "file": "certifi-2026.7.22-py3-none-any.whl",
-        "url": "https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl",
-        "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775"
+        "file": "certifi-2026.10.19-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl",
+        "sha256": "42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b"
       },
       "source": {
-        "file": "certifi-2026.7.22.tar.gz",
-        "url": "https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz",
-        "sha256": "741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55"
+        "file": "certifi-2026.10.19.tar.gz",
+        "url": "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz",
+        "sha256": "035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae"
       },
       "declaredLicence": "MPL-2.0",
-      "upstreamWheelHashVerified": true
+      "upstreamWheelHashVerified": false,
+      "securityOverride": {
+        "baselineVersion": "2026.7.22",
+        "advisories": [
+          "https://github.com/certifi/python-certifi/security/advisories/GHSA-6q48-6c7w-9gw2"
+        ],
+        "metadata": {
+          "file": "certifi-2026.10.19.pypi.json",
+          "url": "https://pypi.org/pypi/certifi/2026.10.19/json",
+          "sha256": "81a3ba70b7b8a6c5e1c428dd958ae71b47aaec1d9dffe187c9d737ba21de1351",
+          "bytes": 5513
+        }
+      }
     },
     {
       "name": "cffi",

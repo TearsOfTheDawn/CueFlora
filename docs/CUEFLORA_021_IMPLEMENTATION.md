@@ -4,6 +4,7 @@ Unpublished Windows x64 / Chrome candidate. No live installation, browser automa
 
 ## Changes
 
+- Publication follow-up, 2026-10-21: final advisory checks discovered GHSA-6q48-6c7w-9gw2 after the earlier candidate was frozen. The publisher approved fixing it and then publishing. Current host/Setup/downloader/development locks pin upstream certifi 2026.10.19 with original MPL terms, exact wheel/source hashes and primary metadata. Earlier candidate bytes stay unchanged and are not cleared for release. The generic security-override mechanism now records both certifi and urllib3 against their real upstream baselines; TLS validation is not disabled. New agreement/provenance regressions run in the full packaging suite. Fresh runner hashes/reviews, not the earlier local candidate's report, govern publication.
 - Update metadata uses GitHub JSON Accept; executable assets retain binary Accept. Redirect/size/hash/pair/identity safeguards remain. Already-current checks return no update without creating a selection folder. Native update failures carry safe stage/code/HTTP metadata.
 - Native transcription separates credential/transport, download, preparation, upload and provider failures. Provider errors are classified by HTTP status without returning response bodies. Existing upload retries, 48 kHz mono / 24 kbps audio, normalization, cue timing and eight-request TypeScript translation recovery are unchanged.
 - Translation errors add safe status metadata without changing error kinds, request counts, batching or retry ownership.

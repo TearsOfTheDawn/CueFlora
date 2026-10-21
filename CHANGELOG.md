@@ -6,6 +6,7 @@ User-facing changes for published CueFlora releases, newest first. Unpublished d
 
 ### Fixes and improvements
 
+- Updated the bundled HTTPS certificate store to certifi 2026.10.19, addressing GHSA-6q48-6c7w-9gw2. The helper, Setup and downloader use the fixed, hash-pinned upstream bundle; TLS verification remains enabled.
 - Fixed GitHub update checks being rejected with HTTP 415: JSON metadata and binary downloads now use the correct separate request headers.
 - Transcription and translation failures now retain privacy-safe stages, reason codes and HTTP status instead of treating every protected-key request failure as a key problem.
 - Added user-triggered **Debugging & support → Collect debug report → Copy report**. Reports contain versions, tool health and at most 20 recent failure codes, never credentials, service addresses, models, video IDs, subtitle text or raw provider responses. Browser-session memory preserves history across worker sleep; extension reload/update or browser restart clears it. Failed retention is reported without failing subtitle generation.

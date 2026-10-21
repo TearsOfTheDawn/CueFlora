@@ -18,7 +18,7 @@ class DownloaderSecurityTests(unittest.TestCase):
         self.assertFalse(self.item['upstreamWheelHashVerified'])
         self.assertEqual(self.item['version'],'2.8.0')
         self.assertEqual(self.item['securityOverride']['baselineVersion'],'2.7.0')
-        self.assertEqual(len(security_manifest(self.lock)),1)
+        self.assertEqual(len(security_manifest(self.lock)),2)
         self.assertFalse(self.lock['redistributionApproved'])
         self.assertEqual(len(self.lock['dependencies']),13)
 
@@ -56,6 +56,14 @@ class DownloaderSecurityTests(unittest.TestCase):
 
     def test_old_schema_still_accepts_an_original_upstream_pin_but_not_a_hidden_patch(self):
         legacy=copy.deepcopy(self.lock); legacy['schema']=1
+        certifi=next(item for item in legacy['dependencies'] if item['name']=='certifi')
+        certifi.pop('securityOverride');certifi['upstreamWheelHashVerified']=True;certifi['version']='2026.7.22'
+        certifi['wheel']={'file':'certifi-2026.7.22-py3-none-any.whl',
+            'url':'https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl',
+            'sha256':'62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775'}
+        certifi['source']={'file':'certifi-2026.7.22.tar.gz',
+            'url':'https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz',
+            'sha256':'741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55'}
         item=next(item for item in legacy['dependencies'] if item['name']=='urllib3')
         item.pop('securityOverride'); item['upstreamWheelHashVerified']=True
         item['version']='2.7.0'
@@ -69,6 +77,6 @@ class DownloaderSecurityTests(unittest.TestCase):
         with self.assertRaises(ValueError): validate_lock({**self.lock,'schema':1})
 
     def test_runtime_must_report_exact_patched_version_not_an_old_or_prefixed_variant(self):
-        verify_runtime_overrides(self.lock,{'metadata':['Optional libraries: requests-2.34.2, urllib3-2.8.0']})
+        verify_runtime_overrides(self.lock,{'metadata':['Optional libraries: certifi-2026.10.19, requests-2.34.2, urllib3-2.8.0']})
         for text in ('urllib3-2.7.0','urllib3-2.8.00','urllib3-2.8.0-evil','noturllib3-2.8.0',''):
             with self.subTest(text=text),self.assertRaises(ValueError): verify_runtime_overrides(self.lock,{'metadata':[text]})

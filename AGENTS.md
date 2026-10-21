@@ -36,7 +36,7 @@ The 0.1.13 clean-runner workflow restores `git archive HEAD` bytes before source
 | Extension framework | [WXT](https://wxt.dev/) 0.21.4 / Vite 8.3.4 | Manifest V3, Chrome and Firefox regression builds; no automatic browser launcher |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest 4.1.12 + jsdom, Python unittest | 315 TypeScript tests; 131 native/setup tests (two Windows symlink-privilege skips locally); 191 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
+| Testing | Vitest 4.1.12 + jsdom, Python unittest | 315 TypeScript tests; 131 native/setup tests (two Windows symlink-privilege skips locally); 193 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -331,7 +331,7 @@ Presentation capture additionally requires one translation per source cue and no
 
 #### 0.2 candidate engineering
 
-`docs/CUEFLORA_020_IMPLEMENTATION.md` governs the current source changes. No 0.2 release is published/authorised. Existing 0.1.13 release/tag/assets, Substrata and previous local packages remain separate preservation gates. Fresh preparation reports are authoritative; automated tests do not establish genuine ChatGPT sign-in, live Chrome updating, visuals or semantic subtitle quality.
+`docs/CUEFLORA_021_IMPLEMENTATION.md` governs the current patch. 0.2.0 is published; 0.2.1 has explicit security-fix/publication direction but still needs its fresh exact-candidate gates. Existing releases/assets, Substrata and previous local packages remain separate preservation gates. Fresh preparation reports are authoritative; automated tests do not establish genuine ChatGPT sign-in, live Chrome updating, visuals or semantic subtitle quality.
 
 `runIdentity.ts` supplies a per-document token and SPA generation. Background binding uses `tabs.get` plus a correlated, document-targeted `RUN_DOCUMENT_CHECK` promise response; cached `sender.url` provides origin provenance only. Checks repeat before dispatch/after capability checks/on results. Navigation releases native ports and the full-Run lease. `runLeases.ts` holds a transient `RUN_LEASE` port across logical batches; native `activity.py` uses crash-released OS leases and an exclusive Setup gate. Windows Setup also checks owned installed native process images, covering pre-0.2 helpers. No broad process-name termination or Chrome-profile inspection occurs.
 
@@ -474,7 +474,7 @@ npm run dev              # Chrome (default)
 npm run dev:chrome       # Chrome
 
 # Run tests
-npm test                 # 293 unit tests via Vitest
+npm test                 # 315 unit tests via Vitest; fresh logs are authoritative
 
 # Run native regression tests
 cd native
@@ -726,7 +726,7 @@ python -m cueflora_host.test_whisper path/to/audio.m4a --base-url YOUR_API_BASE 
 
 `CHANGELOG.md` is the user-facing history of public releases. Before each new release, add its dated entry with new features, fixes, upgrade instructions and known limitations, then copy that entry into its GitHub release notes. Keep required Chrome Reload/bootstrap steps prominent; do not invent historical changes or manual acceptance. Changelog/release-note edits do not replace immutable release assets or authorise another release.
 
-On 2026-10-21 the publisher explicitly requested publication of 0.2.1. `candidate-021.yml` builds only `codex/github-build-0.2.1` with read-only permissions, exact committed source restoration and the full pinned preparation/evidence handoff. It does not publish. The local 0.2.1 candidate remains preserved; any runner rebuild has its own hashes and requires fresh artifact-bound review. One-time publishing operations stay outside the built source tree and cannot grant future-release authority. The dated 0.2.1 changelog is copied into release notes; a dated entry alone is not proof of hosting or publication.
+On 2026-10-21 the publisher explicitly requested publication of 0.2.1, then approved fixing newly disclosed security findings before publishing. `candidate-021.yml` builds only `codex/github-build-0.2.1` with read-only permissions, exact committed source restoration and the full pinned preparation/evidence handoff. It does not publish. Earlier local/runner 0.2.1 candidates remain preserved/superseded: their certifi pins predate GHSA-6q48-6c7w-9gw2. Current host/Setup/downloader and native development locks explicitly pin certifi 2026.10.19, with original MPL terms, wheel/source hashes and immutable primary metadata. `test_certificate_security.py` checks agreement; generic downloader security overrides retain both certifi's actual upstream 2026.7.22 baseline and the existing urllib3 override, rather than claiming original upstream wheel identity. TLS verification is never disabled. A fresh runner build and artifact-bound review are required; one-time publication operations remain separate from built source and cannot authorise future versions. The dated changelog goes into release notes; it alone is not proof of hosting.
 
 CueFlora's current release preparation is described by `docs/RELEASE_COMPLETION.md` plus the fresh preparation directory's `readiness.json` and `IMPLEMENTATION_HANDOFF.md`; earlier security/implementation/polish handoffs remain historical evidence. Substrata historical handoffs were not imported as CueFlora acceptance evidence. Original preservation is recorded by `verify_isolation.py`; private captures were not copied. Automated success is not live browser, GUI, clean-machine, semantic or public-distribution acceptance. Computer Use and browser automation remain prohibited.
 
