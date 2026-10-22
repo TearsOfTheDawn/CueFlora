@@ -1,0 +1,83 @@
+name: Publish reviewed CueFlora 0.2.2 once
+on:
+  push:
+    branches: ['codex/github-publish-0.2.2']
+    paths: ['release/github-publication-022.json']
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.repository == 'TearsOfTheDawn/CueFlora' && github.ref == 'refs/heads/codex/github-publish-0.2.2'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Read only this exact publisher review
+        id: review
+        run: |
+          python packaging/github_publication.py --review release/github-publication-022.json --metadata
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          path=Path('release/github-publication-022.json')
+          value=json.loads(path.read_text())
+          assert hashlib.sha256(path.read_bytes()).hexdigest()=='77beb5aefaa1d327908a3aaeeca3ee4415c2311785797de2e7650aac58da551a'
+          assert value['version']=='0.2.2' and value['repository']=='TearsOfTheDawn/CueFlora'
+          assert value['sourceCommit']=='2089edaa8d92e416e8daa3dccc61bdf55bacf7a5'
+          assert value['candidateRunId']==39813901477
+          PY
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.review.outputs.source_commit }}
+          path: release-source
+          persist-credentials: false
+      - name: Install only exact hash-pinned publisher HTTP dependencies
+        run: |
+          python - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          names={'anyio','certifi','h11','httpcore','httpx','idna','typing_extensions'}
+          lines=Path('release-source/packaging/requirements-windows-hashed.lock').read_text().splitlines()
+          selected=[line for line in lines if line.split('==',1)[0].lower() in names]
+          assert len(selected)==len(names) and all('--hash=sha256:' in line for line in selected)
+          path=Path(os.environ['RUNNER_TEMP'])/'cueflora-publisher-http.lock'
+          path.write_text('\n'.join(selected)+'\n')
+          subprocess.run([sys.executable,'-m','pip','install','--disable-pip-version-check','--require-hashes','--no-deps','--only-binary=:all:','-r',str(path)],check=True)
+          PY
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: cueflora-022-reviewed-inputs
+          run-id: ${{ steps.review.outputs.candidate_run_id }}
+          github-token: ${{ github.token }}
+          path: reviewed-candidate
+      - name: Publish only reviewed 0.2.2 and anonymously verified download links
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python release-source/packaging/github_publication.py --candidate reviewed-candidate --review release/github-publication-022.json --output artifacts/publication-receipt.json --execute --confirm-version 0.2.2
+      - name: Include the dated reliability changelog and explicit bootstrap instructions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python release/notes-022.py
+      - name: Emit bounded public receipt metadata
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/publication-receipt.json').read_text())
+          print('CUEFLORA_022_PUBLICATION='+json.dumps({key:r[key] for key in ('version','sourceCommit','candidateRunId','artifacts','published','anonymousDownloads','pages')},separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: cueflora-0.2.2-publication-receipt
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+      # No future version, wildcard branch, silent installation, Store action,
+      # credential export, existing-tag takeover or source mutation.
+
