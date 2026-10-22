@@ -38,7 +38,7 @@ The 0.1.13 clean-runner workflow restores `git archive HEAD` bytes before source
 | Extension framework | [WXT](https://wxt.dev/) 0.21.4 / Vite 8.3.4 | Manifest V3, Chrome and Firefox regression builds; no automatic browser launcher |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest 4.1.12 + jsdom, Python unittest | 319 TypeScript tests; 138 native/setup tests (two Windows symlink-privilege skips locally); 196 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
+| Testing | Vitest 4.1.12 + jsdom, Python unittest | 326 TypeScript tests; 138 native/setup tests (two Windows symlink-privilege skips locally); 196 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -522,6 +522,8 @@ The `wxt.config.ts` extends the manifest with permissions, host_permissions, and
 3. Cues are cached in-memory (`state.subtitleCache`) and in background-owned extension storage (validated records, 20-record / 8 MiB internal policy)
 
 ### AI Translation (`api.ts` → `utils/translation.ts` → `native/translate.py`)
+
+0.2.3 is an unpublished repair-scheduling candidate; see `docs/CUEFLORA_023_IMPLEMENTATION.md`. Recovery compacts all rejected positions into one request instead of spending a separate call per contiguous bad run. `TranslationAttemptContext.sourceIndexes` maps request-local IDs to original absolute cue positions through retries/splits; use it for resolution, quality allowance, prompt context and evidence capture, never `groupStart + i` for sparse groups. Gap cues/finalized translations are reference-only context and are not requested again. Workflow diagnostics add deduplicated `recoveryIssues` (index/reason only) and the last recovery attempt's call/kind/indexes. These are part of the existing workflow console diagnostics, not the settings session-debug export. Eight calls remain a hard ceiling per logical batch; adequacy gets one targeted attempt per original position, and label leakage remains rejected. Successful old caches stay compatible: no normalization/translation pipeline-version change is warranted for scheduler-only fixes. No installation, inference or publication is authorised by candidate preparation.
 
 1. Source cues are split into serial contextual output batches (target 30 cues, 2400 source characters)
 2. Each request receives up to 8 preceding cues/finalized translations and 4 following source cues as read-only context

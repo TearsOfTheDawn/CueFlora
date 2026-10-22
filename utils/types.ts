@@ -191,6 +191,11 @@ export interface TranslationQualityFlag {
   targetWords?: number;
 }
 
+export interface TranslationRecoveryIssue {
+  cueIndex: number;
+  reason: TranslationQualityReason | 'not-string' | 'empty' | 'truncated-marker' | 'output-format';
+}
+
 export interface TranslationTimingDiagnostics {
   fastCueCountBefore: number;
   fastCueCountAfter: number;
@@ -269,6 +274,13 @@ export interface WorkflowRunDiagnostics {
     qualityRepairs: number;
     qualityFlags: TranslationQualityFlag[];
     unresolvedQualityFlags: TranslationQualityFlag[];
+    recoveryIssues: TranslationRecoveryIssue[];
+    lastRecoveryAttempt?: {
+      call: number;
+      maxCalls: number;
+      kind: 'initial' | 'retry' | 'split' | 'repair';
+      sourceIndexes: number[];
+    };
     timing?: TranslationTimingDiagnostics;
     lastRequest?: TranslationRequestDiagnostics;
     error?: string;

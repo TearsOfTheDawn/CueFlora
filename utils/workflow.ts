@@ -67,6 +67,7 @@ export const beginWorkflow = (
                 qualityRepairs: 0,
                 qualityFlags: [],
                 unresolvedQualityFlags: [],
+                recoveryIssues: [],
             },
         },
     };
