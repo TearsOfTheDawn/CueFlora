@@ -10,6 +10,20 @@ const makeCues = (count: number, text = 'line'): Cue[] =>
     }));
 
 describe('contextual translation batching', () => {
+    it('keeps gap context separate from sparse repair targets and starts following context after the span', () => {
+        const cues = makeCues(12);
+        const translated = cues.map(cue => ({ ...cue, text: `translated ${cue.text}` }));
+        const text = buildTranslationContextLines(cues, translated, 3, 9, 1, 2, [3, 6, 8]).join('\n');
+        expect(text).toContain('INTERLEAVED CONTEXT');
+        expect(text).toContain('[S5] line-4');
+        expect(text).toContain('[T5] translated line-4');
+        expect(text).toContain('[S10] line-9');
+        expect(text).not.toContain('[S4]');
+        expect(text).not.toContain('[S7]');
+        expect(text).not.toContain('[S9]');
+        expect(text).not.toContain('[T10]');
+    });
+
     it('uses non-overlapping output windows', () => {
         const cues = makeCues(65);
         const batches = buildContextualBatches(cues, 30, 2400);

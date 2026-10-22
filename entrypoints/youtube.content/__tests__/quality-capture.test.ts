@@ -20,6 +20,41 @@ const metaKey = 'cueflora_cache_U_V6Jqg7PV4_transcription_meta:zh-CN';
 const sendMessage = vi.fn();
 
 describe('production evidence and normalization cache boundaries', () => {
+    it('preserves sparse repair capture mappings, context and safe workflow diagnostics', async () => {
+        const original = Array.from({ length: 9 }, (_, i) => ({
+            startMs: i * 10000, endMs: i * 10000 + 9000, text: `原文${i}`,
+        }));
+        state.transcriptionCues = original;
+        state.workflow.diagnostics!.transcription.captureId = 'capture';
+        let calls = 0;
+        sendMessage.mockImplementation(async (message) => {
+            if (message.type !== 'TRANSLATE_NATIVE') return { jobId: 'job', captured: true };
+            calls++;
+            return { jobId: 'job', requestCount: 1, translations: message.cues.map((cue: any, i: number) =>
+                calls === 1 && [1, 4, 6].includes(i) ? '' : `Translated ${cue.text}`) };
+        });
+        await translateSubtitles('en', 'transcription:zh-CN', 'job');
+        const requests = sendMessage.mock.calls.map(([message]) => message)
+            .filter(message => message.type === 'TRANSLATE_NATIVE');
+        expect(requests).toHaveLength(2);
+        expect(requests[1].sourceIndexes).toEqual([1, 4, 6]);
+        expect(requests[1].cues).toEqual([original[1], original[4], original[6]]);
+        expect(requests[1].systemPrompt).toContain('input id 1 corresponds to source [S5]');
+        expect(requests[1].systemPrompt).toContain('[T3] Translated 原文2');
+        expect(requests[1].systemPrompt).toContain('[S8] 原文7');
+        expect(requests[1].systemPrompt).not.toContain('[T5]');
+        expect(state.translationCues.map(cue => cue.text)).toEqual(original.map(cue => `Translated ${cue.text}`));
+        expect(state.workflow.diagnostics!.translation).toMatchObject({
+            status: 'complete', physicalRequests: 2, repairCalls: 1,
+            recoveryIssues: [1, 4, 6].map(cueIndex => ({ cueIndex, reason: 'empty' })),
+            lastRecoveryAttempt: { call: 2, maxCalls: 8, kind: 'repair', sourceIndexes: [1, 4, 6] },
+        });
+        expect(JSON.stringify(state.workflow.diagnostics!.translation)).not.toContain('原文');
+        const presentation = sendMessage.mock.calls.map(([message]) => message)
+            .find(message => message.type === 'CAPTURE_PRESENTATION');
+        expect(presentation.translations.map((cue: any) => cue.text)).toEqual(original.map(cue => `Translated ${cue.text}`));
+    });
+
     beforeEach(async () => {
         fakeBrowser.reset();
         localStorage.clear();

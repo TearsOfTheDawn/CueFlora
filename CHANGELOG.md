@@ -2,6 +2,18 @@
 
 User-facing changes, newest first. Candidate entries are explicitly unpublished; release links and publication receipts establish actual availability.
 
+## [0.2.3](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.3) — 2026-10-22
+
+### Fixes and improvements
+
+- Fixed translation recovery exhausting its eight-call budget solely because flagged cues were scattered across a batch. Only rejected positions are grouped into a single aligned repair request; already accepted translations are retained.
+- Keep original cue positions correct through sparse repairs, retries, splits and optional evidence capture. Intervening subtitles remain reference-only context.
+- Workflow console diagnostics now record validation reason codes, affected source indexes and the last recovery request without retaining subtitle text in those added fields. Persistent malformed output still fails within the existing eight-call limit; no extra model calls or paid fallback are introduced.
+
+### Upgrade and limitations
+
+Published under separate authority; see [publication verification](docs/CUEFLORA_023_PUBLICATION.md). Finish Runs, use the update flow or matching Setup, click **Restart CueFlora** or CueFlora **Reload** at `chrome://extensions`, then reload YouTube tabs. Keep existing settings, keys and the extension identity. Valid cached subtitles remain compatible. The reproduced scheduling failure is covered by synthetic production-code tests; the original model outputs were not available, and automated checks do not establish semantic translation or live-browser acceptance. See [implementation and verification scope](docs/CUEFLORA_023_IMPLEMENTATION.md).
+
 ## [0.2.2](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.2) — 2026-10-22
 
 ### Fixes and improvements

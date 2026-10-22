@@ -3,12 +3,15 @@ import type {
     TranslationBatch,
     TranslationQualityFlag,
     TranslationQualityReason,
+    TranslationRecoveryIssue,
 } from './types';
 
 export interface TranslationAttemptContext {
     call: number;
     maxCalls: number;
     groupStart: number;
+    /** Absolute source positions, including gaps in a targeted repair. IDs remain request-local. */
+    sourceIndexes: number[];
     cueCount: number;
     depth: number;
     kind: 'initial' | 'retry' | 'split' | 'repair';
@@ -47,6 +50,7 @@ interface RecoverTranslationBatchOptions {
     onResolved?: (absoluteIndex: number, cue: Cue) => void;
     onSalvage?: (count: number) => void;
     onQualityFlag?: (flag: TranslationQualityFlag) => void;
+    onValidationIssue?: (issue: TranslationRecoveryIssue) => void;
     onQualityRepair?: (count: number) => void;
     onUnresolvedQuality?: (flag: TranslationQualityFlag) => void;
     onStatus?: (message: string, stats: TranslationRecoveryStats) => void;
@@ -89,7 +93,8 @@ export const buildTranslationContextLines = (
     groupStart: number,
     groupEnd: number,
     previousCount: number,
-    forwardCount: number
+    forwardCount: number,
+    requestedIndexes?: readonly number[]
 ): string[] => {
     const sanitize = (text: string): string => (text || '').replace(/\s+/g, ' ').trim();
     const lines: string[] = [];
@@ -100,6 +105,21 @@ export const buildTranslationContextLines = (
             lines.push(`[S${index + 1}] ${sanitize(allCues[index].text)}`);
             const translated = translatedByIndex[index];
             if (translated) lines.push(`[T${index + 1}] ${sanitize(translated.text)}`);
+        }
+    }
+
+    if (requestedIndexes) {
+        const requested = new Set(requestedIndexes);
+        const gaps = Array.from({ length: groupEnd - groupStart }, (_, i) => groupStart + i)
+            .filter(index => !requested.has(index));
+        if (gaps.length) {
+            if (lines.length) lines.push('');
+            lines.push('INTERLEAVED CONTEXT (reference only; do not output these lines):');
+            for (const index of gaps) {
+                lines.push(`[S${index + 1}] ${sanitize(allCues[index].text)}`);
+                const translated = translatedByIndex[index];
+                if (translated) lines.push(`[T${index + 1}] ${sanitize(translated.text)}`);
+            }
         }
     }
 
@@ -226,7 +246,7 @@ export const recoverTranslationBatch = async (
 
     const translateGroup = async (
         cues: Cue[],
-        groupStart: number,
+        sourceIndexes: number[],
         label: string,
         depth = 0,
         sameGroupAttempt = 0,
@@ -235,11 +255,12 @@ export const recoverTranslationBatch = async (
     ): Promise<Cue[]> => {
         if (stats.calls >= options.maxCalls) {
             throw new Error(
-                `Exceeded the recovery limit of ${options.maxCalls} model calls; ` +
-                `last group ${label} had ${cues.length} cues.`
+                `Translation recovery reached ${stats.calls}/${options.maxCalls} model calls; ` +
+                `${cues.length} cues still need repair. No extra request was sent.`
             );
         }
 
+        const groupStart = sourceIndexes[0];
         stats.calls++;
         if (kind !== 'initial') stats.retries++;
         if (kind === 'repair') stats.repairCalls++;
@@ -247,6 +268,7 @@ export const recoverTranslationBatch = async (
             call: stats.calls,
             maxCalls: options.maxCalls,
             groupStart,
+            sourceIndexes: [...sourceIndexes],
             cueCount: cues.length,
             depth,
             kind,
@@ -261,7 +283,7 @@ export const recoverTranslationBatch = async (
                 emitStatus(`malformed output; retrying ${cues.length} cue${cues.length === 1 ? '' : 's'}`);
                 return translateGroup(
                     cues,
-                    groupStart,
+                    sourceIndexes,
                     label,
                     depth,
                     sameGroupAttempt + 1,
@@ -279,7 +301,7 @@ export const recoverTranslationBatch = async (
                 emitStatus(`malformed output persists; splitting ${describeSplit(cues.length)}`);
                 const left = await translateGroup(
                     cues.slice(0, midpoint),
-                    groupStart,
+                    sourceIndexes.slice(0, midpoint),
                     `${label}.1`,
                     depth + 1,
                     0,
@@ -288,7 +310,7 @@ export const recoverTranslationBatch = async (
                 );
                 const right = await translateGroup(
                     cues.slice(midpoint),
-                    groupStart + midpoint,
+                    sourceIndexes.slice(midpoint),
                     `${label}.2`,
                     depth + 1,
                     0,
@@ -308,12 +330,18 @@ export const recoverTranslationBatch = async (
             translations = await options.request(cues, groupStart, attempt);
         } catch (error) {
             if (error instanceof TranslationRequestError && error.recoverable) {
+                for (const cueIndex of sourceIndexes) {
+                    options.onValidationIssue?.({ cueIndex, reason: 'output-format' });
+                }
                 return retryOrSplit(error.message);
             }
             throw error;
         }
 
         if (translations.length > cues.length) {
+            for (const cueIndex of sourceIndexes) {
+                options.onValidationIssue?.({ cueIndex, reason: 'output-format' });
+            }
             return retryOrSplit(
                 `${translations.length}/${cues.length} translations returned; positional alignment is ambiguous`
             );
@@ -324,7 +352,7 @@ export const recoverTranslationBatch = async (
         const issues = new Map<number, InvalidTranslationValidationResult>();
         const commonLength = Math.min(cues.length, translations.length);
         for (let i = 0; i < commonLength; i++) {
-            const absoluteIndex = groupStart + i;
+            const absoluteIndex = sourceIndexes[i];
             const output = translations[i];
             const validation = validateTranslationOutput(
                 cues[i],
@@ -333,6 +361,7 @@ export const recoverTranslationBatch = async (
                 options.enableEnglishAdequacyCheck
             );
             if (!validation.valid) {
+                options.onValidationIssue?.({ cueIndex: absoluteIndex, reason: validation.reason });
                 const qualityFlag = validation.qualityFlag
                     ? { cueIndex: absoluteIndex, ...validation.qualityFlag }
                     : null;
@@ -368,6 +397,7 @@ export const recoverTranslationBatch = async (
         for (let i = commonLength; i < cues.length; i++) {
             invalidIndexes.push(i);
             issues.set(i, { valid: false, reason: 'empty' });
+            options.onValidationIssue?.({ cueIndex: sourceIndexes[i], reason: 'empty' });
         }
 
         if (invalidIndexes.length === 0 && translations.length === cues.length) {
@@ -380,7 +410,7 @@ export const recoverTranslationBatch = async (
         const reason = `${translations.length}/${cues.length} translations returned; issues=${issueSummary}`;
         const hasNewQualityRepair = invalidIndexes.some((index) =>
             issues.get(index)?.reason === 'extreme-under-translation' &&
-            !qualityRepairAttempted.has(groupStart + index)
+            !qualityRepairAttempted.has(sourceIndexes[index])
         );
         if (invalidIndexes.length === cues.length && !hasNewQualityRepair) {
             return retryOrSplit(reason);
@@ -394,45 +424,36 @@ export const recoverTranslationBatch = async (
             : `repairing ${invalidIndexes.length} suspicious cue${invalidIndexes.length === 1 ? '' : 's'}`
         );
 
-        const badRuns: Array<{ start: number; end: number }> = [];
+        // Compact all rejected positions into one request, not one call per adjacent run.
+        // Keep an explicit mapping through retries/splits so gaps can never shift alignment.
+        const repairIndexes = invalidIndexes.map(index => sourceIndexes[index]);
+        let qualityRepairs = 0;
+        const recoveryReasons = new Set<string>();
         for (const index of invalidIndexes) {
-            const previous = badRuns[badRuns.length - 1];
-            if (previous && index === previous.end + 1) previous.end = index;
-            else badRuns.push({ start: index, end: index });
-        }
-
-        for (let i = 0; i < badRuns.length; i++) {
-            const run = badRuns[i];
-            const repairStart = groupStart + run.start;
-            let qualityRepairs = 0;
-            const recoveryReasons = new Set<string>();
-            for (let index = run.start; index <= run.end; index++) {
-                const issue = issues.get(index);
-                if (issue) recoveryReasons.add(issue.reason);
-                const absoluteIndex = groupStart + index;
-                if (
-                    issue?.reason === 'extreme-under-translation' &&
-                    !qualityRepairAttempted.has(absoluteIndex)
-                ) {
-                    qualityRepairAttempted.add(absoluteIndex);
-                    qualityRepairs++;
-                }
+            const issue = issues.get(index);
+            if (issue) recoveryReasons.add(issue.reason);
+            const absoluteIndex = sourceIndexes[index];
+            if (stats.calls < options.maxCalls &&
+                issue?.reason === 'extreme-under-translation' &&
+                !qualityRepairAttempted.has(absoluteIndex)) {
+                qualityRepairAttempted.add(absoluteIndex);
+                qualityRepairs++;
             }
-            if (qualityRepairs > 0) {
-                stats.qualityRepairs += qualityRepairs;
-                options.onQualityRepair?.(qualityRepairs);
-            }
-            const repaired = await translateGroup(
-                cues.slice(run.start, run.end + 1),
-                repairStart,
-                `${label}.repair-${i + 1}`,
-                Math.min(depth + 1, options.maxSplitDepth),
-                0,
-                'repair',
-                Array.from(recoveryReasons).join(', ')
-            );
-            for (let j = 0; j < repaired.length; j++) resolved[run.start + j] = repaired[j];
         }
+        if (qualityRepairs > 0) {
+            stats.qualityRepairs += qualityRepairs;
+            options.onQualityRepair?.(qualityRepairs);
+        }
+        const repaired = await translateGroup(
+            invalidIndexes.map(index => cues[index]),
+            repairIndexes,
+            `${label}.repair`,
+            Math.min(depth + 1, options.maxSplitDepth),
+            0,
+            'repair',
+            Array.from(recoveryReasons).join(', ')
+        );
+        for (let j = 0; j < repaired.length; j++) resolved[invalidIndexes[j]] = repaired[j];
 
         const unresolved = resolved
             .map((cue, index) => cue ? -1 : index)
@@ -443,6 +464,7 @@ export const recoverTranslationBatch = async (
         return resolved as Cue[];
     };
 
-    const cues = await translateGroup(options.cues, options.startIndex, 'batch');
+    const cues = await translateGroup(options.cues,
+        options.cues.map((_, index) => options.startIndex + index), 'batch');
     return { cues, stats };
 };
