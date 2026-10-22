@@ -6,6 +6,7 @@ import threading
 import unittest
 from unittest.mock import patch
 import httpx
+import subprocess
 from .updates import Updates,validate_manifest,download_bytes,REPOSITORY,CHROME_ID,API
 
 
@@ -68,6 +69,7 @@ class UpdatesTests(unittest.TestCase):
             verify_payload.assert_called()
             with patch('cueflora_host.updates.subprocess.Popen') as launch:
                 self.assertTrue(updater.launch(ref)['launched']);self.assertEqual(launch.call_args.args[0],[str(updater.verify(ref))])
+                for stream in ('stdin','stdout','stderr'):self.assertEqual(launch.call_args.kwargs[stream],subprocess.DEVNULL)
             target=updater.verify(ref);target.write_bytes(b'corrupt')
             with patch('cueflora_host.updates.subprocess.Popen') as launch:
                 with self.assertRaises(ValueError):updater.launch(ref)

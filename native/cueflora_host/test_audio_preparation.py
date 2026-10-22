@@ -5,11 +5,43 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
-from .whisper import _validate_prepared_audio, compress_audio
+from .whisper import _validate_prepared_audio, compress_audio, _split_into_chunks, _probe_duration_seconds, transcribe
 from .download import _validated_download_path
 
 
 class AudioPreparationTests(unittest.TestCase):
+    @patch('cueflora_host.whisper._resolve_binary', return_value='tool')
+    def test_failed_chunk_command_rejects_nonempty_partial_output(self, resolve):
+        with tempfile.TemporaryDirectory() as directory:
+            def fail(command,**kwargs):
+                Path(command[-1]).write_bytes(b'partial-invalid-audio')
+                return SimpleNamespace(returncode=1)
+            with patch('cueflora_host.whisper._probe_duration_seconds',return_value=30), \
+                    patch('cueflora_host.whisper.subprocess.run',side_effect=fail):
+                self.assertEqual(_split_into_chunks('source.ogg',20,10,directory),[])
+
+    @patch('cueflora_host.whisper._resolve_binary', return_value='tool')
+    def test_duration_probe_rejects_nonfinite_and_nonpositive_values(self, resolve):
+        for value in ('nan','inf','-inf','0','-1'):
+            with self.subTest(value=value),patch('cueflora_host.whisper.subprocess.run',return_value=SimpleNamespace(returncode=0,stdout=value)):
+                self.assertIsNone(_probe_duration_seconds('source.ogg'))
+
+    def test_optional_audio_tool_evidence_failure_does_not_repeat_or_block_upload(self):
+        from .evidence import RunCapture
+        capture=RunCapture()
+        with tempfile.TemporaryDirectory() as directory:
+            audio=Path(directory)/'prepared.ogg';audio.write_bytes(b'synthetic-prepared-audio')
+            with patch('cueflora_host.whisper.compress_audio',return_value=str(audio)), \
+                    patch('cueflora_host.whisper._resolve_binary',return_value='tool'), \
+                    patch('cueflora_host.whisper._probe_duration_seconds',return_value=1), \
+                    patch('cueflora_host.whisper.subprocess.check_output',side_effect=subprocess.TimeoutExpired('tool',10)) as version, \
+                    patch('cueflora_host.whisper._post_transcription',return_value={'text':'synthetic'}) as upload:
+                self.assertEqual(transcribe(str(audio),'','https://fixture.invalid/v1','fixture',capture=capture),{'text':'synthetic'})
+            upload.assert_called_once()
+            self.assertEqual(version.call_args.kwargs['timeout'],10)
+            self.assertEqual(version.call_args.kwargs['stdin'],subprocess.DEVNULL)
+            self.assertEqual(capture.diagnostics()['stages']['audio-preparation'],'incomplete')
+
     def test_download_output_must_be_nonempty_and_inside_request_root(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory); root = base/'processing'; root.mkdir()

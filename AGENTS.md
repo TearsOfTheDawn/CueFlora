@@ -1,6 +1,6 @@
 # AGENTS.md — CueFlora Project Reference
 
-> **Last updated:** 2026-10-21
+> **Last updated:** 2026-10-22
 >
 > This document is the canonical AI agent onboarding reference for the independent CueFlora project.
 > After making changes, use the update skill described at the bottom of this file.
@@ -38,7 +38,7 @@ The 0.1.13 clean-runner workflow restores `git archive HEAD` bytes before source
 | Extension framework | [WXT](https://wxt.dev/) 0.21.4 / Vite 8.3.4 | Manifest V3, Chrome and Firefox regression builds; no automatic browser launcher |
 | Extension language | TypeScript (strict mode) | Source and Vitest tests use `.ts` |
 | Type checking | TypeScript 6.0+ | `tsc --noEmit` via `npm run typecheck` |
-| Testing | Vitest 4.1.12 + jsdom, Python unittest | 315 TypeScript tests; 131 native/setup tests (two Windows symlink-privilege skips locally); 193 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
+| Testing | Vitest 4.1.12 + jsdom, Python unittest | 319 TypeScript tests; 138 native/setup tests (two Windows symlink-privilege skips locally); 196 packaging tests; 9 Node profile/release tests; fresh logs are authoritative for counts |
 | Styling | Plain CSS | Injected into YouTube player |
 | Native host | Python 3.10+ | Bundled in the preview; uv remains a developer option; PING reports tool health |
 | HTTP client (Python) | httpx | For Whisper & LLM API calls |
@@ -333,7 +333,9 @@ Presentation capture additionally requires one translation per source cue and no
 
 #### 0.2 candidate engineering
 
-`docs/CUEFLORA_021_IMPLEMENTATION.md` governs the current patch. 0.2.0 is published; 0.2.1 has explicit security-fix/publication direction but still needs its fresh exact-candidate gates. Existing releases/assets, Substrata and previous local packages remain separate preservation gates. Fresh preparation reports are authoritative; automated tests do not establish genuine ChatGPT sign-in, live Chrome updating, visuals or semantic subtitle quality.
+0.2.2 is published under separate authority; see `docs/CUEFLORA_022_AUDIT.md`, `docs/CUEFLORA_022_IMPLEMENTATION.md` and `docs/CUEFLORA_022_PUBLICATION.md`. `tool_process.py` gives production tools null stdin and hidden console startup on Windows; the explicit verified Setup launch also detaches stdout/stderr. Never inherit the native control pipe into external tools. `persistent_native.exchange` sends two framed PINGs and receives both before closing input, with bounded framing/deadline checks; runtime/capability/lifecycle gates use it. `run_native_tests.py` discovers the same complete host/setup suites for local, clean-source and CI gates. Failed split exit codes are rejected even with partial files. Optional preparation-version evidence is lazy/bounded and nonfatal for normal Runs. Account writes enforce the eight-record read limit before replacing DPAPI data. Settings retain task IDs/cancellation after uncertain status reads and release post-sign-in refresh busy state correctly. No provider, audio, normalization, timing, retry-budget, identity or dependency pin is changed. No live installation or future-version publication is authorised.
+
+0.2.2 clean build `39813901477`, independent inspection `39814457546` and one-time publication `39817378009` passed. Source tag `2089edaa8d92e416e8daa3dccc61bdf55bacf7a5` matches all 433 archive files and Git modes without normalization exceptions. The exact-hash review is held separately on `codex/github-publish-0.2.2`; all ten anonymous asset hashes, six live pages and update metadata were independently verified. Earlier releases/assets, Substrata and local packages remain intact. The build-only `candidate-022.yml` remains exact-branch/version restricted; building does not approve publishing. Current main CI resolves the macOS temporary-directory alias before running guarded fixtures; all five unit/build jobs passed in `39815553615` without weakening production symlink rejection or changing packaged source. This is not other-platform installer certification. Automated success does not establish genuine ChatGPT sign-in, live Chrome updating, visuals or semantic subtitle quality.
 
 `runIdentity.ts` supplies a per-document token and SPA generation. Background binding uses `tabs.get` plus a correlated, document-targeted `RUN_DOCUMENT_CHECK` promise response; cached `sender.url` provides origin provenance only. Checks repeat before dispatch/after capability checks/on results. Navigation releases native ports and the full-Run lease. `runLeases.ts` holds a transient `RUN_LEASE` port across logical batches; native `activity.py` uses crash-released OS leases and an exclusive Setup gate. Windows Setup also checks owned installed native process images, covering pre-0.2 helpers. No broad process-name termination or Chrome-profile inspection occurs.
 
@@ -476,7 +478,7 @@ npm run dev              # Chrome (default)
 npm run dev:chrome       # Chrome
 
 # Run tests
-npm test                 # 315 unit tests via Vitest; fresh logs are authoritative
+npm test                 # 319 unit tests via Vitest; fresh logs are authoritative
 
 # Run native regression tests
 cd native

@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 from .runtime_tools import packaged_tool, download_runtime_options, download_process_environment
 from .owned_process import OwnedProcess
+from .tool_process import tool_process_options
 
 # We need a lock-free way to send progress while stdout is used for
 # native-messaging frames.  _real_stdout is captured before any redirect.
@@ -62,6 +63,7 @@ def _resolve_yt_dlp_executable():
         try:
             probe = subprocess.run(
                 [path, "--version"],
+                **tool_process_options(),
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 timeout=8,
@@ -231,7 +233,8 @@ def download_audio(video_id, tmp_dir, job_id=None, capture=None, cancel=None):
         template = "cueflora_metadata:%(.{" + ",".join(fields) + "})j"
         cmd[1:1] = ["--print", "after_move:" + template]
         try:
-            version = subprocess.check_output([yt_dlp_bin, "--version"], text=True, timeout=10).strip()
+            version = subprocess.check_output([yt_dlp_bin, "--version"], text=True, timeout=10,
+                                              **tool_process_options()).strip()
         except (OSError, subprocess.SubprocessError):
             version = None
             if hasattr(capture, "stages"):

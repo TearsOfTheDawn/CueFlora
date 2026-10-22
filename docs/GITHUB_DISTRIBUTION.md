@@ -1,14 +1,16 @@
 # GitHub-only distribution
 
-Windows x64 / Google Chrome, published version 0.2.1. Chrome Web Store distribution was abandoned on 2026-10-17; historical Store handoffs remain evidence, not release requirements.
+Windows x64 / Google Chrome, published version 0.2.2. Chrome Web Store distribution was abandoned on 2026-10-17; historical Store handoffs remain evidence, not release requirements.
 
 ## Install and update
 
-Download only **CueFlora-0.2.1-Setup.exe** from GitHub Releases. Run Setup, select Chrome and confirm Install; it supplies the matching helper, extension and tools. Load the stable extension directory shown by Setup through `chrome://extensions` → Developer mode → Load unpacked. Configure existing compatible AI services or optionally ChatGPT for translation only, choose languages and press Run. Caption-only use depends on the video. The complete Windows ZIP is an optional alternative, not another required download.
+Download only **CueFlora-0.2.2-Setup.exe** from GitHub Releases. Run Setup, select Chrome and confirm Install; it supplies the matching helper, extension and tools. Load the stable extension directory shown by Setup through `chrome://extensions` → Developer mode → Load unpacked. Configure existing compatible AI services or optionally ChatGPT for translation only, choose languages and press Run. Caption-only use depends on the video. The complete Windows ZIP is an optional alternative, not another required download.
 
 The extension retains release public key/ID `akcolbcdfnjcahhhodnpablekjagfadf`; the helper permits exactly that ID. The separate development ID remains `klnnagigpdlgchlablabnafceoldfalm`. A Store installation is not needed to load the keyed folder. Do not use a keyless Store ZIP.
 
-0.2.0 users must download 0.2.1 Setup manually because their update checker has a confirmed header defect. Finish Runs, confirm Upgrade, click Chrome Reload and reload YouTube tabs. 0.1.13 users additionally select the existing loaded extension folder and confirm exact-inventory adoption. Later compatible releases support settings → Check for updates → Download → Install update → confirm Setup → Check installation → Restart CueFlora. Maintenance retains paired locking, recovery, repair, rollback, identity conflict rejection and recoverable uninstall. Do not remove/reinstall merely to update or promise settings transfer across IDs. Never touch Substrata. Unsigned files must not be an excuse to disable security protections.
+0.2.0/0.2.1 users should use 0.2.2 Setup manually if their old updater fails or stalls. Finish Runs, confirm Upgrade, click Chrome Reload and reload YouTube tabs. 0.1.13 users additionally select the existing loaded extension folder and confirm exact-inventory adoption. Later compatible releases support settings → Check for updates → Download → Install update → confirm Setup → Check installation → Restart CueFlora. Maintenance retains paired locking, recovery, repair, rollback, identity conflict rejection and recoverable uninstall. Do not remove/reinstall merely to update or promise settings transfer across IDs. Never touch Substrata. Unsigned files must not be an excuse to disable security protections.
+
+0.2.2's exact-source build, inspection, publisher, download/page verification and CI environment correction are recorded in [the publication handoff](CUEFLORA_022_PUBLICATION.md). One-time authority does not publish future versions. The paragraphs below retain earlier releases' history.
 
 ## Implemented engineering
 

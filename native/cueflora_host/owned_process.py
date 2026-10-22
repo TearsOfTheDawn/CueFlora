@@ -2,10 +2,12 @@
 import os
 import signal
 import subprocess
+from .tool_process import tool_process_options
 
 
 class OwnedProcess:
     def __init__(self, command, **kwargs):
+        kwargs = {**tool_process_options(), **kwargs}
         self.job = None
         if os.name == 'nt':
             import ctypes

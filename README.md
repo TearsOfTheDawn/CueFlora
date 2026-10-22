@@ -4,7 +4,7 @@ AI Subtitles & Translation for YouTube — Windows x64 / Google Chrome.
 
 [Changelog — features, fixes and upgrade instructions](CHANGELOG.md)
 
-**Current release: 0.2.1.** Fixes update checks, adds privacy-safe debugging and improves settings. The helper and downloader also include the corrected certificate bundle. See [release verification and limitations](docs/CUEFLORA_021_PUBLICATION.md). Earlier packages remain available unchanged.
+**Current release: 0.2.2.** Fixes the reproduced downloader failure with an open helper connection, rejects partial audio after failed processing, and improves settings-task and account-store reliability. See the [audit](docs/CUEFLORA_022_AUDIT.md) and [verified publication](docs/CUEFLORA_022_PUBLICATION.md). Earlier packages remain available unchanged.
 
 ![Five-petal CueFlora flower](public/icon/flower.svg)
 
@@ -12,7 +12,7 @@ Use available YouTube captions, or your own compatible AI services for transcrip
 
 ## Install from GitHub
 
-### [Download CueFlora Setup.exe — the only required download](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.2.1/CueFlora-0.2.1-Setup.exe)
+### [Download CueFlora Setup.exe — the only required download](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.2.2/CueFlora-0.2.2-Setup.exe)
 
 Setup contains the matching Chrome extension, helper and audio tools. You do not need the other files under Assets for normal installation. AI services and models are separate.
 
@@ -29,7 +29,7 @@ The [download page](https://tearsofthedawn.github.io/CueFlora/download.html) has
 
 ## Updates and removal
 
-**Upgrading from 0.2.0:** its update checker has a confirmed bug. Download the 0.2.1 Setup manually, finish all Runs, confirm **Upgrade**, click CueFlora **Reload** at `chrome://extensions`, then reload YouTube tabs. Keep the extension installed so its settings and identity remain unchanged.
+**Upgrading from 0.2.0 or 0.2.1:** use the 0.2.2 Setup above manually if the old updater stalls. Finish all Runs, confirm **Upgrade**, click CueFlora **Reload** at `chrome://extensions`, then reload YouTube tabs. Keep the extension installed so its settings and identity remain unchanged; do not reset keys/models.
 
 **Upgrading from 0.1.13:** finish all Runs, download this Setup manually, select the currently loaded CueFlora extension folder, and confirm adoption/Upgrade. Only recognized, unmodified files are accepted; a recoverable backup is kept. Click **Reload** once in Chrome's Extensions page, then reload YouTube tabs. Do not remove/reinstall the extension; its ID and settings must stay unchanged.
 

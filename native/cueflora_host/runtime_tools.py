@@ -5,6 +5,7 @@ import sys
 import shutil
 import subprocess
 import re
+from .tool_process import tool_process_options
 
 
 def packaged_tool(name):
@@ -38,6 +39,7 @@ def resolve_deno():
         raise RuntimeError('Deno is missing; upgrade or repair CueFlora runtime')
     try:
         result = subprocess.run([candidate, '--version'], capture_output=True, text=True, timeout=5,
+                                **tool_process_options(),
                                 env=download_process_environment())
         version = re.match(r'deno (\d+)\.(\d+)\.(\d+)', result.stdout)
         if result.returncode or not version or tuple(map(int, version.groups())) < (2, 3, 0):

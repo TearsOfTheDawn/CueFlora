@@ -1,6 +1,21 @@
 # Changelog
 
-User-facing changes for published CueFlora releases, newest first. Unpublished development builds are not listed as public releases.
+User-facing changes, newest first. Candidate entries are explicitly unpublished; release links and publication receipts establish actual availability.
+
+## [0.2.2](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.2) — 2026-10-22
+
+### Fixes and improvements
+
+- Fixed the reproduced downloader startup failure when Chrome keeps its helper connection open. Tool processes no longer inherit CueFlora's native-message input.
+- Detached the user-confirmed Setup launch from native-message streams; install confirmation and all update integrity checks remain.
+- Reject failed audio splits even if FFmpeg leaves a nonempty partial file. Audio settings, timing, normalization and translation request limits are unchanged.
+- Prevent optional evidence-version checks from blocking subtitle generation; incomplete evidence stays a warning in normal Runs.
+- Keep update/account tasks cancellable after status failures, release settings correctly after sign-in status-refresh failure, and preserve the account store when its limit is reached.
+- Added persistent multi-message packaged tests and shared full native-suite discovery to catch the condition missed by closed-input probes.
+
+### Upgrade and limitations
+
+Finish Runs, download 0.2.2's matching Setup, confirm Upgrade, click CueFlora **Reload** at `chrome://extensions`, then reload YouTube tabs. Do not reset keys/models or remove/reinstall the extension. Manual Setup remains the fallback for older versions, including a stalled 0.2.1 launcher. See [audit and boundaries](docs/CUEFLORA_022_AUDIT.md) and [publication verification](docs/CUEFLORA_022_PUBLICATION.md). Automated checks do not establish live-browser or semantic acceptance.
 
 ## [0.2.1](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.1) — 2026-10-21
 

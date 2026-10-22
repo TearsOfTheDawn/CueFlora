@@ -4,14 +4,11 @@ import json
 import os
 from pathlib import Path
 import statistics
-import struct
-import subprocess
 import time
+from persistent_native import exchange
 
 
 def probe(executable, repeats=5):
-    body = json.dumps({'type': 'PING'}).encode()
-    packet = struct.pack('<I', len(body)) + body
     timings = []
     result = None
     env = {key: value for key, value in os.environ.items()
@@ -19,18 +16,16 @@ def probe(executable, repeats=5):
     env['PATH'] = os.environ.get('SystemRoot', '/usr') + ('\\System32' if os.name == 'nt' else '/bin')
     for _ in range(repeats):
         start = time.perf_counter()
-        response = subprocess.run([str(executable.resolve())], input=packet, capture_output=True, timeout=45,
-                                  cwd=executable.parent, env=env)
+        responses, _ = exchange([str(executable.resolve())], [{'type':'PING'}, {'type':'PING'}],
+                                       cwd=executable.parent, env=env)
         elapsed = (time.perf_counter() - start) * 1000
-        data = response.stdout
-        if response.returncode or len(data) < 4 or struct.unpack('<I', data[:4])[0] != len(data) - 4:
-            raise RuntimeError('Invalid framed PING/exit status')
-        result = json.loads(data[4:])
-        if result.get('status') != 'PONG' or not all(result.get('tools', {}).get(tool, {}).get('available') for tool in ['yt-dlp','ffmpeg','ffprobe','deno']):
-            raise RuntimeError(f'Unhealthy bundle: {result}')
+        for result in responses:
+            if result.get('status') != 'PONG' or not all(result.get('tools', {}).get(tool, {}).get('available') for tool in ['yt-dlp','ffmpeg','ffprobe','deno']):
+                raise RuntimeError('Unhealthy persistent native bundle')
         timings.append(round(elapsed, 2))
     return {'ping': result, 'startupMs': timings, 'medianMs': statistics.median(timings),
             'bundleBytes': sum(p.stat().st_size for p in executable.parent.rglob('*') if p.is_file()),
+            'persistentPort':True, 'responsesBeforeClosingInput':2,
             'browserRegistrationVerified': False, 'cleanMachineVerified': False}
 
 

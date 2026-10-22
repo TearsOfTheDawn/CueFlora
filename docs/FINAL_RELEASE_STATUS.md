@@ -1,6 +1,6 @@
 # Final Windows/Chrome release status
 
-Updated 2026-10-21. Published Windows/Chrome version **0.2.1**. This is a fixed completion boundary, not an expanding feature list.
+Updated 2026-10-22. Published Windows/Chrome version **0.2.2**. This is a fixed completion boundary, not an expanding feature list.
 
 ## Implemented
 
@@ -12,9 +12,11 @@ The GitHub-only channel now builds a keyed unpacked Chrome extension and matchin
 
 ## Publication completion
 
-0.2.1 is published at [GitHub Releases](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.1). It fixes the confirmed update-check header defect, adds safe diagnostics and improves settings. The host/Setup/downloader use upstream certifi 2026.10.19, with actual embedded certificate bytes verified. Clean Windows build `39684774078`, independent inspection `39687927662` and one-time publication `39688641300` passed. All ten public assets and six deployed page files were independently verified; 0.2.0 and selected 0.1.13 hashes are unchanged. The complete 424-file source archive matches tag `abaf8e19411ab496cafdca33a2c6fad03ababca2`. See [current handoff](CUEFLORA_021_PUBLICATION.md).
+0.2.2 is [published](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.2). Clean Windows build `39813901477`, independent inspection `39814457546` and the one-time publisher `39817378009` passed. All ten release files were anonymously downloaded/hash-verified; six live page files and update metadata were independently verified. The 433-file source matches tag `2089edaa8d92e416e8daa3dccc61bdf55bacf7a5` exactly, with no line-ending exception. The reported downloader failure and wider audit repairs are included; subtitle processing and dependency pins remain unchanged. See [current handoff](CUEFLORA_022_PUBLICATION.md).
 
-**0.2.0 users:** manually download 0.2.1 Setup, finish Runs, confirm Upgrade, click Chrome Reload and reload YouTube tabs. Do not rely on the old broken checker or remove/reinstall the extension. No new user information or mandatory manual test is needed to complete publication.
+**0.2.0/0.2.1 users:** manually download the matching 0.2.2 Setup if the old updater stalls, finish Runs, confirm Upgrade, click Chrome Reload and reload YouTube tabs. Do not remove/reinstall the extension or reset keys/models. No new user information or mandatory manual test is needed to complete this publication.
+
+The following records are previous publication history, not the current download target. 0.2.1 remains [available unchanged](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.1); its 424-file source, certificate correction and verification are documented in [its handoff](CUEFLORA_021_PUBLICATION.md). All ten 0.2.1, ten 0.2.0 and nine 0.1.13 public asset hashes/sizes were preserved during 0.2.2 publication.
 
 The following paragraphs retain the earlier 0.2.0 publication history, not the current download target.
 

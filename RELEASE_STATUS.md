@@ -1,11 +1,12 @@
-# CueFlora 0.2.1 — published on GitHub
+# CueFlora release status
 
-[Download CueFlora Setup.exe — the only required download](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.2.1/CueFlora-0.2.1-Setup.exe) · [Release and changelog](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.1) · [Verified handoff](docs/CUEFLORA_021_PUBLICATION.md)
+**0.2.2 is publicly available for Windows x64 / Chrome.**
 
-Windows x64 / Google Chrome. Setup includes the matching extension, helper and tools. New users run Setup, then Load unpacked from its stable extension folder at `chrome://extensions`. Connect existing compatible AI services, choose languages and press Run. AI services are not supplied.
+- [Download Setup — the only required download](https://github.com/TearsOfTheDawn/CueFlora/releases/download/v0.2.2/CueFlora-0.2.2-Setup.exe)
+- [Release and changelog](https://github.com/TearsOfTheDawn/CueFlora/releases/tag/v0.2.2)
+- [Installation instructions](README.md#install-from-github)
+- [Verification and limitations](docs/CUEFLORA_022_PUBLICATION.md)
 
-**Upgrading from 0.2.0:** download Setup manually because the old checker is broken. Finish Runs, confirm Upgrade, click Chrome **Reload** and reload YouTube tabs. Do not remove/reinstall the extension. 0.1.13 users additionally confirm recognized-folder adoption.
+When upgrading, finish Runs, confirm Upgrade in Setup, Reload CueFlora at `chrome://extensions`, then reload YouTube tabs. Preserve the extension and its existing settings.
 
-The certificate security fix, full pinned preparation and one-time publication passed. All ten public assets, exact 424-file source tag and six live page files were verified. The installer is unsigned. Genuine ChatGPT login, live Chrome updating and clean-Windows acceptance remain unverified. Earlier releases, Substrata and installed settings/evidence are preserved. Future publication is not automatic.
-
-Earlier manifests under `release/` remain historical evidence. [Current status and limitations](docs/FINAL_RELEASE_STATUS.md) distinguish automated results from deferred acceptance.
+The installer is unsigned. Genuine ChatGPT login, live Chrome updating and clean-machine acceptance remain unverified; other platforms are not certified. No Chrome Web Store publication or automatic future release is authorised. Historical release records remain under `release/` and `docs/`.

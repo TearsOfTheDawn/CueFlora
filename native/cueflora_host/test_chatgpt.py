@@ -16,6 +16,17 @@ from .translate import TranslationError
 
 
 class ChatGPTTests(unittest.TestCase):
+    def test_ninth_account_write_preserves_the_readable_existing_store(self):
+        import uuid
+        with tempfile.TemporaryDirectory() as directory:
+            store=AccountStore(directory,lambda data,entropy,decrypt=False:data)
+            data={'schema':1,'hostId':'urn:uuid:'+str(uuid.uuid4()),'accounts':{str(uuid.uuid4()):{'label':'synthetic'} for _ in range(8)}}
+            store.write(data);before=(Path(directory)/'accounts.dpapi.json').read_bytes()
+            data['accounts'][str(uuid.uuid4())]={'label':'ninth'}
+            with self.assertRaisesRegex(RuntimeError,'eight'):store.write(data)
+            self.assertEqual((Path(directory)/'accounts.dpapi.json').read_bytes(),before)
+            self.assertEqual(len(store.read()['accounts']),8)
+
     @unittest.skipUnless(os.name=='nt','Real DPAPI requires Windows')
     def test_full_synthetic_loopback_pkce_exchange_and_listener_shutdown(self):
         import base64,hashlib,socket
