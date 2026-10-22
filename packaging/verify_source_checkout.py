@@ -36,11 +36,7 @@ def verify(cache, output):
     npm = ['cmd.exe','/d','/c','npm'] if os.name=='nt' else ['npm']
     checks = [('npm-ci',npm+['ci','--offline','--cache',str(cache),'--no-audit','--no-fund'],workspace)]
     checks += [(name,npm+['run',name],workspace) for name in ('typecheck','test','build:chrome','build:firefox')]
-    checks += [('native',[sys.executable,'-m','unittest','cueflora_setup.test_setup','cueflora_setup.test_maintenance','cueflora_host.test_credentials',
-        'cueflora_host.test_provider_check','cueflora_host.test_deno','cueflora_host.test_runtime_tools','cueflora_host.test_controlled_evidence',
-        'cueflora_host.test_audio_preparation','cueflora_host.test_translate','cueflora_host.test_whisper_regressions','cueflora_host.test_evidence',
-        'cueflora_host.test_chatgpt','cueflora_host.test_updates','cueflora_host.test_update_payload','cueflora_host.test_download_progress','cueflora_setup.test_extension_pair',
-        'cueflora_host.test_quality_benchmark','cueflora_host.test_quality_translation','cueflora_host.test_native_protocol'],workspace/'native'),
+    checks += [('native',[sys.executable,'packaging/run_native_tests.py'],workspace),
         ('packaging',[sys.executable,'-m','unittest','discover','-s','packaging','-p','test_*.py'],workspace),
         ('node-release',['node','--test','scripts/release-config.test.mjs'],workspace)]
     report = {'passed':False,'sourceArchiveSha256':source['archiveSha256'],'checks':[],

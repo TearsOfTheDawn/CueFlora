@@ -13,6 +13,7 @@ import httpx
 from .account_store import safe_directory
 from .update_payload import verify_update_payload
 from .failures import OperationFailure, http_failure
+from .tool_process import tool_process_options
 
 REPOSITORY='TearsOfTheDawn/CueFlora'
 API='https://api.github.com/repos/'+REPOSITORY
@@ -166,5 +167,6 @@ class Updates:
     def launch(self,selection):
         target=self.verify(selection)
         # No shell, arbitrary arguments, silent install, or Windows-warning bypass.
-        subprocess.Popen([str(target)],cwd=str(target.parent),close_fds=True)
+        subprocess.Popen([str(target)],cwd=str(target.parent),close_fds=True,
+                         **tool_process_options(detach_output=True))
         return {'launched':True,'version':self.selected(selection)['version']}

@@ -82,6 +82,8 @@ class AccountStore:
             raise RuntimeError('ChatGPT accounts cannot be opened by this Windows user. Repair or reconnect; no plaintext fallback is used.') from None
 
     def write(self, data):
+        if not isinstance(data, dict) or not isinstance(data.get('accounts'), dict) or len(data['accounts']) > 8:
+            raise RuntimeError('At most eight ChatGPT account records can be saved; existing accounts were not changed')
         root = safe_directory(self.root)
         plaintext = json.dumps(data, ensure_ascii=False, separators=(',',':')).encode('utf-8')
         if len(plaintext) > 90000: raise RuntimeError('Too many saved ChatGPT accounts')

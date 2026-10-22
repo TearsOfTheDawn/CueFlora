@@ -4,6 +4,8 @@ AI Subtitles & Translation for YouTube — Windows x64 / Google Chrome.
 
 [Changelog — features, fixes and upgrade instructions](CHANGELOG.md)
 
+Development candidate **0.2.2** is being prepared after a [wider reliability audit](docs/CUEFLORA_022_AUDIT.md). It is not published; the public download below remains 0.2.1. [Candidate engineering](docs/CUEFLORA_022_IMPLEMENTATION.md) does not authorise publication or change installed copies.
+
 **Current release: 0.2.1.** Fixes update checks, adds privacy-safe debugging and improves settings. The helper and downloader also include the corrected certificate bundle. See [release verification and limitations](docs/CUEFLORA_021_PUBLICATION.md). Earlier packages remain available unchanged.
 
 ![Five-petal CueFlora flower](public/icon/flower.svg)

@@ -4,9 +4,8 @@ import json
 import os
 from pathlib import Path
 import shutil
-import struct
-import subprocess
 import sys
+from persistent_native import exchange
 from release_inputs import ROOT
 sys.path.insert(0,str(ROOT/'native'))
 from cueflora_setup.bundle import verify_bundle
@@ -19,11 +18,10 @@ def check(runtime, output):
     environment = {key:value for key,value in os.environ.items() if key not in ('DENO_PATH','YT_DLP_PATH','FFMPEG_PATH','FFPROBE_PATH','PYTHONPATH','PYTHONHOME','CUEFLORA_EVIDENCE_DIR')}
     environment['PATH'] = str(Path(os.environ['SystemRoot'])/'System32')
     def ping():
-        body = b'{"type":"PING"}'
-        result = subprocess.run([str(copy/'cueflora-host.exe')],input=struct.pack('<I',len(body))+body,env=environment,cwd=copy,capture_output=True,timeout=15,check=True)
-        if len(result.stdout)<4 or struct.unpack('<I',result.stdout[:4])[0] != len(result.stdout)-4:
-            raise ValueError('Malformed PING frame')
-        return json.loads(result.stdout[4:])
+        responses,_ = exchange([str(copy/'cueflora-host.exe')],[{'type':'PING'},{'type':'PING'}],
+                               env=environment,cwd=copy,timeout=20)
+        if responses[0]!=responses[1]:raise ValueError('Inconsistent persistent health response')
+        return responses[-1]
     healthy = ping()
     if not all(healthy['tools'][name]['available'] for name in ['yt-dlp','ffmpeg','ffprobe','deno']):
         raise ValueError('Bundled dependency unhealthy')
@@ -37,7 +35,8 @@ def check(runtime, output):
         held.rename(deno)
     verify_bundle(copy)
     report = {'healthy':healthy,'missingDeno':missing,'restrictedPath':True,'unicodePath':True,
-        'inventoryRestored':True,'liveInstallation':False,'inference':False}
+        'inventoryRestored':True,'persistentPort':True,'responsesBeforeClosingInput':2,
+        'liveInstallation':False,'inference':False}
     (output/'capabilities.json').write_text(json.dumps(report,indent=2)+'\n')
 
 

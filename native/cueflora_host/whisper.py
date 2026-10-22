@@ -14,6 +14,7 @@ import unicodedata
 
 import httpx
 from .failures import OperationFailure, http_failure
+from .tool_process import tool_process_options
 
 WHISPER_FORMATS = {"flac", "mp3", "mp4", "mpeg", "mpga", "m4a", "ogg", "wav", "webm"}
 
@@ -318,6 +319,7 @@ def _resolve_binary(name):
             args = [path] + (version_args or ["-version"])
             probe = subprocess.run(
                 args,
+                **tool_process_options(),
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 timeout=8,
@@ -1192,6 +1194,7 @@ def _probe_bitrate_bps(audio_path):
             capture_output=True,
             text=True,
             timeout=15,
+            **tool_process_options(),
         )
     except (subprocess.TimeoutExpired, OSError):
         return None
@@ -1227,6 +1230,7 @@ def _probe_duration_seconds(audio_path):
             capture_output=True,
             text=True,
             timeout=15,
+            **tool_process_options(),
         )
     except (subprocess.TimeoutExpired, OSError):
         return None
@@ -1235,7 +1239,8 @@ def _probe_duration_seconds(audio_path):
         return None
 
     try:
-        return float(res.stdout.strip())
+        duration = float(res.stdout.strip())
+        return duration if math.isfinite(duration) and duration > 0 else None
     except (TypeError, ValueError):
         return None
 
@@ -1290,7 +1295,7 @@ def _split_into_chunks(audio_path, chunk_length_s, overlap_s, output_dir):
         chunk_path = os.path.join(output_dir, f"{base}.chunk{idx:04d}{ext}")
 
         try:
-            subprocess.run(
+            completed = subprocess.run(
                 [
                     ffmpeg_bin,
                     "-y",
@@ -1308,11 +1313,12 @@ def _split_into_chunks(audio_path, chunk_length_s, overlap_s, output_dir):
                 ],
                 capture_output=True,
                 timeout=120,
+                **tool_process_options(),
             )
         except (subprocess.TimeoutExpired, OSError):
             return []
 
-        if not os.path.exists(chunk_path) or os.path.getsize(chunk_path) == 0:
+        if completed.returncode != 0 or not os.path.exists(chunk_path) or os.path.getsize(chunk_path) == 0:
             return []
 
         keep_from = start if idx == 0 else start + (float(overlap_s) / 2.0)
@@ -1587,7 +1593,7 @@ def _validate_prepared_audio(path):
     try:
         result = subprocess.run([ffprobe_bin, "-v", "error", "-select_streams", "a",
             "-show_entries", "stream=codec_name,sample_rate,channels:format=duration",
-            "-of", "json", path], capture_output=True, timeout=30)
+            "-of", "json", path], capture_output=True, timeout=30, **tool_process_options())
         if result.returncode != 0:
             raise ValueError("Probe failed")
         info = json.loads(result.stdout)
@@ -1648,6 +1654,7 @@ def compress_audio(audio_path, on_progress=None):
             cmd,
             capture_output=True,
             timeout=120,
+            **tool_process_options(),
         )
 
         if completed.returncode != 0:
@@ -1703,7 +1710,7 @@ def transcribe(
     # Normalize the full file first, then chunk only if still over size limit.
     upload_path = compress_audio(audio_path, on_progress=on_progress)
     if capture:
-        capture.record("audio-preparation", {
+        capture.record_lazy("audio-preparation", lambda: {
             "source": capture.preserve("source", audio_path),
             "prepared": capture.preserve("prepared", upload_path),
             "sampleRate": TARGET_SAMPLE_RATE_HZ, "channels": TARGET_CHANNELS,
@@ -1711,7 +1718,7 @@ def transcribe(
             "conversionSucceeded": upload_path != audio_path,
             "duration": _probe_duration_seconds(upload_path),
             "ffmpegVersion": subprocess.check_output([_resolve_binary("ffmpeg"), "-version"],
-                text=True).splitlines()[0],
+                text=True, timeout=10, **tool_process_options()).splitlines()[0],
         })
 
     file_size = os.path.getsize(upload_path)

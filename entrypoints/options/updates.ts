@@ -10,7 +10,9 @@ export function createUpdates(section:HTMLElement,canInstall:()=>boolean=()=>tru
     const explanation=document.createElement('p');explanation.textContent='Extension '+version+'. Check published stable releases from TearsOfTheDawn/CueFlora. Downloads are verified; the installer is unsigned. Initial Chrome Load unpacked and the first 0.1.13 upgrade are manual. No update is installed silently.';
     let selected:{selectionRef:string;version:string;size:number}|null=null,taskId:string|null=null,ready=false,launched=false,busy=false,installed=false;
     let timer:ReturnType<typeof setTimeout>|undefined,sequence=0;
-    const showError=(error:unknown)=>{busy=false;status.textContent=error instanceof UpdateTaskFailure?error.message:'Update unavailable or verification failed. Retry explicitly, or download the matching Setup from GitHub. Older helpers need a manual Upgrade. Nothing was installed automatically.';status.focus();sync();};
+    const showError=(error:unknown)=>{busy=taskId!==null;status.textContent=taskId
+        ? 'Update status unavailable. The task may still be running. Cancel the current task before trying again; nothing was installed automatically.'
+        : error instanceof UpdateTaskFailure?error.message:'Update unavailable or verification failed. Retry explicitly, or download the matching Setup from GitHub. Older helpers need a manual Upgrade. Nothing was installed automatically.';status.focus();sync();};
     const make=(text:string,work:()=>Promise<void>)=>{const button=document.createElement('button');button.type='button';button.textContent=text;button.addEventListener('click',()=>void work().catch(showError));return button;};
     const sync=()=>{check.disabled=busy;download.disabled=busy||!selected||ready;install.disabled=busy||!ready;cancel.disabled=!taskId;recheck.disabled=busy;restart.disabled=busy||!installed;};
     async function poll(id:string,expected:number,operation:'check'|'download'){
@@ -25,7 +27,9 @@ export function createUpdates(section:HTMLElement,canInstall:()=>boolean=()=>tru
             sync();return;
         }
         status.textContent=operation==='download'?'Downloading update'+(typeof result.percent==='number'?' — '+result.percent+'%':'…'):'Checking published stable releases…';
-        timer=setTimeout(()=>void poll(id,expected,operation).catch(error=>{taskId=null;showError(error);}),800);
+        timer=setTimeout(()=>void poll(id,expected,operation).catch(error=>{
+            if(sequence===expected&&taskId===id)showError(error);
+        }),800);
     }
     async function start(operation:'check'|'download'){
         if(busy)return;busy=true;if(operation==='check'){selected=null;ready=false;installed=false;launched=false;}sync();

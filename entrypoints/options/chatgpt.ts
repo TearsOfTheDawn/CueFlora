@@ -23,7 +23,7 @@ export function createChatGPTControls(section:HTMLElement, changed:()=>void,acti
                 .finally(()=>{working=false;activity(!!taskId);sync();});});return button;};
     const clearModels=()=>{model.replaceChildren();const blank=document.createElement('option');blank.value='';blank.textContent='Choose an eligible model';model.append(blank);};
     const sync=()=>{mode.disabled=disabled||working||!!taskId;accounts.disabled=disabled||working||!!taskId;model.disabled=disabled||working||!!taskId;
-        for(const button of [login,reconnect,refresh,disconnect])button.disabled=disabled||working||!!taskId;cancel.disabled=!taskId||working;};
+        for(const button of [login,reconnect,refresh,disconnect])button.disabled=disabled||working||!!taskId;cancel.disabled=!taskId;};
     async function refreshAccounts(selectRef?:string){
         const result=await settingsRequest({type:'CHATGPT_STATUS'});if(result.error)throw Error('Account status unavailable');
         const prior=selectRef||accounts.value;accounts.replaceChildren();
@@ -39,7 +39,9 @@ export function createChatGPTControls(section:HTMLElement, changed:()=>void,acti
             taskId=null;activity(false);status.textContent=result.reason==='cancelled'?'ChatGPT sign-in cancelled.':'ChatGPT sign-in failed or expired. Check plan permission, Upgrade/Repair, then retry.';status.focus();sync();return;
         }
         if(result.status==='complete'){
-            taskId=null;await refreshAccounts(result.result?.accountRef);clearModels();changed();activity(false);
+            taskId=null;working=true;sync();
+            try{
+            await refreshAccounts(result.result?.accountRef);clearModels();changed();
             status.textContent='Connected. Choose an eligible model, then Save AI settings. Translation uses your ChatGPT plan; audio transcription still needs a separate service or YouTube captions.';
             if(result.result?.needsUsageNotice){
                 const notice=document.createElement('dialog');const text=document.createElement('p');text.textContent='You’re using your ChatGPT plan. Eligible CueFlora translations use your plan or credits. Review limits in Manage usage. No request is sent until Run.';
@@ -50,10 +52,17 @@ export function createChatGPTControls(section:HTMLElement, changed:()=>void,acti
                         .catch(()=>{gotIt.disabled=false;text.textContent+=' Notice acknowledgement could not be saved; retry explicitly.';});
                 });notice.append(text,gotIt);panel.append(notice);
                 if(typeof notice.showModal==='function')notice.showModal();else notice.setAttribute('open','');
-            }sync();return;
+            }
+            }catch{
+                status.textContent='Sign-in finished, but account status could not be loaded. Reopen the ChatGPT connection to refresh accounts before saving.';status.focus();
+            }finally{working=false;activity(!!taskId);sync();}
+            return;
         }
         status.textContent=result.stage==='validating-account'?'Validating the ChatGPT account…':'Complete sign-in in your browser. You can Cancel; this window closes after ten minutes.';
-        timer=setTimeout(()=>void poll(id,expected).catch(()=>{taskId=null;activity(false);status.textContent='Sign-in status unavailable. Recheck accounts before trying again.';sync();}),800);
+        timer=setTimeout(()=>void poll(id,expected).catch(()=>{
+            if(expected!==sequence||taskId!==id)return;
+            activity(true);status.textContent='Account status unavailable. The task may still be running. Cancel it before trying again.';status.focus();sync();
+        }),800);
     }
     async function start(ref?:string){
         if(disabled||taskId)return;const expected=++sequence;status.textContent='Starting secure ChatGPT sign-in…';
@@ -63,16 +72,26 @@ export function createChatGPTControls(section:HTMLElement, changed:()=>void,acti
     }
     async function accountOperation(message:import('../../utils/types').AccountMessage){
         const started=await settingsRequest(message);if(started.error||!started.taskId)throw Error('Account task unavailable');
-        taskId=started.taskId;sync();const expected=sequence,deadline=Date.now()+120000;
+        taskId=started.taskId;sync();const id=taskId!,expected=sequence,deadline=Date.now()+120000;let completed=false;
         try{
             while(Date.now()<deadline){
-                const result=await settingsRequest({type:'TASK_STATUS',taskId:taskId!});
-                if(sequence!==expected||result.error||result.status==='error')throw Error('Account task changed or failed');
-                if(result.status==='complete')return result.result;
+                if(sequence!==expected||taskId!==id)throw Error('Account task changed');
+                const result=await settingsRequest({type:'TASK_STATUS',taskId:id});
+                if(sequence!==expected||taskId!==id||result.error||result.status==='error')throw Error('Account task changed or failed');
+                if(result.status==='complete'){completed=true;return result.result;}
                 await new Promise(resolve=>setTimeout(resolve,500));
             }
             throw Error('Account metadata task timed out');
-        }finally{taskId=null;sync();}
+        }finally{
+            if(sequence===expected&&taskId===id){
+                if(!completed){
+                    try{const reply=await settingsRequest({type:'TASK_CANCEL',taskId:id});completed=!reply.error;}
+                    catch{/* Keep the reference and Cancel available when termination is uncertain. */}
+                }
+                if(completed)taskId=null;
+            }
+            activity(!!taskId);sync();
+        }
     }
     const login=control('Continue with ChatGPT',()=>start());
     const reconnect=control('Reconnect selected account',async()=>{if(!accounts.value)throw Error('Choose account');await start(accounts.value);});
@@ -89,7 +108,7 @@ export function createChatGPTControls(section:HTMLElement, changed:()=>void,acti
         const result=await accountOperation({type:'CHATGPT_DISCONNECT',accountRef:ref});if(result.error)throw Error('Disconnect failed');
         clearModels();await refreshAccounts(ref);changed();status.textContent=result.revocationConfirmed?'Disconnected. Choose another connection before the next AI translation.':'Disconnected locally. Remote revocation was not confirmed; disconnect CueFlora in ChatGPT settings too.';
     });
-    const cancel=control('Cancel sign-in',async()=>{
+    const cancel=control('Cancel account task',async()=>{
         if(!taskId)return;const id=taskId;++sequence;if(timer)clearTimeout(timer);await settingsRequest({type:'TASK_CANCEL',taskId:id});taskId=null;status.textContent='ChatGPT sign-in cancelled.';sync();
     });
     panel.append(explanation,login,reconnect,cancel,accountLabel,refresh,modelLabel,usage,disconnect,status);section.append(panel);clearModels();sync();
